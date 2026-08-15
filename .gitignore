@@ -1,0 +1,18 @@
+# Node
+node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# Python
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.env
+backend/*.pyc
+
+# Ledger data (runtime-generated, not source)
+backend/app/data/ledger_store/*.json
+
+# OS
+.DS_Store

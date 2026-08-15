@@ -1,0 +1,83 @@
+import hashlib
+import json
+import os
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import List
+from app.schemas.ledger import LedgerLogRequest, LedgerBlock
+
+# Simple append-only, hash-chained ledger persisted as JSON on disk.
+# Each block's hash depends on the previous block's hash, so any tampering
+# with an earlier block breaks the chain from that point forward — the
+# core property of a blockchain, implemented without running real
+# distributed-ledger infrastructure (Hyperledger Fabric etc.).
+# Swap this file's storage backend for Hyperledger Fabric later without
+# changing the public functions below (log_event / get_chain / verify_chain).
+
+LEDGER_DIR = Path(__file__).resolve().parents[1] / "data" / "ledger_store"
+LEDGER_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _ledger_path(entity_type: str, entity_id: str) -> Path:
+    safe_type = entity_type.replace("/", "_")
+    safe_id = entity_id.replace("/", "_")
+    return LEDGER_DIR / f"{safe_type}__{safe_id}.json"
+
+
+def _compute_hash(block_data: dict) -> str:
+    block_string = json.dumps(block_data, sort_keys=True).encode()
+    return hashlib.sha256(block_string).hexdigest()
+
+
+def _read_chain(entity_type: str, entity_id: str) -> List[dict]:
+    path = _ledger_path(entity_type, entity_id)
+    if not path.exists():
+        return []
+    with open(path) as f:
+        return json.load(f)
+
+
+def _write_chain(entity_type: str, entity_id: str, chain: List[dict]):
+    path = _ledger_path(entity_type, entity_id)
+    with open(path, "w") as f:
+        json.dump(chain, f, indent=2)
+
+
+def log_event(req: LedgerLogRequest) -> LedgerBlock:
+    chain = _read_chain(req.entity_type, req.entity_id)
+    prev_hash = chain[-1]["hash"] if chain else "0" * 64
+
+    block_data = {
+        "index": len(chain),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "entity_type": req.entity_type,
+        "entity_id": req.entity_id,
+        "event_type": req.event_type,
+        "payload": req.payload,
+        "actor": req.actor,
+        "prev_hash": prev_hash,
+    }
+    block_data["hash"] = _compute_hash(block_data)
+
+    chain.append(block_data)
+    _write_chain(req.entity_type, req.entity_id, chain)
+    return LedgerBlock(**block_data)
+
+
+def get_chain(entity_type: str, entity_id: str) -> List[LedgerBlock]:
+    chain = _read_chain(entity_type, entity_id)
+    return [LedgerBlock(**b) for b in chain]
+
+
+def verify_chain(entity_type: str, entity_id: str) -> bool:
+    chain = _read_chain(entity_type, entity_id)
+    prev_hash = "0" * 64
+    for block in chain:
+        expected_prev = block["prev_hash"]
+        if expected_prev != prev_hash:
+            return False
+        block_copy = {k: v for k, v in block.items() if k != "hash"}
+        if _compute_hash(block_copy) != block["hash"]:
+            return False
+        prev_hash = block["hash"]
+    return True

@@ -1,0 +1,470 @@
+{
+  "categories": [
+    {
+      "id": "cereals",
+      "name": "Cereals & Millets",
+      "icon": "Wheat",
+      "color": "amber",
+      "types": [
+        {
+          "id": "rice",
+          "name": "Rice (Paddy)",
+          "category_use": "Staple food",
+          "varieties": [
+            { "name": "BPT 5204 (Samba Mahsuri)", "origin": "AP/Telangana, India", "traits": "Fine grain, high market demand, medium duration" },
+            { "name": "MTU 1010", "origin": "Andhra Pradesh, India", "traits": "Short duration, medium grain, drought tolerant" },
+            { "name": "IR 64", "origin": "IRRI/India", "traits": "Widely grown, medium slender grain, good yield" }
+          ],
+          "climate_soil": {
+            "soil_type": "Clay loam / clay, water-retentive soils",
+            "climate": "Warm humid, kharif (monsoon) or irrigated rabi",
+            "rainfall": "100-200 cm/season or assured irrigation",
+            "temperature_range": "20-35°C",
+            "notes": "Puddled transplanting reduces water loss; SRI method saves 25-30% water"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "June-July (kharif), Nov-Dec (rabi, irrigated areas)",
+            "seed_rate": "20-25 kg/acre (nursery), transplant at 20-25 days",
+            "spacing": "20 x 15 cm",
+            "irrigation_schedule": "Maintain 2-5 cm standing water through tillering to flowering",
+            "water_requirement": "1200-1500 mm total (higher than most cereals)"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at transplanting)", "fertilizer": "50% N + full P & K", "dose": "As per soil test, typically 120:60:40 kg NPK/ha" },
+            { "stage": "Active tillering (20-25 DAT)", "fertilizer": "25% N", "dose": "Top dress urea" },
+            { "stage": "Panicle initiation (40-45 DAT)", "fertilizer": "25% N", "dose": "Top dress urea" }
+          ],
+          "growth_timeline": [
+            { "stage": "Nursery", "age_range": "0-25 days", "milestone": "Seedling raised, ready to transplant" },
+            { "stage": "Transplanting-Tillering", "age_range": "0-30 DAT", "milestone": "Active tiller production" },
+            { "stage": "Panicle initiation-Flowering", "age_range": "45-70 DAT", "milestone": "Reproductive stage, critical water need" },
+            { "stage": "Grain filling-Maturity", "age_range": "70-110 DAT", "milestone": "Harvest at 20-22% grain moisture" }
+          ],
+          "common_pests_diseases": ["Stem borer", "Brown planthopper", "Blast", "Bacterial leaf blight", "Sheath blight"],
+          "economics": { "duration_days": "120-140", "avg_yield_q_per_acre": "22-28", "market_price_range_per_q": "1900-2200" }
+        },
+        {
+          "id": "wheat",
+          "name": "Wheat",
+          "category_use": "Staple food",
+          "varieties": [
+            { "name": "HD 2967", "origin": "IARI, India", "traits": "High yielding, rust resistant, widely adapted" },
+            { "name": "PBW 725", "origin": "Punjab, India", "traits": "Early maturing, good for timely sown irrigated conditions" },
+            { "name": "DBW 187 (Karan Vandana)", "origin": "IIWBR, India", "traits": "Heat tolerant, suited to late sowing" }
+          ],
+          "climate_soil": {
+            "soil_type": "Well-drained loam to clay loam",
+            "climate": "Cool dry winters (rabi crop)",
+            "rainfall": "40-65 cm, mostly via irrigation",
+            "temperature_range": "10-25°C (frost sensitive at flowering)",
+            "notes": "Timely sowing (Nov 1-15) critical to avoid terminal heat stress"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "Late Oct to mid-Nov (rabi)",
+            "seed_rate": "40-50 kg/acre",
+            "spacing": "20-22.5 cm row spacing",
+            "irrigation_schedule": "5-6 irrigations at CRI, tillering, jointing, flowering, milk, dough stages",
+            "water_requirement": "450-650 mm total"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at sowing)", "fertilizer": "Full P & K + 1/3 N", "dose": "120:60:40 kg NPK/ha typical" },
+            { "stage": "First irrigation (CRI, 20-25 DAS)", "fertilizer": "1/3 N", "dose": "Top dress urea" },
+            { "stage": "Second irrigation (jointing)", "fertilizer": "1/3 N", "dose": "Top dress urea" }
+          ],
+          "growth_timeline": [
+            { "stage": "Germination-CRI", "age_range": "0-25 days", "milestone": "Crown root initiation, first irrigation" },
+            { "stage": "Tillering-Jointing", "age_range": "25-60 days", "milestone": "Tiller and stem development" },
+            { "stage": "Flowering-Grain filling", "age_range": "60-100 days", "milestone": "Frost/heat sensitive window" },
+            { "stage": "Maturity", "age_range": "110-140 days", "milestone": "Harvest at golden yellow, hard grain" }
+          ],
+          "common_pests_diseases": ["Aphids", "Termites", "Yellow/stripe rust", "Karnal bunt", "Powdery mildew"],
+          "economics": { "duration_days": "110-140", "avg_yield_q_per_acre": "18-22", "market_price_range_per_q": "2100-2400" }
+        }
+      ]
+    },
+    {
+      "id": "pulses",
+      "name": "Pulses (Legumes)",
+      "icon": "Bean",
+      "color": "orange",
+      "types": [
+        {
+          "id": "chickpea",
+          "name": "Chickpea (Bengal Gram)",
+          "category_use": "Protein staple / dal",
+          "varieties": [
+            { "name": "JG 11", "origin": "Madhya Pradesh, India", "traits": "Medium duration, wilt resistant, widely grown" },
+            { "name": "KAK 2 (Kabuli)", "origin": "Karnataka, India", "traits": "Bold seeded kabuli type, premium price" }
+          ],
+          "climate_soil": {
+            "soil_type": "Well-drained sandy loam to clay loam",
+            "climate": "Cool dry winters, rabi crop",
+            "rainfall": "Low rainfall/residual moisture areas suit best",
+            "temperature_range": "15-30°C, sensitive to frost at flowering",
+            "notes": "Avoid waterlogging; deep-rooted, tolerates moisture stress once established"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "Mid-Oct to mid-Nov",
+            "seed_rate": "16-20 kg/acre",
+            "spacing": "30 x 10 cm",
+            "irrigation_schedule": "1-2 light irrigations at branching and pod filling if rainfed fails",
+            "water_requirement": "300-400 mm total, mostly residual moisture"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at sowing)", "fertilizer": "Full dose N, P, K + rhizobium seed treatment", "dose": "20:40:20 kg NPK/ha" }
+          ],
+          "growth_timeline": [
+            { "stage": "Germination-Branching", "age_range": "0-35 days", "milestone": "Vegetative growth, nodulation begins" },
+            { "stage": "Flowering", "age_range": "45-65 days", "milestone": "Critical stage, avoid moisture stress" },
+            { "stage": "Pod filling-Maturity", "age_range": "65-100 days", "milestone": "Harvest when pods dry and rattle" }
+          ],
+          "common_pests_diseases": ["Pod borer (Helicoverpa)", "Wilt (Fusarium)", "Root rot", "Ascochyta blight"],
+          "economics": { "duration_days": "90-110", "avg_yield_q_per_acre": "6-9", "market_price_range_per_q": "5000-6000" }
+        },
+        {
+          "id": "pigeon-pea",
+          "name": "Pigeon Pea (Tur/Arhar)",
+          "category_use": "Protein staple / dal",
+          "varieties": [
+            { "name": "ICPL 87119 (Asha)", "origin": "ICRISAT, India", "traits": "Wilt & sterility mosaic resistant, medium duration" },
+            { "name": "TS 3R (Telangana Special)", "origin": "Telangana, India", "traits": "Hybrid, high yielding, popular in Telangana" }
+          ],
+          "climate_soil": {
+            "soil_type": "Well-drained deep loam, avoids waterlogging",
+            "climate": "Warm, kharif crop with long duration into rabi",
+            "rainfall": "60-100 cm",
+            "temperature_range": "20-35°C",
+            "notes": "Deep tap root system gives good drought tolerance once established"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "June-July (with monsoon onset)",
+            "seed_rate": "6-8 kg/acre",
+            "spacing": "60-75 x 20 cm",
+            "irrigation_schedule": "Mostly rainfed; 1-2 supplemental irrigations at flowering/pod fill in dry spells",
+            "water_requirement": "600-650 mm total"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at sowing)", "fertilizer": "Full dose N, P, K + rhizobium seed treatment", "dose": "25:50:25 kg NPK/ha" }
+          ],
+          "growth_timeline": [
+            { "stage": "Germination-Vegetative", "age_range": "0-60 days", "milestone": "Branching, canopy development" },
+            { "stage": "Flowering-Pod formation", "age_range": "90-150 days", "milestone": "Long flowering window, indeterminate types" },
+            { "stage": "Maturity", "age_range": "150-180 days", "milestone": "Harvest as pods dry, staggered picking possible" }
+          ],
+          "common_pests_diseases": ["Pod borer (Helicoverpa)", "Pod fly", "Wilt", "Sterility mosaic disease"],
+          "economics": { "duration_days": "150-180", "avg_yield_q_per_acre": "5-8", "market_price_range_per_q": "6500-7500" }
+        }
+      ]
+    },
+    {
+      "id": "oilseeds",
+      "name": "Oilseeds",
+      "icon": "Droplet",
+      "color": "yellow",
+      "types": [
+        {
+          "id": "groundnut",
+          "name": "Groundnut (Peanut)",
+          "category_use": "Oilseed / snack crop",
+          "varieties": [
+            { "name": "TAG 24", "origin": "India", "traits": "Short duration, spreading type, good for rainfed" },
+            { "name": "Kadiri 6 (K-6)", "origin": "Andhra Pradesh, India", "traits": "High yielding, bold pods, widely grown in AP/Telangana" }
+          ],
+          "climate_soil": {
+            "soil_type": "Well-drained sandy loam, light-textured for pegging",
+            "climate": "Warm, kharif (rainfed) or irrigated summer crop",
+            "rainfall": "50-75 cm",
+            "temperature_range": "25-35°C",
+            "notes": "Calcium (gypsum) application at pegging critical for pod filling"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "June-July (kharif), Jan-Feb (summer, irrigated)",
+            "seed_rate": "40-45 kg/acre (pods)",
+            "spacing": "30 x 10 cm",
+            "irrigation_schedule": "Critical at pegging and pod development stages",
+            "water_requirement": "500-600 mm total"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at sowing)", "fertilizer": "Full N, P, K", "dose": "20:40:40 kg NPK/ha" },
+            { "stage": "Pegging (30-35 DAS)", "fertilizer": "Gypsum (calcium)", "dose": "400-500 kg/ha in furrows" }
+          ],
+          "growth_timeline": [
+            { "stage": "Germination-Vegetative", "age_range": "0-30 days", "milestone": "Branching begins" },
+            { "stage": "Flowering-Pegging", "age_range": "30-55 days", "milestone": "Pegs enter soil, pod formation starts" },
+            { "stage": "Pod development-Maturity", "age_range": "55-100 days", "milestone": "Harvest when inner shell veins darken" }
+          ],
+          "common_pests_diseases": ["Leaf miner", "Tikka leaf spot", "Rust", "Collar rot", "Aflatoxin (post-harvest, storage)"],
+          "economics": { "duration_days": "95-110", "avg_yield_q_per_acre": "10-14", "market_price_range_per_q": "5500-6200" }
+        },
+        {
+          "id": "mustard",
+          "name": "Mustard (Rapeseed)",
+          "category_use": "Oilseed",
+          "varieties": [
+            { "name": "Pusa Bold", "origin": "IARI, India", "traits": "Bold seed, high oil content, widely grown" },
+            { "name": "RH 749", "origin": "Haryana, India", "traits": "High yielding, short duration hybrid" }
+          ],
+          "climate_soil": {
+            "soil_type": "Well-drained sandy loam to loam",
+            "climate": "Cool dry winters, rabi crop",
+            "rainfall": "Low, mostly irrigated",
+            "temperature_range": "10-25°C",
+            "notes": "Frost at flowering can reduce pod set; sow within recommended window"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "Mid-Oct to mid-Nov",
+            "seed_rate": "1.5-2 kg/acre",
+            "spacing": "30 x 10-15 cm",
+            "irrigation_schedule": "2-3 irrigations: pre-flowering, flowering, siliqua formation",
+            "water_requirement": "300-400 mm total"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at sowing)", "fertilizer": "Full P & K + 1/2 N + sulphur", "dose": "80:40:40 kg NPK + 40 kg S/ha" },
+            { "stage": "First irrigation (30-35 DAS)", "fertilizer": "1/2 N", "dose": "Top dress urea" }
+          ],
+          "growth_timeline": [
+            { "stage": "Germination-Rosette", "age_range": "0-30 days", "milestone": "Vegetative leaf growth" },
+            { "stage": "Flowering", "age_range": "40-60 days", "milestone": "Yellow flowering, bee pollination beneficial" },
+            { "stage": "Siliqua formation-Maturity", "age_range": "60-110 days", "milestone": "Harvest when siliquae turn yellow-brown" }
+          ],
+          "common_pests_diseases": ["Aphids", "Painted bug", "Alternaria blight", "White rust", "Powdery mildew"],
+          "economics": { "duration_days": "100-120", "avg_yield_q_per_acre": "7-10", "market_price_range_per_q": "5200-5800" }
+        }
+      ]
+    },
+    {
+      "id": "vegetables",
+      "name": "Vegetables",
+      "icon": "Carrot",
+      "color": "green",
+      "types": [
+        {
+          "id": "tomato",
+          "name": "Tomato",
+          "category_use": "Vegetable crop",
+          "varieties": [
+            { "name": "Arka Rakshak", "origin": "IIHR, India", "traits": "Triple disease resistant (bacterial wilt, leaf curl, early blight)" },
+            { "name": "Abhinav / Hybrid F1", "origin": "Private seed companies, India", "traits": "High yielding hybrid, firm fruit for long transport" }
+          ],
+          "climate_soil": {
+            "soil_type": "Well-drained sandy loam rich in organic matter",
+            "climate": "Warm, frost-free; can be grown across seasons with protection",
+            "rainfall": "N/A, irrigated crop",
+            "temperature_range": "20-27°C optimal, poor fruit set above 35°C",
+            "notes": "Staking/trellising improves fruit quality and reduces rot"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "Nursery raised, transplant 25-30 days after sowing",
+            "seed_rate": "80-100 g/acre (nursery)",
+            "spacing": "60 x 45 cm",
+            "irrigation_schedule": "Drip irrigation preferred, every 3-4 days depending on stage",
+            "water_requirement": "400-600 mm total"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at transplanting)", "fertilizer": "FYM + full P & K + 1/4 N", "dose": "100:50:50 kg NPK/ha + 10t FYM" },
+            { "stage": "30 DAT", "fertilizer": "1/4 N", "dose": "Top dress or fertigate" },
+            { "stage": "Flowering & fruit set", "fertilizer": "Remaining N split doses", "dose": "Fertigate weekly" }
+          ],
+          "growth_timeline": [
+            { "stage": "Nursery", "age_range": "0-25 days", "milestone": "Seedling ready for transplant" },
+            { "stage": "Vegetative-Flowering", "age_range": "0-45 DAT", "milestone": "Staking done, first flowers appear" },
+            { "stage": "Fruiting", "age_range": "45-90 DAT", "milestone": "Multiple harvests every 4-7 days" }
+          ],
+          "common_pests_diseases": ["Fruit borer", "Whitefly (leaf curl virus vector)", "Early/late blight", "Bacterial wilt"],
+          "economics": { "duration_days": "90-120 (multiple harvests)", "avg_yield_q_per_acre": "150-250", "market_price_range_per_q": "800-2500 (volatile)" }
+        },
+        {
+          "id": "onion",
+          "name": "Onion",
+          "category_use": "Vegetable / bulb crop",
+          "varieties": [
+            { "name": "Nasik Red (N-53)", "origin": "Maharashtra, India", "traits": "Popular red variety, good storage life" },
+            { "name": "Bhima Super", "origin": "IARI/Directorate of Onion & Garlic Research, India", "traits": "High yielding, medium storage" }
+          ],
+          "climate_soil": {
+            "soil_type": "Well-drained sandy loam to loam, neutral pH",
+            "climate": "Mild climate, sensitive to excess rain at bulbing",
+            "rainfall": "N/A, irrigated crop",
+            "temperature_range": "13-24°C for bulb development",
+            "notes": "Day-length sensitive; choose variety matched to season (kharif/rabi)"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "Nursery raised, transplant 35-45 days after sowing",
+            "seed_rate": "3.5-4 kg/acre (nursery)",
+            "spacing": "15 x 10 cm",
+            "irrigation_schedule": "Light frequent irrigation, stop 2-3 weeks before harvest",
+            "water_requirement": "350-450 mm total"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at transplanting)", "fertilizer": "FYM + full P & K + 1/2 N", "dose": "100:50:50 kg NPK/ha + 10t FYM" },
+            { "stage": "30 DAT", "fertilizer": "1/4 N", "dose": "Top dress" },
+            { "stage": "45 DAT (bulb initiation)", "fertilizer": "1/4 N", "dose": "Top dress" }
+          ],
+          "growth_timeline": [
+            { "stage": "Nursery", "age_range": "0-40 days", "milestone": "Seedling ready for transplant" },
+            { "stage": "Vegetative-Bulb initiation", "age_range": "0-60 DAT", "milestone": "Bulb formation begins" },
+            { "stage": "Bulb maturation", "age_range": "60-110 DAT", "milestone": "Harvest when 50-70% tops fall over" }
+          ],
+          "common_pests_diseases": ["Thrips", "Purple blotch", "Basal rot", "Downy mildew"],
+          "economics": { "duration_days": "100-130", "avg_yield_q_per_acre": "80-120", "market_price_range_per_q": "600-3000 (volatile)" }
+        }
+      ]
+    },
+    {
+      "id": "cash-crops",
+      "name": "Cash Crops",
+      "icon": "IndianRupee",
+      "color": "blue",
+      "types": [
+        {
+          "id": "cotton",
+          "name": "Cotton (Bt)",
+          "category_use": "Fiber / cash crop",
+          "varieties": [
+            { "name": "Bt Cotton Hybrids (Bollgard II)", "origin": "Various seed companies, India", "traits": "Bollworm resistant, widely grown across cotton belt" }
+          ],
+          "climate_soil": {
+            "soil_type": "Deep black cotton soil (vertisols) or well-drained loam",
+            "climate": "Warm, long frost-free season",
+            "rainfall": "60-100 cm or irrigated",
+            "temperature_range": "21-30°C",
+            "notes": "Requires refuge crop planting alongside Bt cotton per resistance management guidelines"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "May-June (with pre-monsoon showers)",
+            "seed_rate": "450-500 g/acre (hybrid)",
+            "spacing": "90-120 x 45-60 cm",
+            "irrigation_schedule": "Critical at squaring, flowering, boll development if irrigated",
+            "water_requirement": "700-1300 mm depending on rainfed/irrigated"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at sowing)", "fertilizer": "Full P & K + 1/4 N", "dose": "120:60:60 kg NPK/ha" },
+            { "stage": "Squaring (30-40 DAS)", "fertilizer": "1/4 N", "dose": "Top dress" },
+            { "stage": "Flowering (60-70 DAS)", "fertilizer": "1/4 N", "dose": "Top dress" },
+            { "stage": "Boll development (90-100 DAS)", "fertilizer": "1/4 N", "dose": "Top dress" }
+          ],
+          "growth_timeline": [
+            { "stage": "Germination-Squaring", "age_range": "0-45 days", "milestone": "Vegetative growth, square (bud) formation" },
+            { "stage": "Flowering-Boll development", "age_range": "45-120 days", "milestone": "Peak flowering, boll set" },
+            { "stage": "Boll opening-Picking", "age_range": "120-180 days", "milestone": "2-4 pickings as bolls open" }
+          ],
+          "common_pests_diseases": ["Pink bollworm", "Whitefly", "Jassids", "Bacterial blight", "Wilt"],
+          "economics": { "duration_days": "160-180", "avg_yield_q_per_acre": "8-12 (lint)", "market_price_range_per_q": "6500-7500" }
+        },
+        {
+          "id": "sugarcane",
+          "name": "Sugarcane",
+          "category_use": "Cash crop / sugar",
+          "varieties": [
+            { "name": "Co 86032", "origin": "Coimbatore, India", "traits": "High yielding, good sugar recovery, widely adopted" },
+            { "name": "CoC 671", "origin": "Coimbatore, India", "traits": "Early maturing, high juice quality" }
+          ],
+          "climate_soil": {
+            "soil_type": "Deep, well-drained loam to clay loam, rich in organic matter",
+            "climate": "Tropical/subtropical, long growing season",
+            "rainfall": "75-150 cm or assured irrigation",
+            "temperature_range": "20-35°C",
+            "notes": "Long duration crop (10-12 months); ratoon crops possible after first harvest"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "Feb-Mar (spring) or Oct-Nov (autumn) planting",
+            "seed_rate": "25,000-30,000 three-budded setts/acre",
+            "spacing": "90-120 cm row spacing",
+            "irrigation_schedule": "Every 7-10 days depending on season, more frequent in summer",
+            "water_requirement": "1800-2500 mm total"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at planting)", "fertilizer": "Full P & K + 1/3 N", "dose": "280:90:90 kg NPK/ha typical" },
+            { "stage": "45-60 DAP", "fertilizer": "1/3 N", "dose": "Top dress + earthing up" },
+            { "stage": "90-120 DAP", "fertilizer": "1/3 N", "dose": "Top dress + earthing up" }
+          ],
+          "growth_timeline": [
+            { "stage": "Germination-Tillering", "age_range": "0-120 days", "milestone": "Shoot emergence, tiller buildup" },
+            { "stage": "Grand growth", "age_range": "120-270 days", "milestone": "Rapid cane elongation, peak water need" },
+            { "stage": "Maturity-Harvest", "age_range": "300-365 days", "milestone": "Harvest at peak sucrose content" }
+          ],
+          "common_pests_diseases": ["Early shoot borer", "Top borer", "Red rot", "Smut", "Wilt"],
+          "economics": { "duration_days": "300-365", "avg_yield_t_per_acre": "35-45", "market_price_range_per_t": "3000-3400 (FRP linked)" }
+        }
+      ]
+    },
+    {
+      "id": "spices",
+      "name": "Spices & Plantation",
+      "icon": "Flame",
+      "color": "pink",
+      "types": [
+        {
+          "id": "turmeric",
+          "name": "Turmeric",
+          "category_use": "Spice / rhizome crop",
+          "varieties": [
+            { "name": "Salem/Erode local", "origin": "Tamil Nadu, India", "traits": "High curcumin content, good market demand" },
+            { "name": "Suguna", "origin": "IISR, India", "traits": "Short duration, high yielding, disease resistant" }
+          ],
+          "climate_soil": {
+            "soil_type": "Well-drained sandy loam to clay loam, rich in organic matter",
+            "climate": "Warm humid, well distributed rainfall",
+            "rainfall": "150-200 cm or irrigated",
+            "temperature_range": "20-35°C",
+            "notes": "Raised beds recommended in heavy soils to prevent rhizome rot"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "May-June (with onset of monsoon)",
+            "seed_rate": "600-800 kg rhizomes/acre",
+            "spacing": "30 x 25 cm",
+            "irrigation_schedule": "Weekly irrigation in dry spells, avoid waterlogging",
+            "water_requirement": "1500-2000 mm total"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at planting)", "fertilizer": "FYM + full P & K + 1/3 N", "dose": "120:60:120 kg NPK/ha + 12-15t FYM" },
+            { "stage": "60 DAP", "fertilizer": "1/3 N", "dose": "Top dress" },
+            { "stage": "90 DAP", "fertilizer": "1/3 N", "dose": "Top dress + earthing up" }
+          ],
+          "growth_timeline": [
+            { "stage": "Sprouting-Tillering", "age_range": "0-90 days", "milestone": "Rhizome sprouting, leaf growth" },
+            { "stage": "Rhizome development", "age_range": "90-210 days", "milestone": "Underground rhizome bulking" },
+            { "stage": "Maturity-Harvest", "age_range": "210-270 days", "milestone": "Harvest when leaves yellow and dry" }
+          ],
+          "common_pests_diseases": ["Shoot borer", "Rhizome fly", "Rhizome rot", "Leaf spot"],
+          "economics": { "duration_days": "240-270", "avg_yield_q_per_acre": "60-80 (fresh)", "market_price_range_per_q": "6000-9000" }
+        },
+        {
+          "id": "chilli",
+          "name": "Chilli (Red Pepper)",
+          "category_use": "Spice / cash crop",
+          "varieties": [
+            { "name": "Teja (Byadgi type)", "origin": "Andhra Pradesh/Telangana, India", "traits": "High pungency, export quality, popular hybrid" },
+            { "name": "G4", "origin": "Guntur, India", "traits": "Bold fruit, good for both fresh and dry markets" }
+          ],
+          "climate_soil": {
+            "soil_type": "Well-drained sandy loam to red loam",
+            "climate": "Warm, moderate rainfall, sensitive to waterlogging",
+            "rainfall": "60-100 cm or irrigated",
+            "temperature_range": "20-30°C",
+            "notes": "Mulching helps conserve moisture and suppress weeds"
+          },
+          "sowing_irrigation": {
+            "sowing_time": "Nursery raised, transplant 30-35 days after sowing",
+            "seed_rate": "150-200 g/acre (nursery)",
+            "spacing": "60 x 45 cm",
+            "irrigation_schedule": "Drip preferred, every 4-5 days depending on stage",
+            "water_requirement": "500-700 mm total"
+          },
+          "fertilizer_schedule": [
+            { "stage": "Basal (at transplanting)", "fertilizer": "FYM + full P & K + 1/4 N", "dose": "100:50:50 kg NPK/ha + 10t FYM" },
+            { "stage": "30 DAT", "fertilizer": "1/4 N", "dose": "Top dress" },
+            { "stage": "Flowering & fruiting", "fertilizer": "Remaining N split doses", "dose": "Fertigate/top dress every 3 weeks" }
+          ],
+          "growth_timeline": [
+            { "stage": "Nursery", "age_range": "0-30 days", "milestone": "Seedling ready for transplant" },
+            { "stage": "Vegetative-Flowering", "age_range": "0-60 DAT", "milestone": "Branching, first flush of flowers" },
+            { "stage": "Fruiting-Harvest", "age_range": "60-180 DAT", "milestone": "Multiple pickings (green or red-ripe)" }
+          ],
+          "common_pests_diseases": ["Thrips & mites (leaf curl complex)", "Fruit borer", "Anthracnose (die-back)", "Bacterial wilt"],
+          "economics": { "duration_days": "150-180 (multiple harvests)", "avg_yield_q_per_acre": "15-25 (dry)", "market_price_range_per_q": "12000-25000 (volatile)" }
+        }
+      ]
+    }
+  ]
+}
