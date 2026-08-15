@@ -1,38 +1,52 @@
 import { useNavigate } from "react-router-dom";
-
 export default function Home() {
   const navigate = useNavigate();
-
-  const features = [
-    { name: "Crop Planner", icon: "🌱", path: "/crop-planner" },
-    { name: "Diagnose", icon: "🩺", path: "/diagnose" },
-    { name: "Near Me", icon: "📍", path: "/near-me" },
-    { name: "Market Prices", icon: "📊", path: "/market-prices" },
-    { name: "Farm Ledger", icon: "📒", path: "/farm-ledger" },
-    { name: "Weather", icon: "🌤️", path: "/weather" },
-    { name: "Fertilizer", icon: "🧪", path: "/fertilize" },
-    { name: "Soil Passport", icon: "🌍", path: "/soil-passport" }
-  ];
-
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">🌾 AgriSaathi</h1>
-        <div className="bg-green-100 p-2 rounded-full text-green-700">👤</div>
+    <div className="min-h-screen bg-gray-50 pb-20">
+      <div className="p-6 bg-white border-b border-gray-200 flex justify-between items-center sticky top-0 z-10">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">🌾</span>
+          <h1 className="text-xl font-bold text-gray-800">AgriSaathi</h1>
+        </div>
+        <button className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">👤</button>
       </div>
-      
-      <div className="bg-green-700 text-white p-6 rounded-xl mb-6 shadow-md">
-        <h2 className="text-xl font-bold">Welcome back, Farmer!</h2>
-        <p className="text-sm opacity-90 mt-1">Let's make your farming smarter with AI.</p>
+      <div className="mx-4 mt-4 bg-[#0b7a3f] rounded-2xl p-5 shadow-md text-white">
+        <h2 className="text-lg font-semibold">Welcome back, Farmer!</h2>
+        <p className="text-sm text-green-100 mt-1 opacity-90">Let's make your farming smarter with AI.</p>
       </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        {features.map((f, i) => (
-          <div key={i} onClick={() => navigate(f.path)} className="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition cursor-pointer flex flex-col items-center justify-center py-6">
-            <span className="text-4xl mb-2">{f.icon}</span>
-            <span className="font-medium text-center">{f.name}</span>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 gap-4 p-4">
+        <div onClick={() => navigate("/crop-planner")} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition cursor-pointer min-h-[120px]">
+          <span className="text-4xl">🌱</span>
+          <span className="font-medium text-gray-700">Crop Planner</span>
+        </div>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition cursor-pointer min-h-[120px]">
+          <span className="text-4xl">🩺</span>
+          <span className="font-medium text-gray-700">Diagnose</span>
+        </div>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition cursor-pointer min-h-[120px]">
+          <span className="text-4xl">📍</span>
+          <span className="font-medium text-gray-700">Near Me</span>
+        </div>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition cursor-pointer min-h-[120px]">
+          <span className="text-4xl">📊</span>
+          <span className="font-medium text-gray-700">Market Prices</span>
+        </div>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition cursor-pointer min-h-[120px]">
+          <span className="text-4xl">📒</span>
+          <span className="font-medium text-gray-700">Farm Ledger</span>
+        </div>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition cursor-pointer min-h-[120px]">
+          <span className="text-4xl">⛅</span>
+          <span className="font-medium text-gray-700">Weather</span>
+        </div>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition cursor-pointer min-h-[120px]">
+          <span className="text-4xl">🧪</span>
+          <span className="font-medium text-gray-700">Fertilizer</span>
+        </div>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-3 hover:shadow-md transition cursor-pointer min-h-[120px]">
+          <span className="text-4xl">🌍</span>
+          <span className="font-medium text-gray-700">Soil Passport</span>
+        </div>
       </div>
     </div>
   );
