@@ -1,7 +1,52 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const navigate = useNavigate();
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+
+  // REAL SPEECH RECOGNITION LOGIC
+  const handleMicClick = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert("Sorry, your browser doesn't support speech recognition. Please use Chrome or Edge.");
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = true;
+
+    setShowSearch(true);
+    setIsListening(true);
+    setTranscript("Listening...");
+
+    recognition.onresult = (event) => {
+      const current = event.resultIndex;
+      const transcriptText = event.results[current][0].transcript;
+      setTranscript(transcriptText);
+      
+      if (event.results[current].isFinal) {
+        setIsListening(false);
+        // You can replace this logic to trigger specific pages based on voice commands
+        console.log("User said:", transcriptText);
+      }
+    };
+
+    recognition.onerror = (event) => {
+      setIsListening(false);
+      setTranscript("Error: " + event.error);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
 
   const moreFeatures = [
     { name: "Diagnose", icon: "🩺", color: "bg-orange-100", path: "/diagnose" },
@@ -21,14 +66,44 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white pb-20 font-sans">
       {/* Top Section: Voice & Weather */}
-      <div className="p-6 flex flex-col items-center pt-10">
+      <div className="p-6 flex flex-col items-center pt-10 relative">
         <h2 className="text-xl font-bold text-green-700">Speak to AgriSaathi</h2>
         <p className="text-xs text-gray-500 mb-4">Tap and speak your problem</p>
         
-        <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-lg mb-4">
+        <div 
+          onClick={handleMicClick}
+          className={`w-24 h-24 rounded-full flex items-center justify-center shadow-lg mb-4 cursor-pointer transition-all duration-300 ${isListening ? 'bg-red-500 animate-pulse scale-110' : 'bg-green-500'}`}
+        >
           <span className="text-4xl text-white">🎤</span>
         </div>
-        <p className="text-xs text-gray-500">Tap and speak your problem</p>
+        <p className="text-xs text-gray-500">{isListening ? "Listening..." : "Tap and speak your problem"}</p>
+
+        {/* Voice Search Popup */}
+        {showSearch && (
+          <div className="absolute top-full mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-xl p-4 z-50">
+            <div className="flex items-center gap-2 mb-2">
+              <div className={`w-2 h-2 rounded-full ${isListening ? 'bg-red-500 animate-pulse' : 'bg-gray-400'}`}></div>
+              <p className="text-xs text-gray-500">{isListening ? "Listening..." : "Ready"}</p>
+            </div>
+            <input 
+              type="text" 
+              value={transcript} 
+              readOnly 
+              className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm mb-2 focus:outline-none"
+              placeholder="Ask anything about farming"
+            />
+            <div className="flex gap-2 text-[10px]">
+              <span className="bg-gray-100 px-2 py-1 rounded-full border border-gray-200">Crop</span>
+              <span className="bg-gray-100 px-2 py-1 rounded-full border border-gray-200">Livestock</span>
+              <span className="bg-gray-100 px-2 py-1 rounded-full border border-gray-200">Weather</span>
+            </div>
+            {!isListening && transcript !== "Listening..." && transcript !== "" && (
+              <button className="w-full mt-3 bg-green-600 text-white text-sm py-2 rounded-lg font-bold">
+                Search for "{transcript}"
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Weather Card */}
@@ -100,7 +175,7 @@ export default function Home() {
       </div>
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-20 right-4 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+      <div className="fixed bottom-20 right-4 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg cursor-pointer" onClick={handleMicClick}>
         <span className="text-2xl text-white">🎤</span>
       </div>
     </div>
