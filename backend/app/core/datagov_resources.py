@@ -100,6 +100,37 @@ DATAGOV_RESOURCES = {
     "livestock_census_telangana": {"resource_id": "317f3cbd-75f4-422d-8e53-7282ce4b1cfd", "title": "Livestock Census - Telangana", "filters": []},
     "livestock_census_jammu_kashmir": {"resource_id": "a3f30913-cd7a-4465-97c4-c54f0c962721", "title": "Livestock Census - Jammu and Kashmir", "filters": []},
     "livestock_census_tamil_nadu": {"resource_id": "297b2340-3751-446d-8c56-7a4f4a6fde86", "title": "Livestock Census - Tamil Nadu", "filters": []},
+
+    "fertilizer_production_monthly": {
+        "resource_id": "373358c8-63fd-4612-8f2b-9ce483422312",
+        "title": "Product wise and Month wise production of chemical Fertilizers",
+        "filters": [],
+    },
+    "cold_storage_distribution": {
+        "resource_id": "0b827ac7-ebad-47c1-9cc9-816ce4ab10a7",
+        "title": "Sector-wise distribution of cold storages in India (as on 31.12.2009)",
+        "filters": [],
+    },
+    "fertilizer_demand_availability_rabi": {
+        "resource_id": "e636c081-9a0a-45ed-8531-d3d33f31f90c",
+        "title": "Fertilizer-wise Details of Demand, Availability, Consumption and Closing Stock of Fertilizers during Ongoing Rabi 2024-25",
+        "filters": [],
+    },
+    "fertilizer_demand_supply_kharif": {
+        "resource_id": "7ea27976-ff4e-4077-8c3b-ca3bc14a0bb8",
+        "title": "State/UT-wise Details of Demand, Supply and Consumption of All Fertilizer During Kharif 2024-25",
+        "filters": [],
+    },
+    "pm_kisan_beneficiaries": {
+        "resource_id": "388208c6-d82a-4190-90df-91aa2c326fec",
+        "title": "Village and Gender-wise Beneficiaries Count under PM-KISAN Scheme",
+        "filters": [],
+    },
+    "pmfby_funds_allocated": {
+        "resource_id": "2c0d784b-de75-42e5-9146-689eb0ba407a",
+        "title": "Year-wise Details of Funds Allocated and Utilised under Pradhan Mantri Fasal Bima Yojana (PMFBY) 2020-21 to 2024-25",
+        "filters": [],
+    },
 }
 
 # NOT VERIFIED / NOT FOUND in the primary source: air_quality_index,
