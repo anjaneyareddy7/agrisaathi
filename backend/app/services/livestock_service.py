@@ -1,23 +1,38 @@
-from typing import Optional, List, Dict
-from app.data.animal_encyclopedia import ANIMAL_ENCYCLOPEDIA
+from app.data.livestock_encyclopedia import LIVESTOCK_ENCYCLOPEDIA, SOURCE_LABEL
 
-def list_animals(category: Optional[str] = None, search: Optional[str] = None) -> List[Dict]:
-    results = ANIMAL_ENCYCLOPEDIA
 
-    if category:
-        results = [a for a in results if a["category"].lower() == category.lower()]
+def _slug(animal_id: str) -> str:
+    # matches the existing /api/livestock-types id convention: "{slug}__{Name}"
+    return animal_id.split("__")[0]
 
-    if search:
-        search_lower = search.lower()
-        results = [a for a in results if search_lower in a["name_en"].lower()]
 
+def list_categories():
+    # Matches the slugs already returned by the live
+    # GET /api/livestock/encyclopedia/categories endpoint
+    # (apiculture, aquaculture_prawns, dairy, fisheries, poultry, small_ruminants)
+    seen = []
+    for animal_id in LIVESTOCK_ENCYCLOPEDIA:
+        slug = _slug(animal_id)
+        if slug not in seen:
+            seen.append(slug)
+    return seen
+
+
+def list_entries_by_category(category_slug: str):
+    results = []
+    for animal_id, entry in LIVESTOCK_ENCYCLOPEDIA.items():
+        if _slug(animal_id).lower() == category_slug.lower():
+            results.append({"id": animal_id, "source": SOURCE_LABEL, **entry})
     return results
 
-def get_animal_by_name(name: str) -> Optional[Dict]:
-    for animal in ANIMAL_ENCYCLOPEDIA:
-        if animal["name_en"].lower() == name.lower():
-            return animal
-    return None
 
-def list_categories() -> List[str]:
-    return sorted(set(a["category"] for a in ANIMAL_ENCYCLOPEDIA))
+def get_entry(animal_id: str):
+    entry = LIVESTOCK_ENCYCLOPEDIA.get(animal_id)
+    if entry is None:
+        return None
+    return {"id": animal_id, "source": SOURCE_LABEL, **entry}
+
+
+def list_all_entries():
+    return [{"id": animal_id, "source": SOURCE_LABEL, **entry} for animal_id, entry in LIVESTOCK_ENCYCLOPEDIA.items()]
+

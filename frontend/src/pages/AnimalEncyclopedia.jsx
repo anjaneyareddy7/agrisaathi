@@ -1,159 +1,167 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { PawPrint, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { BookOpen, Syringe, Wheat, Thermometer, TrendingUp, AlertTriangle, Loader2 } from 'lucide-react';
+import { useLang } from '../lib/i18n';
+import { base44 } from '../api/base44Client';
 import { Card, CardContent } from '../components/ui/card';
-import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
 import PageHeader from '../components/PageHeader';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const CATEGORY_LABELS = {
+  poultry: 'Poultry (Layer/Broiler)',
+  dairy: 'Dairy Cattle/Buffalo',
+  fisheries: 'Freshwater Fisheries',
+  apiculture: 'Apiculture (Beekeeping)',
+  aquaculture_prawns: 'Prawn/Shrimp Farming',
+  small_ruminants: 'Goat/Sheep Herd',
+};
 
 export default function AnimalEncyclopedia() {
-  const [animals, setAnimals] = useState([]);
-  const [query, setQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [expanded, setExpanded] = useState(null);
-  const [details, setDetails] = useState({});
-  const [loadingDetail, setLoadingDetail] = useState(null);
+  const { t } = useLang();
+  const [categories, setCategories] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [entries, setEntries] = useState([]);
+  const [expandedId, setExpandedId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadingEntries, setLoadingEntries] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/livestock/encyclopedia/`)
-      .then((res) => setAnimals(res.data.animals || []))
-      .catch(() => setAnimals([]));
+    setLoading(true);
+    base44
+      .call('/api/livestock/encyclopedia/categories')
+      .then((res) => {
+        setCategories(res.categories || []);
+        if (res.categories?.length) setActiveCategory(res.categories[0]);
+        setError(null);
+      })
+      .catch(() => setError(t('encyclopediaLoadFailed') || 'Could not load the encyclopedia. Service may be unavailable.'))
+      .finally(() => setLoading(false));
   }, []);
 
-  const toggle = (name) => {
-    if (expanded === name) { setExpanded(null); return; }
-    setExpanded(name);
-    if (!details[name]) {
-      setLoadingDetail(name);
-      axios.get(`${API_URL}/api/livestock/details/${encodeURIComponent(name)}`)
-        .then((res) => setDetails((d) => ({ ...d, [name]: res.data })))
-        .catch(() => setDetails((d) => ({ ...d, [name]: { detail_level: 'not_found' } })))
-        .finally(() => setLoadingDetail(null));
-    }
-  };
+  useEffect(() => {
+    if (!activeCategory) return;
+    setLoadingEntries(true);
+    base44
+      .call(`/api/livestock/encyclopedia/${activeCategory}`)
+      .then((res) => setEntries(Array.isArray(res) ? res : []))
+      .catch(() => setEntries([]))
+      .finally(() => setLoadingEntries(false));
+  }, [activeCategory]);
 
-  const categories = ['all', ...Array.from(new Set(animals.map((a) => a.category).filter(Boolean)))];
-  const filtered = animals.filter((a) => {
-    const matchesCategory = activeCategory === 'all' || a.category === activeCategory;
-    const matchesQuery = !query || (a.name_en || '').toLowerCase().includes(query.toLowerCase());
-    return matchesCategory && matchesQuery;
-  });
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-6 w-6 animate-spin text-green-600" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <PageHeader titleKey="animalEncyclopedia" icon={BookOpen} />
+        <Card><CardContent className="pt-6 text-center text-sm text-red-500">{error}</CardContent></Card>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <PageHeader titleKey="animalEncyclopedia" icon={PawPrint} />
+      <PageHeader titleKey="animalEncyclopedia" icon={BookOpen} />
+      <p className="text-xs text-gray-500 mb-3">
+        Standard husbandry reference — vaccination schedules, feed and environment needs. Always confirm specifics with your local Veterinarian or KVK.
+      </p>
 
-      <div className="relative mb-3">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-        <Input placeholder="Search breed name..." value={query} onChange={(e) => setQuery(e.target.value)} className="pl-9" />
-      </div>
-
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
         {categories.map((c) => (
-          <button key={c} onClick={() => setActiveCategory(c)}
-            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border ${activeCategory === c ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-600 border-gray-200'}`}>
-            {c === 'all' ? 'All' : c}
+          <button
+            key={c}
+            onClick={() => setActiveCategory(c)}
+            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border ${
+              activeCategory === c ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-600 border-gray-200'
+            }`}
+          >
+            {CATEGORY_LABELS[c] || c}
           </button>
         ))}
       </div>
 
-      {animals.length === 0 && <p className="text-sm text-gray-400">No livestock reference data loaded yet.</p>}
+      {loadingEntries ? (
+        <div className="flex items-center justify-center py-10">
+          <Loader2 className="h-5 w-5 animate-spin text-green-600" />
+        </div>
+      ) : entries.length === 0 ? (
+        <Card><CardContent className="pt-6 text-center text-sm text-gray-400">No entries for this category yet.</CardContent></Card>
+      ) : (
+        <div className="space-y-3">
+          {entries.map((entry) => {
+            const expanded = expandedId === entry.id;
+            return (
+              <Card key={entry.id}>
+                <CardContent className="pt-4">
+                  <button className="w-full text-left" onClick={() => setExpandedId(expanded ? null : entry.id)}>
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <h3 className="font-semibold text-sm">{entry.name_en}</h3>
+                        <p className="text-xs text-gray-500">{entry.purpose}</p>
+                      </div>
+                      <Badge className="bg-gray-100 text-gray-600 shrink-0">{expanded ? '−' : '+'}</Badge>
+                    </div>
+                  </button>
 
-      <div className="space-y-2">
-        {filtered.map((a, i) => {
-          const isOpen = expanded === a.name_en;
-          const detail = details[a.name_en];
-          return (
-            <Card key={`${a.name_en}_${i}`}>
-              <CardContent className="pt-3 cursor-pointer" onClick={() => toggle(a.name_en)}>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium">{a.name_en}</p>
-                  <div className="flex items-center gap-2">
-                    {a.category && <Badge className="bg-green-100 text-green-700">{a.category}</Badge>}
-                    {isOpen ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
-                  </div>
-                </div>
-                {a.notes && <p className="text-xs text-gray-500 mt-1">{a.notes}</p>}
+                  {expanded && (
+                    <div className="mt-3 space-y-3 text-xs text-gray-700">
+                      <div className="flex items-start gap-2">
+                        <TrendingUp className="h-3.5 w-3.5 text-green-600 shrink-0 mt-0.5" />
+                        <div><span className="font-medium">Maturity & yield: </span>{entry.maturity_yield}</div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Wheat className="h-3.5 w-3.5 text-amber-600 shrink-0 mt-0.5" />
+                        <div><span className="font-medium">Feed: </span>{entry.feed}</div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Thermometer className="h-3.5 w-3.5 text-blue-600 shrink-0 mt-0.5" />
+                        <div><span className="font-medium">Environment: </span>{entry.environment}</div>
+                      </div>
 
-                {isOpen && (
-                  <div className="mt-3 pt-3 border-t space-y-3" onClick={(e) => e.stopPropagation()}>
-                    {loadingDetail === a.name_en && <p className="text-xs text-gray-400">Loading details...</p>}
-
-                    {detail?.detail_level === 'full' && (
-                      <>
-                        <p className="text-xs text-gray-600">{detail.description}</p>
-                        <p className="text-xs"><span className="font-medium text-gray-500">Origin:</span> {detail.origin}</p>
-
-                        <div>
-                          <p className="text-xs font-semibold text-gray-700 mb-1">Environment</p>
-                          <p className="text-xs text-gray-600">Housing: {detail.environment?.housing}</p>
-                          <p className="text-xs text-gray-600">Space: {detail.environment?.space}</p>
-                          <p className="text-xs text-gray-600">Temperature: {detail.environment?.temperature}</p>
-                        </div>
-
-                        <div>
-                          <p className="text-xs font-semibold text-gray-700 mb-1">Feed schedule</p>
-                          {detail.feed_schedule?.map((f, idx) => (
-                            <p key={idx} className="text-xs text-gray-600">• {f.stage}: {f.diet}</p>
-                          ))}
-                        </div>
-
-                        <div>
-                          <p className="text-xs font-semibold text-gray-700 mb-1">Vaccination schedule</p>
-                          {detail.vaccination_schedule?.map((v, idx) => (
-                            <p key={idx} className="text-xs text-gray-600">• {v.age}: {v.vaccine}</p>
-                          ))}
-                        </div>
-
-                        <div>
-                          <p className="text-xs font-semibold text-gray-700 mb-1">Growth timeline</p>
-                          {detail.growth_timeline?.map((g, idx) => (
-                            <p key={idx} className="text-xs text-gray-600">• {g.stage} ({g.duration}): {g.notes}</p>
-                          ))}
-                        </div>
-
-                        <div>
-                          <p className="text-xs font-semibold text-gray-700 mb-1">Common diseases</p>
-                          <div className="flex flex-wrap gap-1">
-                            {detail.common_diseases?.map((d, idx) => (
-                              <Badge key={idx} className="bg-red-50 text-red-600">{d}</Badge>
-                            ))}
+                      {entry.vaccination_schedule?.length > 0 && (
+                        <div className="flex items-start gap-2">
+                          <Syringe className="h-3.5 w-3.5 text-red-500 shrink-0 mt-0.5" />
+                          <div className="flex-1">
+                            <span className="font-medium">Vaccination schedule:</span>
+                            <ul className="mt-1 space-y-0.5">
+                              {entry.vaccination_schedule.map((v, i) => (
+                                <li key={i} className="text-gray-600">• {v.age} — {v.vaccine}</li>
+                              ))}
+                            </ul>
                           </div>
                         </div>
+                      )}
 
-                        <div className="grid grid-cols-3 gap-2 pt-2">
-                          <div className="bg-gray-50 rounded p-2 text-center">
-                            <div className="text-[10px] text-gray-400">Maturity</div>
-                            <div className="text-xs font-medium">{detail.quick_facts?.maturity_days}</div>
-                          </div>
-                          <div className="bg-gray-50 rounded p-2 text-center">
-                            <div className="text-[10px] text-gray-400">Yield</div>
-                            <div className="text-xs font-medium">{detail.quick_facts?.yield}</div>
-                          </div>
-                          <div className="bg-gray-50 rounded p-2 text-center">
-                            <div className="text-[10px] text-gray-400">Price range</div>
-                            <div className="text-xs font-medium">{detail.quick_facts?.market_price_range}</div>
+                      {entry.care_notes && (
+                        <div className="bg-blue-50 rounded-lg p-2 text-blue-700">{entry.care_notes}</div>
+                      )}
+
+                      {entry.common_risks?.length > 0 && (
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="h-3.5 w-3.5 text-orange-500 shrink-0 mt-0.5" />
+                          <div>
+                            <span className="font-medium">Common risks: </span>
+                            {entry.common_risks.join(', ')}
                           </div>
                         </div>
-                      </>
-                    )}
+                      )}
 
-                    {detail?.detail_level === 'basic' && (
-                      <p className="text-xs text-gray-400">{detail.note}</p>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      <p className="text-[10px] text-gray-300 mt-3">
-        Reference data compiled from general agricultural extension guidance. Tap a breed for full details where curated.
-      </p>
+                      <p className="text-[10px] text-gray-400 pt-1 border-t border-gray-100">{entry.source}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
+
