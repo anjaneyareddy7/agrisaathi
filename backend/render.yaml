@@ -12,7 +12,9 @@ services:
       - key: WEATHER_API_KEY
         sync: false
       - key: ALLOWED_ORIGINS
-        value: "https://agrisaathi.vercel.app"
+        value: "https://agrisaathi-ashy.vercel.app"
+      - key: DATA_GOV_API_KEY
+        sync: false
     disk:
       name: ledger-storage
       mountPath: /opt/render/project/src/app/data/ledger_store

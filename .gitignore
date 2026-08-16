@@ -1,18 +1,34 @@
-# Node
 node_modules/
+frontend/node_modules/
 frontend/dist/
+frontend/dist-ssr/
 frontend/.env
 frontend/.env.local
+frontend/*.local
+frontend/.vercel
 
-# Python
 backend/venv/
 backend/__pycache__/
 backend/**/__pycache__/
 backend/.env
 backend/*.pyc
 
-# Ledger data (runtime-generated, not source)
 backend/app/data/ledger_store/*.json
 
-# OS
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
