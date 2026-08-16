@@ -1,75 +1,174 @@
-import React from 'react';
-import PlaceholderPage from './Placeholder.jsx';
+import React, { useState, useEffect } from 'react';
+import { FileSpreadsheet, Plus, ShieldCheck, ShieldAlert, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
+import { base44 } from '../api/base44Client';
+import { Card, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Badge } from '../components/ui/badge';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select';
+import PageHeader from '../components/PageHeader';
+
+const CATEGORIES = {
+  income: ['Crop Sale', 'Livestock Sale', 'Government Subsidy', 'Other Income'],
+  expense: ['Seeds', 'Fertilizer', 'Pesticide', 'Labour', 'Irrigation', 'Equipment', 'Transport', 'Other Expense'],
+};
 
 export default function FarmLedger() {
-  const titles = {
-    NearMe: '📍 Near Me',
-    Crops: '🌾 My Crops',
-    Dashboard: '📊 Dashboard',
-    Fertilizer: '💧 Fertilizer Calculator',
-    SoilPassport: '🌱 Soil Passport',
-    CropPlanner: '📈 Crop Planner',
-    Livestock: '🐄 Livestock Care',
-    MarketPrices: '📦 Market Prices',
-    FarmLedger: '📒 Farm Ledger',
-    CropPassport: '🛡️ Crop Passport',
-    Schemes: '🏛️ Government Schemes',
-    Community: '💬 Community',
-    Weather: '🌤️ Weather',
-    SensorLab: '🧪 Sensor Lab',
-    IrrigationPlanner: '💧 Irrigation Planner',
-    HarvestRecords: '🌾 Harvest Records',
-    ProfileSettings: '👤 Profile Settings',
-    VoiceNotes: '🎤 Voice Notes',
-    LoanEligibility: '💰 Loan Eligibility',
-    InputMarketplace: '🏪 Input Marketplace',
-    TrainingCenter: '🎓 Training Center',
-    DocumentWallet: '📁 Document Wallet',
-    InsuranceHub: '🛡️ Insurance Hub',
-    InventoryTracker: '📦 Inventory Tracker',
-    TaskManager: '✅ Task Manager',
-    AlertsCenter: '🔔 Alerts Center',
-    PestLibrary: '🐛 Pest Library',
-    SustainabilityScore: '🌿 Sustainability Score',
-    ExpertDirectory: '👨‍🌾 Expert Directory',
-    SuccessStories: '🏆 Success Stories',
-    FarmNotifications: '🔔 Farm Notifications',
-    VendorContacts: '📞 Vendor Contacts',
+  const [userId, setUserId] = useState(null);
+  const [blocks, setBlocks] = useState([]);
+  const [valid, setValid] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ type: 'expense', category: 'Seeds', amount: '', note: '' });
+
+  const load = async (uid) => {
+    setLoading(true);
+    try {
+      const res = await base44.call(`/api/ledger/chain/farm_ledger/${uid}`);
+      setBlocks(res.blocks || []);
+      setValid(res.valid);
+    } catch {
+      setBlocks([]);
+    } finally {
+      setLoading(false);
+    }
   };
-  const descriptions = {
-    NearMe: 'Find agricultural services and resources near you',
-    Crops: 'Manage your crop inventory and planning',
-    Dashboard: 'Overview of your farm analytics',
-    Fertilizer: 'Calculate fertilizer dosage for your crops',
-    SoilPassport: 'Track soil health over time',
-    CropPlanner: 'Plan your crop cycles',
-    Livestock: 'Track animal health and care',
-    MarketPrices: 'Real-time crop prices',
-    FarmLedger: 'Track farm expenses and revenue',
-    CropPassport: 'Blockchain-verified crop records',
-    Schemes: 'Find eligible government schemes',
-    Community: 'Connect with other farmers',
-    Weather: 'Weather forecasts and alerts',
-    SensorLab: 'IoT sensor integration for smart farming',
-    IrrigationPlanner: 'Plan and track irrigation',
-    HarvestRecords: 'Track harvest yields over time',
-    ProfileSettings: 'Manage your personal information',
-    VoiceNotes: 'Record voice memos for your farm',
-    LoanEligibility: 'Check loan eligibility',
-    InputMarketplace: 'Find verified local shops for inputs',
-    TrainingCenter: 'Learn modern farming techniques',
-    DocumentWallet: 'Store important documents securely',
-    InsuranceHub: 'Manage crop insurance',
-    InventoryTracker: 'Track farm inventory',
-    TaskManager: 'Manage farm tasks',
-    AlertsCenter: 'View all alerts in one place',
-    PestLibrary: 'Identify pests and diseases',
-    SustainabilityScore: 'Track your farm sustainability',
-    ExpertDirectory: 'Find agricultural experts',
-    SuccessStories: 'Learn from fellow farmers',
-    FarmNotifications: 'Set up farm reminders',
-    VendorContacts: 'Manage vendor contacts',
+
+  useEffect(() => {
+    base44.auth.me().then((user) => {
+      setUserId(user.id);
+      load(user.id);
+    });
+  }, []);
+
+  const submit = async () => {
+    if (!userId || !form.amount || Number(form.amount) <= 0) return;
+    setSaving(true);
+    try {
+      await base44.call('/api/ledger/log', {
+        method: 'POST',
+        data: {
+          entity_type: 'farm_ledger',
+          entity_id: userId,
+          event_type: form.type,
+          payload: { category: form.category, amount: Number(form.amount), note: form.note },
+          actor: userId,
+        },
+      });
+      setForm({ type: 'expense', category: 'Seeds', amount: '', note: '' });
+      setShowForm(false);
+      await load(userId);
+    } finally {
+      setSaving(false);
+    }
   };
-  const pageName = 'FarmLedger';
-  return <PlaceholderPage title={titles[pageName] || pageName} icon="" description={descriptions[pageName] || 'Coming soon'} />;
+
+  const totalIncome = blocks.filter((b) => b.event_type === 'income').reduce((s, b) => s + (b.payload?.amount || 0), 0);
+  const totalExpense = blocks.filter((b) => b.event_type === 'expense').reduce((s, b) => s + (b.payload?.amount || 0), 0);
+  const net = totalIncome - totalExpense;
+
+  return (
+    <div>
+      <PageHeader title="Farm Ledger" icon={FileSpreadsheet} />
+      <p className="text-xs text-gray-500 mb-3">
+        Every entry is written to a tamper-evident, hash-chained ledger — nothing can be silently edited or deleted after the fact.
+      </p>
+
+      <div className="grid grid-cols-3 gap-2 mb-3">
+        <Card><CardContent className="pt-3">
+          <p className="text-xs text-gray-500">Income</p>
+          <p className="text-base font-bold text-green-700">₹{totalIncome.toLocaleString('en-IN')}</p>
+        </CardContent></Card>
+        <Card><CardContent className="pt-3">
+          <p className="text-xs text-gray-500">Expense</p>
+          <p className="text-base font-bold text-red-600">₹{totalExpense.toLocaleString('en-IN')}</p>
+        </CardContent></Card>
+        <Card><CardContent className="pt-3">
+          <p className="text-xs text-gray-500">Net</p>
+          <p className={`text-base font-bold ${net >= 0 ? 'text-green-700' : 'text-red-600'}`}>₹{net.toLocaleString('en-IN')}</p>
+        </CardContent></Card>
+      </div>
+
+      <div className="flex items-center justify-between mb-3">
+        <Badge variant={valid ? 'success' : 'destructive'} className="flex items-center gap-1">
+          {valid ? <ShieldCheck className="h-3 w-3" /> : <ShieldAlert className="h-3 w-3" />}
+          {valid ? `Chain verified · ${blocks.length} entries` : 'Chain integrity check failed'}
+        </Badge>
+        <Button size="sm" onClick={() => setShowForm((s) => !s)}>
+          <Plus className="h-4 w-4 mr-1" /> Add entry
+        </Button>
+      </div>
+
+      {showForm && (
+        <Card className="mb-4">
+          <CardContent className="pt-4 space-y-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label>Type</Label>
+                <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v, category: CATEGORIES[v][0] })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="income">Income</SelectItem>
+                    <SelectItem value="expense">Expense</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Category</Label>
+                <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES[form.type].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div>
+              <Label>Amount (₹)</Label>
+              <Input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="e.g. 5000" />
+            </div>
+            <div>
+              <Label>Note (optional)</Label>
+              <Input value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="e.g. Urea for plot 2" />
+            </div>
+            <Button className="w-full" onClick={submit} disabled={saving || !form.amount}>
+              {saving ? 'Saving to ledger…' : 'Save entry'}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {loading ? (
+        <p className="text-sm text-gray-400 text-center py-8">Loading ledger…</p>
+      ) : blocks.length === 0 ? (
+        <Card><CardContent className="pt-6 text-center text-sm text-gray-400">No entries yet. Add your first income or expense above.</CardContent></Card>
+      ) : (
+        <div className="space-y-2">
+          {[...blocks].reverse().map((b) => (
+            <Card key={b.index}>
+              <CardContent className="pt-3 pb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {b.event_type === 'income'
+                    ? <ArrowUpCircle className="h-5 w-5 text-green-600 shrink-0" />
+                    : <ArrowDownCircle className="h-5 w-5 text-red-500 shrink-0" />}
+                  <div>
+                    <p className="text-sm font-medium">{b.payload?.category}</p>
+                    <p className="text-[11px] text-gray-400">
+                      {new Date(b.timestamp).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      {b.payload?.note ? ` · ${b.payload.note}` : ''}
+                    </p>
+                  </div>
+                </div>
+                <p className={`text-sm font-bold ${b.event_type === 'income' ? 'text-green-700' : 'text-red-600'}`}>
+                  {b.event_type === 'income' ? '+' : '−'}₹{(b.payload?.amount || 0).toLocaleString('en-IN')}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }

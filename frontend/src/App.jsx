@@ -59,6 +59,8 @@ import OAuthConsent from './pages/OAuthConsent.jsx';
 import AnimalEncyclopedia from './pages/AnimalEncyclopedia.jsx';
 import AnimalEncyclopediaDetail from './pages/AnimalEncyclopediaDetail.jsx';
 import CropEncyclopediaDetail from './pages/CropEncyclopediaDetail.jsx';
+import Weather from './pages/Weather.jsx';
+import Community from './pages/Community.jsx';
 
 function App() {
   return (
@@ -118,6 +120,8 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/oauth-consent" element={<OAuthConsent />} />
+          <Route path="/weather" element={<Weather />} />
+          <Route path="/community" element={<Community />} />
           <Route path="/animal-encyclopedia" element={<AnimalEncyclopedia />} />
           <Route path="/animal-encyclopedia/:categoryId/:typeId" element={<AnimalEncyclopediaDetail />} />
           <Route path="/crop-encyclopedia/:categoryId/:typeId" element={<CropEncyclopediaDetail />} />
