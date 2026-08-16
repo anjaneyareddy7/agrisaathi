@@ -10,10 +10,19 @@ async def get_current_weather(lat: float, lon: float) -> WeatherResponse:
         "appid": settings.weather_api_key,
         "units": "metric",
     }
-    async with httpx.AsyncClient(timeout=10) as client:
-        resp = await client.get(f"{settings.weather_api_url}/weather", params=params)
-        resp.raise_for_status()
-        data = resp.json()
+    last_error = None
+    for attempt in range(2):
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                resp = await client.get(f"{settings.weather_api_url}/weather", params=params)
+                resp.raise_for_status()
+                data = resp.json()
+            last_error = None
+            break
+        except Exception as e:
+            last_error = e
+    if last_error:
+        raise last_error
 
     return WeatherResponse(
         location=data.get("name"),

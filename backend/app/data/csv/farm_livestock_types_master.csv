@@ -1,0 +1,68 @@
+name_en,category,notes
+Gir Cattle,Dairy - Cattle,"Indigenous dairy breed, Gujarat origin, heat tolerant"
+Sahiwal Cattle,Dairy - Cattle,"Indigenous dairy breed, Punjab/Haryana origin"
+Red Sindhi Cattle,Dairy - Cattle,"Indigenous dairy breed, hardy, good milk yield"
+Tharparkar Cattle,Dairy - Cattle,"Dual-purpose (milk+draught), arid-tolerant"
+Rathi Cattle,Dairy - Cattle,"Indigenous dairy breed, Rajasthan"
+Kankrej Cattle,Dairy - Cattle,"Dual-purpose breed, Gujarat/Rajasthan"
+Ongole Cattle,Dairy - Cattle,"Draught + dairy breed, Andhra Pradesh"
+Hariana Cattle,Dairy - Cattle,"Dual-purpose breed, Haryana"
+Deoni Cattle,Dairy - Cattle,"Dual-purpose breed, Maharashtra/Karnataka"
+Holstein Friesian Cross,Dairy - Cattle,High-yield crossbred dairy cattle
+Jersey Cross,Dairy - Cattle,High-fat-content crossbred dairy cattle
+Murrah Buffalo,Dairy - Buffalo,"High milk-yield buffalo breed, Haryana/Punjab"
+Jaffarabadi Buffalo,Dairy - Buffalo,"Heavy buffalo breed, Gujarat"
+Surti Buffalo,Dairy - Buffalo,"Medium milk-yield buffalo, Gujarat"
+Mehsana Buffalo,Dairy - Buffalo,Gujarat buffalo breed
+Bhadawari Buffalo,Dairy - Buffalo,"High-fat milk buffalo, UP/MP"
+Nili-Ravi Buffalo,Dairy - Buffalo,"High milk-yield buffalo, Punjab"
+Jamunapari Goat,Goat & Sheep - Goat,"Dual-purpose goat breed, UP"
+Barbari Goat,Goat & Sheep - Goat,"Meat + milk breed, small size"
+Beetal Goat,Goat & Sheep - Goat,"Dual-purpose, Punjab"
+Sirohi Goat,Goat & Sheep - Goat,"Meat breed, Rajasthan"
+Osmanabadi Goat,Goat & Sheep - Goat,"Meat breed, Maharashtra"
+Black Bengal Goat,Goat & Sheep - Goat,"Prolific meat breed, West Bengal"
+Boer Goat,Goat & Sheep - Goat,Exotic meat breed
+Nellore Sheep,Goat & Sheep - Sheep,"Meat breed, Andhra Pradesh"
+Deccani Sheep,Goat & Sheep - Sheep,"Meat/wool breed, Deccan plateau"
+Marwari Sheep,Goat & Sheep - Sheep,"Wool/meat breed, Rajasthan"
+Garole Sheep,Goat & Sheep - Sheep,"Prolific breed, West Bengal"
+Chokla Sheep,Goat & Sheep - Sheep,"Wool breed, Rajasthan"
+Patanwadi Sheep,Goat & Sheep - Sheep,"Wool/meat breed, Gujarat"
+Layer Poultry,Poultry,Egg-laying commercial birds
+Broiler Poultry,Poultry,Meat commercial birds
+Kadaknath,Poultry - Backyard/Desi,"Black-meat indigenous breed, MP"
+Aseel,Poultry - Backyard/Desi,Indigenous fighter/dual-purpose breed
+Vanaraja,Poultry - Backyard/Desi,Improved dual-purpose backyard bird
+Giriraja,Poultry - Backyard/Desi,Improved dual-purpose backyard bird
+Duck,Poultry - Waterfowl,Egg and meat production
+Turkey,Poultry,Meat production
+Japanese Quail,Poultry,"Egg and meat, short cycle"
+Indigenous Pig,Piggery,Local pig breeds
+Large White Yorkshire Cross,Piggery,Commercial crossbred piggery
+Rohu,Fisheries - Freshwater (Indian Major Carp),Freshwater pond culture
+Catla,Fisheries - Freshwater (Indian Major Carp),Freshwater pond culture
+Mrigal,Fisheries - Freshwater (Indian Major Carp),Freshwater pond culture
+Common Carp,Fisheries - Freshwater,"Exotic carp, pond culture"
+Grass Carp,Fisheries - Freshwater,"Exotic carp, pond culture"
+Silver Carp,Fisheries - Freshwater,"Exotic carp, pond culture"
+Pangasius,Fisheries - Freshwater,High-density pond culture
+Tilapia,Fisheries - Freshwater,"Hardy, fast-growing"
+Freshwater Prawn (Scampi),Fisheries - Freshwater,Giant river prawn culture
+Vannamei Shrimp,Fisheries - Brackish Water,Major export shrimp species
+Black Tiger Shrimp (Monodon),Fisheries - Brackish Water,Native shrimp species
+Milkfish,Fisheries - Brackish Water,Brackish water culture
+Marine Cage Culture,Fisheries - Marine/Coastal,Coastal cage-based fish farming
+Ornamental Fish,Fisheries - Ornamental,Aquarium fish culture
+Apis Cerana Indica,Apiculture,Indian hive bee
+Apis Mellifera,Apiculture,"European/Italian bee, higher yield"
+Apis Dorsata,Apiculture,"Rock bee, wild/semi-domesticated"
+Stingless Bee (Meliponiculture),Apiculture,Small-scale honey/pollination bees
+Mulberry Silk (Bombyx mori),Sericulture,"Most common silk type, mulberry-fed"
+Tasar (Tussar) Silk,Sericulture,"Forest-based, non-mulberry silk"
+Eri Silk,Sericulture,"Castor-fed, non-mulberry silk"
+Muga Silk,Sericulture,"Golden silk, Assam-specific"
+Mango Orchard,Orchard/Plantation,"Tree-crop holding, see Fruit crop list"
+Coconut Plantation,Orchard/Plantation,"Tree-crop holding, see Plantation crop list"
+Coffee/Tea Estate,Orchard/Plantation,"Tree-crop holding, see Plantation crop list"
+Cashew Plantation,Orchard/Plantation,"Tree-crop holding, see Plantation crop list"

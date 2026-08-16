@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.routes import crop, fertilizer, diagnosis, health, weather, helper, ledger, animal_encyclopedia, livestock, crop_planner, crop_passport, livestock_encyclopedia
+from app.api.routes import crop, fertilizer, diagnosis, health, weather, helper, ledger, animal_encyclopedia, livestock, crop_planner, crop_passport, livestock_encyclopedia, soil_profiles, kvk, gov_markets, mandi_prices, pest_library, livestock_details, sensor, translate
 
 app = FastAPI(
     title="AgriSaathi API",
@@ -24,6 +24,13 @@ app.include_router(crop.router)
 app.include_router(fertilizer.router)
 app.include_router(diagnosis.router)
 app.include_router(livestock_encyclopedia.router)
+app.include_router(mandi_prices.router)
+app.include_router(pest_library.router)
+app.include_router(livestock_details.router)
+app.include_router(sensor.router)
+app.include_router(gov_markets.router)
+app.include_router(kvk.router)
+app.include_router(soil_profiles.router)
 app.include_router(weather.router)
 app.include_router(helper.router)
 app.include_router(ledger.router)
@@ -31,7 +38,7 @@ app.include_router(animal_encyclopedia.router)
 app.include_router(livestock.router)
 app.include_router(crop_planner.router)
 app.include_router(crop_passport.router)
-app.include_router(livestock.router)
+app.include_router(translate.router)
 
 @app.get("/")
 def root():

@@ -1,14 +1,50 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Home, Syringe, Utensils, Thermometer, TrendingUp,
   AlertTriangle, IndianRupee, Droplets,
 } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
+import { registerReadableContent, clearReadableContent } from '@/lib/pageReadable';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/PageHeader';
 import animalData from '@/data/animalEncyclopedia.json';
+
+
+function buildAnimalReadableText(animal, category) {
+  const parts = [];
+  parts.push(`${animal.name}, kept for ${animal.purpose}, in the ${category.name} category.`);
+
+  if (animal.breeds?.length) {
+    const b = animal.breeds.map((x) => `${x.name} from ${x.origin}, known for ${x.traits}`).join('. ');
+    parts.push(`Breeds: ${b}.`);
+  }
+  if (animal.housing) {
+    const h = animal.housing;
+    parts.push(`Housing: ${h.type}, needs ${h.space_requirement} space, temperature range ${h.temperature_range}, humidity ${h.humidity}, ventilation ${h.ventilation}. ${h.notes || ''}`);
+  }
+  if (animal.feed) {
+    const f = animal.feed;
+    parts.push(`Feed: ${f.type}, daily quantity ${f.daily_quantity}, key ingredients ${f.key_ingredients}, water requirement ${f.water_requirement}.`);
+  }
+  if (animal.vaccination_schedule?.length) {
+    const v = animal.vaccination_schedule.map((x) => `at ${x.age}, give ${x.vaccine} to prevent ${x.disease_prevented}, via ${x.route}`).join('. ');
+    parts.push(`Vaccination schedule: ${v}.`);
+  }
+  if (animal.yield_timeline?.length) {
+    const y = animal.yield_timeline.map((x) => `${x.stage} around ${x.age_range}: ${x.milestone}`).join('. ');
+    parts.push(`Yield timeline: ${y}.`);
+  }
+  if (animal.common_diseases?.length) {
+    parts.push(`Common diseases to watch for: ${animal.common_diseases.join(', ')}.`);
+  }
+  if (animal.economics) {
+    const e = Object.entries(animal.economics).map(([k, v]) => `${k.replace(/_/g, ' ')}: ${v}`).join(', ');
+    parts.push(`Quick facts: ${e}.`);
+  }
+  return parts.join(' ');
+}
 
 export default function AnimalEncyclopediaDetail() {
   const { categoryId, typeId } = useParams();
@@ -17,6 +53,12 @@ export default function AnimalEncyclopediaDetail() {
 
   const category = animalData.categories.find((c) => c.id === categoryId);
   const animal = category?.types.find((tItem) => tItem.id === typeId);
+
+  useEffect(() => {
+    if (!animal || !category) return undefined;
+    registerReadableContent(animal.name, buildAnimalReadableText(animal, category));
+    return () => clearReadableContent();
+  }, [animal, category]);
 
   if (!animal) {
     return (

@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     weather_api_key: str = ""
     weather_api_url: str = "https://api.openweathermap.org/data/2.5"
 
+    data_gov_api_key: str = ""
     model_config = SettingsConfigDict(
         env_file=str(ENV_FILE),
         env_file_encoding="utf-8",

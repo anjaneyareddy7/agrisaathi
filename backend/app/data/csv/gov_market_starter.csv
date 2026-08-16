@@ -1,0 +1,16 @@
+state,market_name,district_region,lat_approx,lng_approx,commodities_traded,VERIFY_AT
+Delhi,Azadpur Mandi (APMC Azadpur),Delhi,28.7096,77.1746,Fruits & Vegetables,data.gov.in / enam.gov.in
+Maharashtra,Vashi APMC (Navi Mumbai),Thane/Mumbai region,19.0771,73.0016,"Fruits & Vegetables, Grains",data.gov.in / enam.gov.in
+Karnataka,Yeshwantpur APMC Yard,Bengaluru,13.0284,77.5540,"Vegetables, Grains, Onion",data.gov.in / enam.gov.in
+Tamil Nadu,Koyambedu Wholesale Market,Chennai,13.0703,80.1958,Fruits & Vegetables,data.gov.in / enam.gov.in
+Telangana,Bowenpally Market Yard,Hyderabad,17.4740,78.4867,Fruits & Vegetables,data.gov.in / enam.gov.in
+West Bengal,Sealdah Koley Market,Kolkata,22.5697,88.3697,"Vegetables, Fish",data.gov.in / enam.gov.in
+Uttar Pradesh,Naveen Mandi Sthal,Lucknow,26.8467,80.9462,"Grains, Vegetables",data.gov.in / enam.gov.in
+Punjab,Grain Market Khanna,Ludhiana district,30.7046,76.2222,"Wheat, Rice (largest Asia grain market)",data.gov.in / enam.gov.in
+Gujarat,APMC Unjha,Mehsana district,23.8036,72.3928,"Cumin, Fennel, Castor",data.gov.in / enam.gov.in
+Rajasthan,Krishi Upaj Mandi Kota,Kota,25.2138,75.8648,"Wheat, Soybean, Coriander",data.gov.in / enam.gov.in
+Madhya Pradesh,Krishi Upaj Mandi Indore,Indore,22.7196,75.8577,"Soybean, Wheat, Gram",data.gov.in / enam.gov.in
+Andhra Pradesh,Guntur Chilli Yard,Guntur,16.3067,80.4365,Chilli,data.gov.in / enam.gov.in
+Kerala,Kalamassery Market,Ernakulam,10.0550,76.3283,"Vegetables, Spices",data.gov.in / enam.gov.in
+Bihar,Patna Grain Market,Patna,25.5941,85.1376,"Rice, Maize",data.gov.in / enam.gov.in
+Haryana,Naya Bazar Grain Market,Karnal,29.6857,76.9905,"Wheat, Rice, Basmati",data.gov.in / enam.gov.in

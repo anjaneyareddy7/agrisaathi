@@ -1,75 +1,84 @@
-import React from 'react';
-import PlaceholderPage from './Placeholder.jsx';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Bug } from 'lucide-react';
+import { Card, CardContent } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
+import PageHeader from '../components/PageHeader';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+const TYPE_COLORS = {
+  pest: 'bg-red-100 text-red-700',
+  disease: 'bg-orange-100 text-orange-700',
+  weed: 'bg-yellow-100 text-yellow-800',
+};
 
 export default function PestLibrary() {
-  const titles = {
-    NearMe: '📍 Near Me',
-    Crops: '🌾 My Crops',
-    Dashboard: '📊 Dashboard',
-    Fertilizer: '💧 Fertilizer Calculator',
-    SoilPassport: '🌱 Soil Passport',
-    CropPlanner: '📈 Crop Planner',
-    Livestock: '🐄 Livestock Care',
-    MarketPrices: '📦 Market Prices',
-    FarmLedger: '📒 Farm Ledger',
-    CropPassport: '🛡️ Crop Passport',
-    Schemes: '🏛️ Government Schemes',
-    Community: '💬 Community',
-    Weather: '🌤️ Weather',
-    SensorLab: '🧪 Sensor Lab',
-    IrrigationPlanner: '💧 Irrigation Planner',
-    HarvestRecords: '🌾 Harvest Records',
-    ProfileSettings: '👤 Profile Settings',
-    VoiceNotes: '🎤 Voice Notes',
-    LoanEligibility: '💰 Loan Eligibility',
-    InputMarketplace: '🏪 Input Marketplace',
-    TrainingCenter: '🎓 Training Center',
-    DocumentWallet: '📁 Document Wallet',
-    InsuranceHub: '🛡️ Insurance Hub',
-    InventoryTracker: '📦 Inventory Tracker',
-    TaskManager: '✅ Task Manager',
-    AlertsCenter: '🔔 Alerts Center',
-    PestLibrary: '🐛 Pest Library',
-    SustainabilityScore: '🌿 Sustainability Score',
-    ExpertDirectory: '👨‍🌾 Expert Directory',
-    SuccessStories: '🏆 Success Stories',
-    FarmNotifications: '🔔 Farm Notifications',
-    VendorContacts: '📞 Vendor Contacts',
-  };
-  const descriptions = {
-    NearMe: 'Find agricultural services and resources near you',
-    Crops: 'Manage your crop inventory and planning',
-    Dashboard: 'Overview of your farm analytics',
-    Fertilizer: 'Calculate fertilizer dosage for your crops',
-    SoilPassport: 'Track soil health over time',
-    CropPlanner: 'Plan your crop cycles',
-    Livestock: 'Track animal health and care',
-    MarketPrices: 'Real-time crop prices',
-    FarmLedger: 'Track farm expenses and revenue',
-    CropPassport: 'Blockchain-verified crop records',
-    Schemes: 'Find eligible government schemes',
-    Community: 'Connect with other farmers',
-    Weather: 'Weather forecasts and alerts',
-    SensorLab: 'IoT sensor integration for smart farming',
-    IrrigationPlanner: 'Plan and track irrigation',
-    HarvestRecords: 'Track harvest yields over time',
-    ProfileSettings: 'Manage your personal information',
-    VoiceNotes: 'Record voice memos for your farm',
-    LoanEligibility: 'Check loan eligibility',
-    InputMarketplace: 'Find verified local shops for inputs',
-    TrainingCenter: 'Learn modern farming techniques',
-    DocumentWallet: 'Store important documents securely',
-    InsuranceHub: 'Manage crop insurance',
-    InventoryTracker: 'Track farm inventory',
-    TaskManager: 'Manage farm tasks',
-    AlertsCenter: 'View all alerts in one place',
-    PestLibrary: 'Identify pests and diseases',
-    SustainabilityScore: 'Track your farm sustainability',
-    ExpertDirectory: 'Find agricultural experts',
-    SuccessStories: 'Learn from fellow farmers',
-    FarmNotifications: 'Set up farm reminders',
-    VendorContacts: 'Manage vendor contacts',
-  };
-  const pageName = 'PestLibrary';
-  return <PlaceholderPage title={titles[pageName] || pageName} icon="" description={descriptions[pageName] || 'Coming soon'} />;
+  const [items, setItems] = useState([]);
+  const [vaccines, setVaccines] = useState([]);
+  const [tab, setTab] = useState('crop');
+  const [filter, setFilter] = useState('all');
+  const [disclaimer, setDisclaimer] = useState('');
+
+  useEffect(() => {
+    axios.get(`${API_URL}/api/pest-library`)
+      .then((res) => { setItems(res.data.items || []); setDisclaimer(res.data.disclaimer || ''); })
+      .catch(() => setItems([]));
+    axios.get(`${API_URL}/api/pest-library/livestock-vaccines`)
+      .then((res) => setVaccines(res.data.items || []))
+      .catch(() => setVaccines([]));
+  }, []);
+
+  const filtered = filter === 'all' ? items : items.filter((i) => i.type === filter);
+
+  return (
+    <div>
+      <PageHeader titleKey="pestLibrary" icon={Bug} />
+
+      <div className="flex gap-2 mb-3">
+        <button onClick={() => setTab('crop')} className={`px-3 py-1.5 rounded-full text-xs font-medium border ${tab === 'crop' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-600 border-gray-200'}`}>Crop pests & weeds</button>
+        <button onClick={() => setTab('livestock')} className={`px-3 py-1.5 rounded-full text-xs font-medium border ${tab === 'livestock' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-600 border-gray-200'}`}>Livestock vaccines</button>
+      </div>
+
+      {tab === 'crop' ? (
+        <>
+          <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
+            {['all', 'pest', 'disease', 'weed'].map((f) => (
+              <button key={f} onClick={() => setFilter(f)} className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border ${filter === f ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200'}`}>
+                {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
+            ))}
+          </div>
+          <div className="space-y-2">
+            {filtered.map((p, i) => (
+              <Card key={i}><CardContent className="pt-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">{p.name}</p>
+                  <Badge className={TYPE_COLORS[p.type] || 'bg-gray-100 text-gray-700'}>{p.type}</Badge>
+                </div>
+                <p className="text-xs text-gray-400 mt-0.5">Affects: {p.affects}</p>
+                <p className="text-xs text-gray-600 mt-1"><span className="font-medium">Symptoms:</span> {p.symptoms}</p>
+                <p className="text-xs text-gray-600 mt-1"><span className="font-medium">Management:</span> {p.management}</p>
+              </CardContent></Card>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="space-y-2">
+          {vaccines.map((v, i) => (
+            <Card key={i}><CardContent className="pt-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">{v.disease}</p>
+                <Badge className="bg-blue-100 text-blue-700">{v.species}</Badge>
+              </div>
+              <p className="text-xs text-gray-600 mt-1"><span className="font-medium">Vaccine:</span> {v.vaccine}</p>
+              <p className="text-xs text-gray-600 mt-1"><span className="font-medium">Schedule:</span> {v.schedule}</p>
+            </CardContent></Card>
+          ))}
+        </div>
+      )}
+
+      {disclaimer && <p className="text-[10px] text-gray-300 mt-3">{disclaimer}</p>}
+    </div>
+  );
 }

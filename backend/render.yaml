@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: agrisaathi-backend
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: WEATHER_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: "https://agrisaathi.vercel.app"
+    disk:
+      name: ledger-storage
+      mountPath: /opt/render/project/src/app/data/ledger_store
+      sizeGB: 1

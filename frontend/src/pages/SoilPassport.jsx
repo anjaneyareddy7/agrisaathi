@@ -12,6 +12,9 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '.
 import { Image } from '../components/ui/image';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import PageHeader from '../components/PageHeader';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const toHash = async (obj) => {
   const data = new TextEncoder().encode(JSON.stringify(obj));
@@ -28,6 +31,15 @@ export default function SoilPassport() {
 
   const load = () => base44.entities.SoilRecord.list('-test_date').then(setRecords).catch(() => {});
   useEffect(() => { load(); }, []);
+
+  const [soilProfiles, setSoilProfiles] = useState([]);
+  const [refState, setRefState] = useState('');
+  useEffect(() => {
+    axios.get(`${API_URL}/api/soil-profiles`)
+      .then((res) => setSoilProfiles(res.data || []))
+      .catch(() => setSoilProfiles([]));
+  }, []);
+  const refProfile = soilProfiles.find((p) => p.state === refState);
 
   const save = async () => {
     if (!form.plot_name) { alert('Plot name required'); return; }
@@ -106,6 +118,25 @@ export default function SoilPassport() {
   return (
     <div>
       <PageHeader titleKey="soilPassport" icon={Sprout} />
+
+      {soilProfiles.length > 0 && (
+        <Card className="mb-4 border-blue-200"><CardContent className="pt-4">
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">Government soil reference (state-level)</h3>
+          <Select value={refState} onValueChange={setRefState}>
+            <SelectTrigger className="h-8 text-sm mb-2"><SelectValue placeholder="Select your state" /></SelectTrigger>
+            <SelectContent>{soilProfiles.map((p) => <SelectItem key={p.state} value={p.state}>{p.state}</SelectItem>)}</SelectContent>
+          </Select>
+          {refProfile && (
+            <div className="text-sm space-y-1">
+              <p><span className="text-gray-400">Dominant soil type:</span> {refProfile.dominant_soil_type}</p>
+              <p><span className="text-gray-400">Typical pH range:</span> {refProfile.typical_ph_range}</p>
+              <p><span className="text-gray-400">Characteristics:</span> {refProfile.characteristics}</p>
+              <p><span className="text-gray-400">Suitable crops:</span> {refProfile.suitable_crops}</p>
+            </div>
+          )}
+          <p className="text-[10px] text-gray-300 mt-2">Reference values only — not a substitute for your own soil test.</p>
+        </CardContent></Card>
+      )}
 
       <div className="space-y-2 mb-4">
         {records.length === 0 ? (

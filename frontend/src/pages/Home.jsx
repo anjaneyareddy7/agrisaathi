@@ -126,17 +126,17 @@ export default function Home() {
 
       {/* Weather Card */}
       <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg">
-        {weather && weather.status === 'ok' ? (
+        {weather && weather.temperature != null ? (
           <div className="flex justify-between items-start">
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-4xl font-bold">{Math.round(weather.temperature)}°C</span>
               </div>
-              <p className="text-blue-100 capitalize text-lg">{weather.conditions}</p>
+              <p className="text-blue-100 capitalize text-lg">{weather.description}</p>
             </div>
             <div className="text-right text-sm text-blue-100">
               <div className="flex items-center gap-1 justify-end">💧 {weather.humidity}%</div>
-              <div className="flex items-center gap-1 justify-end">💨 {weather.wind_speed} km/h</div>
+              <div className="flex items-center gap-1 justify-end">💨 {weather.wind_speed} m/s</div>
             </div>
           </div>
         ) : (

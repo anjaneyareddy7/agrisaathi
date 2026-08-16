@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { MapPin, Phone, Building2, Sprout, Navigation, ExternalLink, Store, Leaf, FlaskConical } from 'lucide-react';
 import { useLang } from '../lib/i18n';
 import { base44 } from '../api/base44Client';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
@@ -35,8 +38,30 @@ export default function NearMe() {
   const [shopsLoading, setShopsLoading] = useState(false);
 
   useEffect(() => {
-    base44.entities.KVK.list().then(setKvks).catch(() => {});
-    base44.entities.GovMarket.list().then(setMarkets).catch(() => {});
+    axios.get(`${API_URL}/api/kvk`)
+      .then((res) => setKvks((res.data || []).map((k, idx) => ({
+        id: `kvk_${k.state}_${k.serial_no ?? idx}`,
+        address: k.address,
+        state_ut: k.state,
+        host_institution_approx: k.host_institution,
+        year_of_sanction: k.year_of_sanction,
+        kvk_type: k.type,
+        lat_approx: null,
+        lng_approx: null,
+        VERIFY_AT: k.verify_at,
+      }))))
+      .catch(() => setKvks([]));
+    axios.get(`${API_URL}/api/gov-markets`)
+      .then((res) => setMarkets((res.data || []).map((m) => ({
+        id: `market_${m.market_name}_${m.state}`,
+        market_name: m.market_name,
+        state: m.state,
+        district_region: m.district_region,
+        lat_approx: m.lat,
+        lng_approx: m.lng,
+        commodities_traded: m.commodities_traded,
+      }))))
+      .catch(() => setMarkets([]));
   }, []);
 
   const useLocation = () => {
@@ -101,8 +126,12 @@ export default function NearMe() {
     if (i._type === 'shop') return SHOP_TYPES[i.shop_type]?.color || 'bg-gray-100 text-gray-700';
     return i._type === 'kvk' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700';
   };
-  const nameFor = (i) => i.name || i.market_name || `${i.district} KVK`;
-  const subFor = (i) => i._type === 'shop' ? SHOP_TYPES[i.shop_type]?.label : (i.district_region || i.district || '') + (i.state || i.state_ut ? ` · ${i.state || i.state_ut}` : '');
+  const nameFor = (i) => i.name || i.market_name || i.address || 'KVK';
+  const subFor = (i) => {
+    if (i._type === 'shop') return SHOP_TYPES[i.shop_type]?.label;
+    if (i._type === 'kvk') return (i.host_institution_approx || '').slice(0, 70) + (i.state_ut ? ` · ${i.state_ut}` : '');
+    return (i.district_region || '') + (i.state ? ` · ${i.state}` : '');
+  };
 
   return (
     <div>

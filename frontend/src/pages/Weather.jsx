@@ -1,75 +1,62 @@
-import React from 'react';
-import PlaceholderPage from './Placeholder.jsx';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { CloudSun, Wind, Droplets, MapPin } from 'lucide-react';
+import { Card, CardContent } from '../components/ui/card';
+import PageHeader from '../components/PageHeader';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export default function Weather() {
-  const titles = {
-    NearMe: '📍 Near Me',
-    Crops: '🌾 My Crops',
-    Dashboard: '📊 Dashboard',
-    Fertilizer: '💧 Fertilizer Calculator',
-    SoilPassport: '🌱 Soil Passport',
-    CropPlanner: '📈 Crop Planner',
-    Livestock: '🐄 Livestock Care',
-    MarketPrices: '📦 Market Prices',
-    FarmLedger: '📒 Farm Ledger',
-    CropPassport: '🛡️ Crop Passport',
-    Schemes: '🏛️ Government Schemes',
-    Community: '💬 Community',
-    Weather: '🌤️ Weather',
-    SensorLab: '🧪 Sensor Lab',
-    IrrigationPlanner: '💧 Irrigation Planner',
-    HarvestRecords: '🌾 Harvest Records',
-    ProfileSettings: '👤 Profile Settings',
-    VoiceNotes: '🎤 Voice Notes',
-    LoanEligibility: '💰 Loan Eligibility',
-    InputMarketplace: '🏪 Input Marketplace',
-    TrainingCenter: '🎓 Training Center',
-    DocumentWallet: '📁 Document Wallet',
-    InsuranceHub: '🛡️ Insurance Hub',
-    InventoryTracker: '📦 Inventory Tracker',
-    TaskManager: '✅ Task Manager',
-    AlertsCenter: '🔔 Alerts Center',
-    PestLibrary: '🐛 Pest Library',
-    SustainabilityScore: '🌿 Sustainability Score',
-    ExpertDirectory: '👨‍🌾 Expert Directory',
-    SuccessStories: '🏆 Success Stories',
-    FarmNotifications: '🔔 Farm Notifications',
-    VendorContacts: '📞 Vendor Contacts',
+  const [weather, setWeather] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchWeather = (lat, lon) => {
+    setLoading(true);
+    setError(null);
+    axios.get(`${API_URL}/api/weather/current`, { params: { lat, lon } })
+      .then((res) => setWeather(res.data))
+      .catch((err) => setError(err?.response?.data?.detail || 'Could not fetch weather'))
+      .finally(() => setLoading(false));
   };
-  const descriptions = {
-    NearMe: 'Find agricultural services and resources near you',
-    Crops: 'Manage your crop inventory and planning',
-    Dashboard: 'Overview of your farm analytics',
-    Fertilizer: 'Calculate fertilizer dosage for your crops',
-    SoilPassport: 'Track soil health over time',
-    CropPlanner: 'Plan your crop cycles',
-    Livestock: 'Track animal health and care',
-    MarketPrices: 'Real-time crop prices',
-    FarmLedger: 'Track farm expenses and revenue',
-    CropPassport: 'Blockchain-verified crop records',
-    Schemes: 'Find eligible government schemes',
-    Community: 'Connect with other farmers',
-    Weather: 'Weather forecasts and alerts',
-    SensorLab: 'IoT sensor integration for smart farming',
-    IrrigationPlanner: 'Plan and track irrigation',
-    HarvestRecords: 'Track harvest yields over time',
-    ProfileSettings: 'Manage your personal information',
-    VoiceNotes: 'Record voice memos for your farm',
-    LoanEligibility: 'Check loan eligibility',
-    InputMarketplace: 'Find verified local shops for inputs',
-    TrainingCenter: 'Learn modern farming techniques',
-    DocumentWallet: 'Store important documents securely',
-    InsuranceHub: 'Manage crop insurance',
-    InventoryTracker: 'Track farm inventory',
-    TaskManager: 'Manage farm tasks',
-    AlertsCenter: 'View all alerts in one place',
-    PestLibrary: 'Identify pests and diseases',
-    SustainabilityScore: 'Track your farm sustainability',
-    ExpertDirectory: 'Find agricultural experts',
-    SuccessStories: 'Learn from fellow farmers',
-    FarmNotifications: 'Set up farm reminders',
-    VendorContacts: 'Manage vendor contacts',
-  };
-  const pageName = 'Weather';
-  return <PlaceholderPage title={titles[pageName] || pageName} icon="" description={descriptions[pageName] || 'Coming soon'} />;
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      fetchWeather(17.385, 78.4867);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+      () => fetchWeather(17.385, 78.4867)
+    );
+  }, []);
+
+  return (
+    <div>
+      <PageHeader titleKey="weather" icon={CloudSun} />
+
+      {loading && <p className="text-sm text-gray-400">Loading weather...</p>}
+      {error && <p className="text-sm text-red-500">{error}</p>}
+
+      {weather && (
+        <Card className="bg-blue-600 text-white mb-4">
+          <CardContent className="pt-5 pb-5">
+            <div className="flex items-center gap-1 text-xs opacity-80 mb-1">
+              <MapPin className="h-3 w-3" /> {weather.location || 'Your location'}
+            </div>
+            <div className="text-4xl font-bold">{Math.round(weather.temperature)}°C</div>
+            <div className="text-sm capitalize opacity-90">{weather.description}</div>
+            <div className="flex gap-4 mt-3 text-xs">
+              <span className="flex items-center gap-1"><Droplets className="h-3.5 w-3.5" /> {weather.humidity}%</span>
+              <span className="flex items-center gap-1"><Wind className="h-3.5 w-3.5" /> {weather.wind_speed} m/s</span>
+              {weather.rain_1h != null && <span>Rain: {weather.rain_1h}mm/h</span>}
+            </div>
+            {weather.feels_like != null && (
+              <div className="text-xs opacity-70 mt-1">Feels like {Math.round(weather.feels_like)}°C</div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
 }

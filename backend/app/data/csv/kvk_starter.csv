@@ -1,0 +1,31 @@
+state_ut,district,host_institution_approx,lat_approx,lng_approx,VERIFY_AT
+Punjab,Ludhiana,Punjab Agricultural University,30.9010,75.8573,kvk.icar.gov.in
+Haryana,Karnal,ICAR / CCS HAU,29.6857,76.9905,kvk.icar.gov.in
+Uttar Pradesh,Lucknow,State Agricultural University,26.8467,80.9462,kvk.icar.gov.in
+Bihar,Patna,ICAR / RAU,25.5941,85.1376,kvk.icar.gov.in
+West Bengal,Nadia,Bidhan Chandra Krishi Viswavidyalaya,23.4710,88.5565,kvk.icar.gov.in
+Assam,Kamrup,Assam Agricultural University,26.1445,91.7362,kvk.icar.gov.in
+Rajasthan,Jaipur,Sri Karan Narendra Agriculture University,26.9124,75.7873,kvk.icar.gov.in
+Gujarat,Anand,Anand Agricultural University,22.5645,72.9289,kvk.icar.gov.in
+Maharashtra,Pune,MPKV Rahuri,18.5204,73.8567,kvk.icar.gov.in
+Madhya Pradesh,Bhopal,JNKVV Jabalpur (host),23.2599,77.4126,kvk.icar.gov.in
+Karnataka,Bengaluru Rural (Doddaballapura),"University of Agricultural Sciences, Bengaluru",13.2900,77.5400,kvk.icar.gov.in
+Andhra Pradesh,Guntur,Acharya NG Ranga Agricultural University,16.3067,80.4365,kvk.icar.gov.in
+Telangana,Hyderabad (Rangareddy),PJTS Agricultural University,17.3850,78.4867,kvk.icar.gov.in
+Tamil Nadu,Coimbatore,Tamil Nadu Agricultural University,11.0168,76.9558,kvk.icar.gov.in
+Kerala,Pathanamthitta,Kerala Agricultural University,9.2648,76.7870,kvk.icar.gov.in
+Odisha,Bhubaneswar,Odisha University of Agriculture & Technology,20.2961,85.8245,kvk.icar.gov.in
+Jharkhand,Ranchi,Birsa Agricultural University,23.3441,85.3096,kvk.icar.gov.in
+Chhattisgarh,Raipur,Indira Gandhi Krishi Vishwavidyalaya,21.2514,81.6296,kvk.icar.gov.in
+Himachal Pradesh,Kangra,CSK HP Agricultural University,32.0998,76.2691,kvk.icar.gov.in
+Uttarakhand,Dehradun,GB Pant University of Agriculture & Technology,30.3165,78.0322,kvk.icar.gov.in
+Jammu & Kashmir,Srinagar,SKUAST-Kashmir,34.0837,74.7973,kvk.icar.gov.in
+Sikkim,Gangtok (East Sikkim),ICAR NEH Region,27.3389,88.6065,kvk.icar.gov.in
+Arunachal Pradesh,Papum Pare (Itanagar),ICAR NEH Region,27.0844,93.6053,kvk.icar.gov.in
+Meghalaya,East Khasi Hills (Shillong),ICAR NEH Region,25.5788,91.8933,kvk.icar.gov.in
+Manipur,Imphal,ICAR NEH Region,24.8170,93.9368,kvk.icar.gov.in
+Mizoram,Aizawl,ICAR NEH Region,23.7307,92.7173,kvk.icar.gov.in
+Nagaland,Kohima,ICAR NEH Region,25.6751,94.1086,kvk.icar.gov.in
+Tripura,Agartala (West Tripura),ICAR NEH Region,23.8315,91.2868,kvk.icar.gov.in
+Goa,North Goa,ICAR Goa,15.4909,73.8278,kvk.icar.gov.in
+Delhi,New Delhi,IARI Pusa,28.6383,77.1652,kvk.icar.gov.in

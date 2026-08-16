@@ -1,14 +1,50 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Home, FlaskConical, Droplets, Sun, TrendingUp,
-  AlertTriangle, IndianRupee, CalendarDays,
+  AlertTriangle, IndianRupee,
 } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
+import { registerReadableContent, clearReadableContent } from '@/lib/pageReadable';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/PageHeader';
 import cropData from '@/data/cropEncyclopedia.json';
+
+
+function buildCropReadableText(crop, category) {
+  const parts = [];
+  parts.push(`${crop.name}, a ${crop.category_use} crop in the ${category.name} category.`);
+
+  if (crop.varieties?.length) {
+    const v = crop.varieties.map((x) => `${x.name} from ${x.origin}, known for ${x.traits}`).join('. ');
+    parts.push(`Varieties: ${v}.`);
+  }
+  if (crop.climate_soil) {
+    const c = crop.climate_soil;
+    parts.push(`Climate and soil: needs ${c.soil_type} soil, ${c.climate} climate, ${c.rainfall} rainfall, and a temperature range of ${c.temperature_range}. ${c.notes || ''}`);
+  }
+  if (crop.sowing_irrigation) {
+    const s = crop.sowing_irrigation;
+    parts.push(`Sowing and irrigation: sow during ${s.sowing_time}, seed rate ${s.seed_rate}, spacing ${s.spacing}. Irrigation schedule: ${s.irrigation_schedule}, water requirement ${s.water_requirement}.`);
+  }
+  if (crop.fertilizer_schedule?.length) {
+    const f = crop.fertilizer_schedule.map((x) => `at ${x.stage} stage, apply ${x.fertilizer}, dose ${x.dose}`).join('. ');
+    parts.push(`Fertilizer schedule: ${f}.`);
+  }
+  if (crop.growth_timeline?.length) {
+    const g = crop.growth_timeline.map((x) => `${x.stage} around ${x.age_range}: ${x.milestone}`).join('. ');
+    parts.push(`Growth timeline: ${g}.`);
+  }
+  if (crop.common_pests_diseases?.length) {
+    parts.push(`Common pests and diseases to watch for: ${crop.common_pests_diseases.join(', ')}.`);
+  }
+  if (crop.economics) {
+    const e = Object.entries(crop.economics).map(([k, v]) => `${k.replace(/_/g, ' ')}: ${v}`).join(', ');
+    parts.push(`Quick facts: ${e}.`);
+  }
+  return parts.join(' ');
+}
 
 export default function CropEncyclopediaDetail() {
   const { categoryId, typeId } = useParams();
@@ -17,6 +53,12 @@ export default function CropEncyclopediaDetail() {
 
   const category = cropData.categories.find((c) => c.id === categoryId);
   const crop = category?.types.find((tItem) => tItem.id === typeId);
+
+  useEffect(() => {
+    if (!crop || !category) return undefined;
+    registerReadableContent(crop.name, buildCropReadableText(crop, category));
+    return () => clearReadableContent();
+  }, [crop, category]);
 
   if (!crop) {
     return (
