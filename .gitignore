@@ -34,3 +34,5 @@ lerna-debug.log*
 *.sw?
 data_gov_resources.env
 data_gov_test/
+
+.env
