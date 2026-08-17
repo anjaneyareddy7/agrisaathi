@@ -69,6 +69,25 @@ def get_chain(entity_type: str, entity_id: str) -> List[LedgerBlock]:
     return [LedgerBlock(**b) for b in chain]
 
 
+def list_all_blocks(entity_type: str, limit: int = 100) -> List[dict]:
+    """
+    Every block, across every entity_id, for a given entity_type — the
+    'shared feed' read path (e.g. all success stories from all farmers,
+    not just one device's chain). Sorted newest first.
+    """
+    safe_type = entity_type.replace("/", "_")
+    all_blocks = []
+    for path in LEDGER_DIR.glob(f"{safe_type}__*.json"):
+        try:
+            with open(path) as f:
+                chain = json.load(f)
+            all_blocks.extend(chain)
+        except (json.JSONDecodeError, OSError):
+            continue
+    all_blocks.sort(key=lambda b: b.get("timestamp", ""), reverse=True)
+    return all_blocks[:limit]
+
+
 def verify_chain(entity_type: str, entity_id: str) -> bool:
     chain = _read_chain(entity_type, entity_id)
     prev_hash = "0" * 64

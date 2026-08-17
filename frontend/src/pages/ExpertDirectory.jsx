@@ -1,75 +1,42 @@
-import React from 'react';
-import PlaceholderPage from './Placeholder.jsx';
+import { Users, Sprout, Stethoscope, GraduationCap, Landmark, Phone } from 'lucide-react';
+import { Card, CardContent } from '../components/ui/card';
+import PageHeader from '../components/PageHeader';
+
+const EXPERT_TYPES = [
+  { icon: Sprout, title: 'Agronomist', description: 'Crop disease, fertilizer & soil advice', helpline: '1800-180-1551' },
+  { icon: Stethoscope, title: 'Veterinarian', description: 'Livestock, poultry & fish health', helpline: '1962' },
+  { icon: GraduationCap, title: 'KVK Expert', description: 'Krishi Vigyan Kendra farm scientist — see Near Me for your nearest KVK contact', helpline: null },
+  { icon: Landmark, title: 'Agriculture Officer', description: 'Schemes, insurance & subsidies', helpline: '1800-180-1551' },
+];
 
 export default function ExpertDirectory() {
-  const titles = {
-    NearMe: '📍 Near Me',
-    Crops: '🌾 My Crops',
-    Dashboard: '📊 Dashboard',
-    Fertilizer: '💧 Fertilizer Calculator',
-    SoilPassport: '🌱 Soil Passport',
-    CropPlanner: '📈 Crop Planner',
-    Livestock: '🐄 Livestock Care',
-    MarketPrices: '📦 Market Prices',
-    FarmLedger: '📒 Farm Ledger',
-    CropPassport: '🛡️ Crop Passport',
-    Schemes: '🏛️ Government Schemes',
-    Community: '💬 Community',
-    Weather: '🌤️ Weather',
-    SensorLab: '🧪 Sensor Lab',
-    IrrigationPlanner: '💧 Irrigation Planner',
-    HarvestRecords: '🌾 Harvest Records',
-    ProfileSettings: '👤 Profile Settings',
-    VoiceNotes: '🎤 Voice Notes',
-    LoanEligibility: '💰 Loan Eligibility',
-    InputMarketplace: '🏪 Input Marketplace',
-    TrainingCenter: '🎓 Training Center',
-    DocumentWallet: '📁 Document Wallet',
-    InsuranceHub: '🛡️ Insurance Hub',
-    InventoryTracker: '📦 Inventory Tracker',
-    TaskManager: '✅ Task Manager',
-    AlertsCenter: '🔔 Alerts Center',
-    PestLibrary: '🐛 Pest Library',
-    SustainabilityScore: '🌿 Sustainability Score',
-    ExpertDirectory: '👨‍🌾 Expert Directory',
-    SuccessStories: '🏆 Success Stories',
-    FarmNotifications: '🔔 Farm Notifications',
-    VendorContacts: '📞 Vendor Contacts',
-  };
-  const descriptions = {
-    NearMe: 'Find agricultural services and resources near you',
-    Crops: 'Manage your crop inventory and planning',
-    Dashboard: 'Overview of your farm analytics',
-    Fertilizer: 'Calculate fertilizer dosage for your crops',
-    SoilPassport: 'Track soil health over time',
-    CropPlanner: 'Plan your crop cycles',
-    Livestock: 'Track animal health and care',
-    MarketPrices: 'Real-time crop prices',
-    FarmLedger: 'Track farm expenses and revenue',
-    CropPassport: 'Blockchain-verified crop records',
-    Schemes: 'Find eligible government schemes',
-    Community: 'Connect with other farmers',
-    Weather: 'Weather forecasts and alerts',
-    SensorLab: 'IoT sensor integration for smart farming',
-    IrrigationPlanner: 'Plan and track irrigation',
-    HarvestRecords: 'Track harvest yields over time',
-    ProfileSettings: 'Manage your personal information',
-    VoiceNotes: 'Record voice memos for your farm',
-    LoanEligibility: 'Check loan eligibility',
-    InputMarketplace: 'Find verified local shops for inputs',
-    TrainingCenter: 'Learn modern farming techniques',
-    DocumentWallet: 'Store important documents securely',
-    InsuranceHub: 'Manage crop insurance',
-    InventoryTracker: 'Track farm inventory',
-    TaskManager: 'Manage farm tasks',
-    AlertsCenter: 'View all alerts in one place',
-    PestLibrary: 'Identify pests and diseases',
-    SustainabilityScore: 'Track your farm sustainability',
-    ExpertDirectory: 'Find agricultural experts',
-    SuccessStories: 'Learn from fellow farmers',
-    FarmNotifications: 'Set up farm reminders',
-    VendorContacts: 'Manage vendor contacts',
-  };
-  const pageName = 'ExpertDirectory';
-  return <PlaceholderPage title={titles[pageName] || pageName} icon="" description={descriptions[pageName] || 'Coming soon'} />;
+  return (
+    <div>
+      <PageHeader title="Expert Directory" icon={Users} />
+      <p className="text-xs text-gray-500 mb-3">
+        Connect with the right expert for your farm issue. For a KVK scientist near you specifically, use Near Me — it lists actual KVK contacts from the ICAR directory.
+      </p>
+
+      <div className="space-y-2">
+        {EXPERT_TYPES.map((e) => (
+          <Card key={e.title}>
+            <CardContent className="pt-4 pb-4 flex items-center gap-3">
+              <div className="p-2 rounded-full bg-green-50">
+                <e.icon className="h-5 w-5 text-green-700" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">{e.title}</p>
+                <p className="text-xs text-gray-500">{e.description}</p>
+              </div>
+              {e.helpline && (
+                <a href={`tel:${e.helpline}`} className="p-2 rounded-full bg-green-600 text-white shrink-0" aria-label={`Call ${e.title} helpline`}>
+                  <Phone className="h-4 w-4" />
+                </a>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
 }

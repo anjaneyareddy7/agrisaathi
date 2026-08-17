@@ -32,3 +32,5 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+data_gov_resources.env
+data_gov_test/

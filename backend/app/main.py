@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.routes import crop, fertilizer, diagnosis, health, weather, helper, ledger, animal_encyclopedia, livestock, crop_planner, crop_passport, livestock_encyclopedia, soil_profiles, kvk, gov_markets, mandi_prices, pest_library, livestock_details, sensor, translate, scheme, livestock_types
+from app.api.routes import crop, fertilizer, diagnosis, health, weather, helper, ledger, animal_encyclopedia, livestock, crop_planner, crop_passport, livestock_encyclopedia, soil_profiles, kvk, gov_markets, mandi_prices, pest_library, livestock_details, sensor, translate, price_alerts, scheme, livestock_types
 
 app = FastAPI(
     title="AgriSaathi API",
@@ -39,6 +39,7 @@ app.include_router(livestock.router)
 app.include_router(crop_planner.router)
 app.include_router(crop_passport.router)
 app.include_router(translate.router)
+app.include_router(price_alerts.router)
 app.include_router(scheme.router)
 app.include_router(livestock_types.router)
 

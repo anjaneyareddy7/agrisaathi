@@ -1,75 +1,114 @@
-import React from 'react';
-import PlaceholderPage from './Placeholder.jsx';
+import { useState, useEffect, useCallback } from 'react';
+import { Trophy, Plus, Sprout } from 'lucide-react';
+import axios from 'axios';
+import { getDeviceId } from '../lib/deviceId';
+import { Card, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Textarea } from '../components/ui/textarea';
+import PageHeader from '../components/PageHeader';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export default function SuccessStories() {
-  const titles = {
-    NearMe: '📍 Near Me',
-    Crops: '🌾 My Crops',
-    Dashboard: '📊 Dashboard',
-    Fertilizer: '💧 Fertilizer Calculator',
-    SoilPassport: '🌱 Soil Passport',
-    CropPlanner: '📈 Crop Planner',
-    Livestock: '🐄 Livestock Care',
-    MarketPrices: '📦 Market Prices',
-    FarmLedger: '📒 Farm Ledger',
-    CropPassport: '🛡️ Crop Passport',
-    Schemes: '🏛️ Government Schemes',
-    Community: '💬 Community',
-    Weather: '🌤️ Weather',
-    SensorLab: '🧪 Sensor Lab',
-    IrrigationPlanner: '💧 Irrigation Planner',
-    HarvestRecords: '🌾 Harvest Records',
-    ProfileSettings: '👤 Profile Settings',
-    VoiceNotes: '🎤 Voice Notes',
-    LoanEligibility: '💰 Loan Eligibility',
-    InputMarketplace: '🏪 Input Marketplace',
-    TrainingCenter: '🎓 Training Center',
-    DocumentWallet: '📁 Document Wallet',
-    InsuranceHub: '🛡️ Insurance Hub',
-    InventoryTracker: '📦 Inventory Tracker',
-    TaskManager: '✅ Task Manager',
-    AlertsCenter: '🔔 Alerts Center',
-    PestLibrary: '🐛 Pest Library',
-    SustainabilityScore: '🌿 Sustainability Score',
-    ExpertDirectory: '👨‍🌾 Expert Directory',
-    SuccessStories: '🏆 Success Stories',
-    FarmNotifications: '🔔 Farm Notifications',
-    VendorContacts: '📞 Vendor Contacts',
+  const deviceId = getDeviceId();
+  const [stories, setStories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ farmer_name: '', crop: '', story: '' });
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Shared feed — every farmer's story, not just this device's.
+      const res = await axios.get(`${API_URL}/api/ledger/list/success_story`, { params: { limit: 50 } });
+      setStories(res.data.blocks || []);
+    } catch {
+      setStories([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount, same pattern as FarmLedger/SoilPassport
+  useEffect(() => { load(); }, [load]);
+
+  const submit = async () => {
+    if (!form.farmer_name || !form.crop || !form.story) return;
+    setSaving(true);
+    try {
+      await axios.post(`${API_URL}/api/ledger/log`, {
+        entity_type: 'success_story',
+        entity_id: deviceId,
+        event_type: 'story_shared',
+        payload: form,
+        actor: deviceId,
+      });
+      setForm({ farmer_name: '', crop: '', story: '' });
+      setShowForm(false);
+      await load();
+    } finally {
+      setSaving(false);
+    }
   };
-  const descriptions = {
-    NearMe: 'Find agricultural services and resources near you',
-    Crops: 'Manage your crop inventory and planning',
-    Dashboard: 'Overview of your farm analytics',
-    Fertilizer: 'Calculate fertilizer dosage for your crops',
-    SoilPassport: 'Track soil health over time',
-    CropPlanner: 'Plan your crop cycles',
-    Livestock: 'Track animal health and care',
-    MarketPrices: 'Real-time crop prices',
-    FarmLedger: 'Track farm expenses and revenue',
-    CropPassport: 'Blockchain-verified crop records',
-    Schemes: 'Find eligible government schemes',
-    Community: 'Connect with other farmers',
-    Weather: 'Weather forecasts and alerts',
-    SensorLab: 'IoT sensor integration for smart farming',
-    IrrigationPlanner: 'Plan and track irrigation',
-    HarvestRecords: 'Track harvest yields over time',
-    ProfileSettings: 'Manage your personal information',
-    VoiceNotes: 'Record voice memos for your farm',
-    LoanEligibility: 'Check loan eligibility',
-    InputMarketplace: 'Find verified local shops for inputs',
-    TrainingCenter: 'Learn modern farming techniques',
-    DocumentWallet: 'Store important documents securely',
-    InsuranceHub: 'Manage crop insurance',
-    InventoryTracker: 'Track farm inventory',
-    TaskManager: 'Manage farm tasks',
-    AlertsCenter: 'View all alerts in one place',
-    PestLibrary: 'Identify pests and diseases',
-    SustainabilityScore: 'Track your farm sustainability',
-    ExpertDirectory: 'Find agricultural experts',
-    SuccessStories: 'Learn from fellow farmers',
-    FarmNotifications: 'Set up farm reminders',
-    VendorContacts: 'Manage vendor contacts',
-  };
-  const pageName = 'SuccessStories';
-  return <PlaceholderPage title={titles[pageName] || pageName} icon="" description={descriptions[pageName] || 'Coming soon'} />;
+
+  return (
+    <div>
+      <PageHeader title="Success Stories" icon={Trophy} />
+      <p className="text-xs text-gray-500 mb-3">
+        Real stories shared by farmers using AgriSaathi — visible to everyone.
+      </p>
+
+      <div className="flex justify-end mb-3">
+        <Button size="sm" onClick={() => setShowForm((s) => !s)}>
+          <Plus className="h-4 w-4 mr-1" /> Share your story
+        </Button>
+      </div>
+
+      {showForm && (
+        <Card className="mb-4">
+          <CardContent className="pt-4 space-y-3">
+            <div>
+              <Label>Your name</Label>
+              <Input value={form.farmer_name} onChange={(e) => setForm({ ...form, farmer_name: e.target.value })} placeholder="e.g. Ravi Kumar" />
+            </div>
+            <div>
+              <Label>Crop</Label>
+              <Input value={form.crop} onChange={(e) => setForm({ ...form, crop: e.target.value })} placeholder="e.g. Chilli" />
+            </div>
+            <div>
+              <Label>Your story</Label>
+              <Textarea value={form.story} onChange={(e) => setForm({ ...form, story: e.target.value })} placeholder="What changed, what worked, what would you tell other farmers?" rows={4} />
+            </div>
+            <Button className="w-full" onClick={submit} disabled={saving || !form.farmer_name || !form.crop || !form.story}>
+              {saving ? 'Sharing…' : 'Share with the community'}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {loading ? (
+        <p className="text-sm text-gray-400 text-center py-8">Loading stories…</p>
+      ) : stories.length === 0 ? (
+        <Card><CardContent className="pt-6 text-center text-sm text-gray-400">No stories shared yet. Be the first!</CardContent></Card>
+      ) : (
+        <div className="space-y-2">
+          {stories.map((b) => (
+            <Card key={b.hash}>
+              <CardContent className="pt-3 pb-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <Sprout className="h-4 w-4 text-green-600" />
+                  <p className="text-sm font-medium">{b.payload?.farmer_name} · {b.payload?.crop}</p>
+                </div>
+                <p className="text-xs text-gray-600">{b.payload?.story}</p>
+                <p className="text-[11px] text-gray-400 mt-1">{new Date(b.timestamp).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }

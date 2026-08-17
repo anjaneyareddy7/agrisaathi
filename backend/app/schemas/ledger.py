@@ -19,6 +19,11 @@ class LedgerBlock(BaseModel):
     prev_hash: str
     hash: str
 
+class LedgerListResponse(BaseModel):
+    entity_type: str
+    blocks: List[LedgerBlock]
+
+
 class LedgerChainResponse(BaseModel):
     entity_type: str
     entity_id: str

@@ -1,75 +1,125 @@
-import React from 'react';
-import PlaceholderPage from './Placeholder.jsx';
+import { useState, useEffect, useCallback } from 'react';
+import { BellRing, Plus, CheckCircle2, Circle } from 'lucide-react';
+import axios from 'axios';
+import { getDeviceId } from '../lib/deviceId';
+import { Card, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import PageHeader from '../components/PageHeader';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export default function FarmNotifications() {
-  const titles = {
-    NearMe: '📍 Near Me',
-    Crops: '🌾 My Crops',
-    Dashboard: '📊 Dashboard',
-    Fertilizer: '💧 Fertilizer Calculator',
-    SoilPassport: '🌱 Soil Passport',
-    CropPlanner: '📈 Crop Planner',
-    Livestock: '🐄 Livestock Care',
-    MarketPrices: '📦 Market Prices',
-    FarmLedger: '📒 Farm Ledger',
-    CropPassport: '🛡️ Crop Passport',
-    Schemes: '🏛️ Government Schemes',
-    Community: '💬 Community',
-    Weather: '🌤️ Weather',
-    SensorLab: '🧪 Sensor Lab',
-    IrrigationPlanner: '💧 Irrigation Planner',
-    HarvestRecords: '🌾 Harvest Records',
-    ProfileSettings: '👤 Profile Settings',
-    VoiceNotes: '🎤 Voice Notes',
-    LoanEligibility: '💰 Loan Eligibility',
-    InputMarketplace: '🏪 Input Marketplace',
-    TrainingCenter: '🎓 Training Center',
-    DocumentWallet: '📁 Document Wallet',
-    InsuranceHub: '🛡️ Insurance Hub',
-    InventoryTracker: '📦 Inventory Tracker',
-    TaskManager: '✅ Task Manager',
-    AlertsCenter: '🔔 Alerts Center',
-    PestLibrary: '🐛 Pest Library',
-    SustainabilityScore: '🌿 Sustainability Score',
-    ExpertDirectory: '👨‍🌾 Expert Directory',
-    SuccessStories: '🏆 Success Stories',
-    FarmNotifications: '🔔 Farm Notifications',
-    VendorContacts: '📞 Vendor Contacts',
+  const deviceId = getDeviceId();
+  const [blocks, setBlocks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ title: '', due_date: '' });
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${API_URL}/api/ledger/chain/farm_notification/${deviceId}`);
+      setBlocks(res.data.blocks || []);
+    } catch {
+      setBlocks([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [deviceId]);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount, same pattern as FarmLedger/SoilPassport
+  useEffect(() => { load(); }, [load]);
+
+  const submit = async () => {
+    if (!form.title || !form.due_date) return;
+    setSaving(true);
+    try {
+      await axios.post(`${API_URL}/api/ledger/log`, {
+        entity_type: 'farm_notification',
+        entity_id: deviceId,
+        event_type: 'reminder_created',
+        payload: { ...form, done: false },
+        actor: deviceId,
+      });
+      setForm({ title: '', due_date: '' });
+      setShowForm(false);
+      await load();
+    } finally {
+      setSaving(false);
+    }
   };
-  const descriptions = {
-    NearMe: 'Find agricultural services and resources near you',
-    Crops: 'Manage your crop inventory and planning',
-    Dashboard: 'Overview of your farm analytics',
-    Fertilizer: 'Calculate fertilizer dosage for your crops',
-    SoilPassport: 'Track soil health over time',
-    CropPlanner: 'Plan your crop cycles',
-    Livestock: 'Track animal health and care',
-    MarketPrices: 'Real-time crop prices',
-    FarmLedger: 'Track farm expenses and revenue',
-    CropPassport: 'Blockchain-verified crop records',
-    Schemes: 'Find eligible government schemes',
-    Community: 'Connect with other farmers',
-    Weather: 'Weather forecasts and alerts',
-    SensorLab: 'IoT sensor integration for smart farming',
-    IrrigationPlanner: 'Plan and track irrigation',
-    HarvestRecords: 'Track harvest yields over time',
-    ProfileSettings: 'Manage your personal information',
-    VoiceNotes: 'Record voice memos for your farm',
-    LoanEligibility: 'Check loan eligibility',
-    InputMarketplace: 'Find verified local shops for inputs',
-    TrainingCenter: 'Learn modern farming techniques',
-    DocumentWallet: 'Store important documents securely',
-    InsuranceHub: 'Manage crop insurance',
-    InventoryTracker: 'Track farm inventory',
-    TaskManager: 'Manage farm tasks',
-    AlertsCenter: 'View all alerts in one place',
-    PestLibrary: 'Identify pests and diseases',
-    SustainabilityScore: 'Track your farm sustainability',
-    ExpertDirectory: 'Find agricultural experts',
-    SuccessStories: 'Learn from fellow farmers',
-    FarmNotifications: 'Set up farm reminders',
-    VendorContacts: 'Manage vendor contacts',
+
+  const markDone = async (title, due_date) => {
+    await axios.post(`${API_URL}/api/ledger/log`, {
+      entity_type: 'farm_notification',
+      entity_id: deviceId,
+      event_type: 'reminder_completed',
+      payload: { title, due_date, done: true },
+      actor: deviceId,
+    });
+    await load();
   };
-  const pageName = 'FarmNotifications';
-  return <PlaceholderPage title={titles[pageName] || pageName} icon="" description={descriptions[pageName] || 'Coming soon'} />;
+
+  const latestByReminder = {};
+  [...blocks].reverse().forEach((b) => {
+    const key = `${b.payload?.title}__${b.payload?.due_date}`;
+    if (key && !latestByReminder[key]) latestByReminder[key] = b;
+  });
+  const reminders = Object.values(latestByReminder).sort((a, b) => (a.payload.due_date || '').localeCompare(b.payload.due_date || ''));
+
+  return (
+    <div>
+      <PageHeader title="Farm Notifications" icon={BellRing} />
+      <p className="text-xs text-gray-500 mb-3">Set reminders for spraying, harvest, vaccination — anything with a date.</p>
+
+      <div className="flex justify-end mb-3">
+        <Button size="sm" onClick={() => setShowForm((s) => !s)}>
+          <Plus className="h-4 w-4 mr-1" /> New reminder
+        </Button>
+      </div>
+
+      {showForm && (
+        <Card className="mb-4">
+          <CardContent className="pt-4 space-y-3">
+            <div>
+              <Label>Reminder</Label>
+              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Spray fungicide on plot 2" />
+            </div>
+            <div>
+              <Label>Due date</Label>
+              <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
+            </div>
+            <Button className="w-full" onClick={submit} disabled={saving || !form.title || !form.due_date}>
+              {saving ? 'Saving…' : 'Save reminder'}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {loading ? (
+        <p className="text-sm text-gray-400 text-center py-8">Loading reminders…</p>
+      ) : reminders.length === 0 ? (
+        <Card><CardContent className="pt-6 text-center text-sm text-gray-400">No reminders set yet.</CardContent></Card>
+      ) : (
+        <div className="space-y-2">
+          {reminders.map((b) => (
+            <Card key={`${b.payload.title}-${b.payload.due_date}`} className={b.payload.done ? 'opacity-50' : ''}>
+              <CardContent className="pt-3 pb-3 flex items-center justify-between">
+                <button onClick={() => !b.payload.done && markDone(b.payload.title, b.payload.due_date)} className="flex items-center gap-2 text-left flex-1">
+                  {b.payload.done ? <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" /> : <Circle className="h-5 w-5 text-gray-300 shrink-0" />}
+                  <div>
+                    <p className={`text-sm font-medium ${b.payload.done ? 'line-through' : ''}`}>{b.payload.title}</p>
+                    <p className="text-[11px] text-gray-400">{new Date(b.payload.due_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                  </div>
+                </button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }

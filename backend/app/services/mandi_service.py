@@ -1,5 +1,6 @@
 import httpx
 from app.core.config import settings
+from app.services.price_history_service import record_snapshot
 
 DATA_GOV_RESOURCE_ID = "9ef84268-d588-465a-a308-a864a43d0070"
 DATA_GOV_BASE = f"https://api.data.gov.in/resource/{DATA_GOV_RESOURCE_ID}"
@@ -37,6 +38,20 @@ async def get_mandi_prices(state: str = None, commodity: str = None, limit: int 
 
         if not records:
             raise ValueError("empty records from live API")
+
+        # Only real, live records feed price-change alerts — never the
+        # static sample fallback, which would produce fake "changes".
+        normalized = []
+        for r in records:
+            try:
+                normalized.append({
+                    "market": r.get("market"),
+                    "commodity": r.get("commodity"),
+                    "modal_price": float(r.get("modal_price")) if r.get("modal_price") not in (None, "") else None,
+                })
+            except (TypeError, ValueError):
+                continue
+        record_snapshot(normalized)
 
         return {"records": records, "source": "data.gov.in", "note": note}
 
