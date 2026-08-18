@@ -53,3 +53,4 @@ audit_*.sh
 fix-agrisaathi-*.sh
 frontend/fix-agrisaathi*.sh
 backend/app/data/storage/*.json
+backend/app/data/storage/*.lock
