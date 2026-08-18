@@ -1,0 +1,410 @@
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:36:    secondary_features: ["Crops", "Marketplace"],
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:105:    primary_feature: "Near Me",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:106:    secondary_features: ["Location Context", "Profile/Location"],
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:115:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:125:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:196:    secondary_features: ["Crops", "Harvest"],
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:223:    name: "Year-wise Details of Fund Allocated and Utilized under Livestock Health & Disease Control Programme (LHDCP)",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:225:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:235:    primary_feature: "Weather",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:245:    primary_feature: "Weather",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:255:    primary_feature: "Crops",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:265:    primary_feature: "Crops",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:285:    primary_feature: "Animal Encyclopedia",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:286:    secondary_features: ["Livestock"],
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:306:    secondary_features: ["Near Me"],
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:323:    name: "All India level Index Numbers of Yield of Principal Crops from 2007-08 to 2015-16",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:325:    primary_feature: "Crops",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:343:    name: "Animals Insured under Livestock Insurance Scheme of GoI in India from 2006-07 onwards",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:345:    primary_feature: "Animal Encyclopedia",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:346:    secondary_features: ["Insurance", "Livestock"],
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:353:    name: "District-wise Details of Livestock Population in Himachal Pradesh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:355:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:363:    name: "District-wise Details of Livestock Population in Sikkim - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:365:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:373:    name: "District-wise Details of Livestock Population in Haryana - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:375:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:383:    name: "District-wise Details of Livestock Population in Rajasthan - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:385:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:393:    name: "District-wise Details of Livestock Population in Gujarat - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:395:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:403:    name: "District-wise Details of Livestock Population in Punjab - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:405:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:413:    name: "District-wise Details of Livestock Population in Goa - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:415:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:423:    name: "District-wise Details of Livestock Population in Puducherry - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:425:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:433:    name: "District-wise Details of Livestock Population in Daman and Diu - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:435:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:443:    name: "District-wise Details of Livestock Population in Odisha - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:445:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:453:    name: "District-wise Details of Livestock Population in Dadra And Nagar Haveli - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:455:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:463:    name: "District-wise Details of Livestock Population in Nagaland - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:465:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:473:    name: "District-wise Details of Livestock Population in Chhattisgarh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:475:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:483:    name: "District-wise Details of Livestock Population in Mizoram - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:485:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:493:    name: "District-wise Details of Livestock Population in Meghalaya - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:495:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:503:    name: "District-wise Details of Livestock Population in Chandigarh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:505:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:513:    name: "District-wise Details of Livestock Population in Manipur - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:515:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:523:    name: "District-wise Details of Livestock Population in Bihar - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:525:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:533:    name: "District-wise Details of Livestock Population in Maharashtra - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:535:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:543:    name: "District-wise Details of Livestock Population in Assam - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:545:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:553:    name: "District-wise Details of Livestock Population in Madhya Pradesh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:555:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:563:    name: "District-wise Details of Livestock Population in West Bengal - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:565:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:573:    name: "District-wise Details of Livestock Population in Arunachal Pradesh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:575:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:583:    name: "District-wise Details of Livestock Population in Lakshadweep - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:585:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:593:    name: "District-wise Details of Livestock Population in Uttarakhand - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:595:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:603:    name: "District-wise Details of Livestock Population in Andhra Pradesh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:605:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:613:    name: "District-wise Details of Livestock Population in Kerala - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:615:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:623:    name: "District-wise Details of Livestock Population in Uttar Pradesh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:625:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:633:    name: "District-wise Details of Livestock Population in Andaman Nicobar - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:635:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:643:    name: "District-wise Details of Livestock Population in Karnataka - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:645:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:653:    name: "District-wise Details of Livestock Population in Tripura - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:655:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:663:    name: "District-wise Details of Livestock Population in Jharkhand - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:665:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:673:    name: "District-wise Details of Livestock Population in Telangana - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:675:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:683:    name: "District-wise Details of Livestock Population in Jammu And Kashmir - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:685:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:693:    name: "District-wise Details of Livestock Population in Tamil Nadu - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:695:    primary_feature: "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:715:    primary_feature: "Weather",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:716:    secondary_features: ["Alerts"],
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/config/data-gov-72-registry.js:726:    secondary_features: ["Crops"],
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/components/Layout.jsx:11:    { path: '/diagnose', icon: Camera, label: 'Diagnose' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/components/Layout.jsx:12:    { path: '/near-me', icon: MapPin, label: 'Near Me' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/components/Layout.jsx:13:    { path: '/crops', icon: Sprout, label: 'Crops' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/components/Layout.jsx:15:    { path: '/dashboard', icon: User, label: 'Dashboard' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/components/Layout.jsx:41:            <button className="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-600">Livestock</button>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/components/Layout.jsx:42:            <button className="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-600">Weather</button>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/components/LocationFields.jsx:7://   <LocationFields value={profile} onChange={(v) => setProfile({ ...profile, ...v })} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/components/DashboardCalendar.jsx:8:export default function DashboardCalendar({ harvestEvents = [], milestoneEvents = [] }) {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:5:import Diagnose from './pages/Diagnose.jsx';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:7:import Crops from './pages/Crops.jsx';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:8:import Dashboard from './pages/Dashboard.jsx';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:12:import LivestockCare from './pages/LivestockCare.jsx';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:21:import ProfileSettings from './pages/ProfileSettings.jsx';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:25:import WeatherAlerts from './pages/WeatherAlerts.jsx';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:41:import AlertsCenter from './pages/AlertsCenter.jsx';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:49:import WeatherAnalytics from './pages/WeatherAnalytics.jsx';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:50:import FarmNotifications from './pages/FarmNotifications.jsx';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:61:import Weather from './pages/Weather.jsx';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:71:          <Route path="/diagnose" element={<Diagnose />} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:73:          <Route path="/crops" element={<Crops />} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:74:          <Route path="/dashboard" element={<Dashboard />} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:78:          <Route path="/livestock-care" element={<LivestockCare />} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:89:          <Route path="/profile-settings" element={<ProfileSettings />} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:93:          <Route path="/weather-alerts" element={<WeatherAlerts />} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:112:          <Route path="/alerts-center" element={<AlertsCenter />} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:120:          <Route path="/weather-analytics" element={<WeatherAnalytics />} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:121:          <Route path="/farm-notifications" element={<FarmNotifications />} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/App.jsx:128:          <Route path="/weather" element={<Weather />} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/i18n.jsx:14:  diagnose: { en: 'Diagnose', hi: 'निदान', te: 'రోగ నిర్ధారణ' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/i18n.jsx:15:  dashboard: { en: 'Dashboard', hi: 'डैशबोर्ड', te: 'డాష్బోర్డ్' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/i18n.jsx:16:  nearMe: { en: 'Near Me', hi: 'आस-पास', te: 'నా దగ్గర' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/i18n.jsx:17:  crops: { en: 'Crops', hi: 'फसलें', te: 'పంటలు' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/i18n.jsx:18:  livestock: { en: 'Livestock', hi: 'पशुधन', te: 'పశువులు' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/i18n.jsx:22:  weather: { en: 'Weather', hi: 'मौसम', te: 'వాతావరణం' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/i18n.jsx:26:  profile: { en: 'Profile', hi: 'प्रोफ़ाइल', te: 'ప్రొఫైల్' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/pageRouter.js:5:  { path: '/diagnose', label: 'Diagnose',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/pageRouter.js:22:  { path: '/livestock-care', label: 'Livestock Care',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/pageRouter.js:25:  { path: '/animal-encyclopedia', label: 'Animal Encyclopedia',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/pageRouter.js:36:  { path: '/near-me', label: 'Near Me',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/pageRouter.js:57:  { path: '/weather-analytics', label: 'Weather Analytics',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/pageRouter.js:62:  { path: '/weather-alerts', label: 'Weather Alerts',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/pageRouter.js:65:  { path: '/weather', label: 'Weather',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/pageRouter.js:74:  { path: '/profile-settings', label: 'Profile & Settings',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/pageRouter.js:77:  { path: '/dashboard', label: 'Dashboard',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/pageReadable.js:1:// Lets any detail page (Crop Encyclopedia, Animal Encyclopedia, etc.)
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/dataGov.js:50:  'Near Me': true,
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/dataGov.js:51:  'Livestock': true,
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/dataGov.js:54:  'Weather': true,
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/lib/dataGov.js:55:  'Crops': true,
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/base44Client.js:74:// "Cannot read properties of undefined (reading 'me')" on Profile,
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/base44Client.js:75:// Government Schemes, Community, and Animal Encyclopedia.
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/base44Client.js:81:function defaultProfile() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/base44Client.js:98:function readProfile() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/base44Client.js:101:    return raw ? JSON.parse(raw) : defaultProfile();
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/base44Client.js:103:    return defaultProfile();
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/base44Client.js:107:function writeProfile(profile) {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/base44Client.js:119:    return readProfile();
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/base44Client.js:123:    const current = readProfile();
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/base44Client.js:125:    return writeProfile(updated);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/base44Client.js:129:    const p = readProfile();
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/api/endpoints.js:4:  soilProfiles: '/api/soil-profiles',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:28:      "Crops",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:103:    "primary_feature": "Near Me",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:106:      "Profile/Location"
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:115:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:124:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:193:      "Crops",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:219:    "resource_name": "Year-wise Details of Fund Allocated and Utilized under Livestock Health & Disease Control Programme (LHDCP)",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:221:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:232:    "primary_feature": "Weather",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:243:    "primary_feature": "Weather",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:252:    "primary_feature": "Crops",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:264:    "primary_feature": "Crops",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:284:    "primary_feature": "Animal Encyclopedia",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:286:      "Livestock"
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:306:      "Near Me"
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:324:    "resource_name": "All India level Index Numbers of Yield of Principal Crops from 2007-08 to 2015-16",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:326:    "primary_feature": "Crops",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:346:    "resource_name": "Animals Insured under Livestock Insurance Scheme of GoI in India from 2006-07 onwards",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:348:    "primary_feature": "Animal Encyclopedia",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:351:      "Livestock"
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:358:    "resource_name": "District-wise Details of Livestock Population in Himachal Pradesh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:360:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:367:    "resource_name": "District-wise Details of Livestock Population in Sikkim - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:369:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:376:    "resource_name": "District-wise Details of Livestock Population in Haryana - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:378:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:385:    "resource_name": "District-wise Details of Livestock Population in Rajasthan - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:387:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:394:    "resource_name": "District-wise Details of Livestock Population in Gujarat - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:396:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:403:    "resource_name": "District-wise Details of Livestock Population in Punjab - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:405:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:412:    "resource_name": "District-wise Details of Livestock Population in Goa - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:414:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:421:    "resource_name": "District-wise Details of Livestock Population in Puducherry - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:423:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:430:    "resource_name": "District-wise Details of Livestock Population in Daman and Diu - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:432:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:439:    "resource_name": "District-wise Details of Livestock Population in Odisha - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:441:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:448:    "resource_name": "District-wise Details of Livestock Population in Dadra And Nagar Haveli - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:450:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:457:    "resource_name": "District-wise Details of Livestock Population in Nagaland - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:459:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:466:    "resource_name": "District-wise Details of Livestock Population in Chhattisgarh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:468:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:475:    "resource_name": "District-wise Details of Livestock Population in Mizoram - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:477:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:484:    "resource_name": "District-wise Details of Livestock Population in Meghalaya - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:486:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:493:    "resource_name": "District-wise Details of Livestock Population in Chandigarh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:495:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:502:    "resource_name": "District-wise Details of Livestock Population in Manipur - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:504:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:511:    "resource_name": "District-wise Details of Livestock Population in Bihar - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:513:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:520:    "resource_name": "District-wise Details of Livestock Population in Maharashtra - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:522:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:529:    "resource_name": "District-wise Details of Livestock Population in Assam - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:531:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:538:    "resource_name": "District-wise Details of Livestock Population in Madhya Pradesh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:540:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:547:    "resource_name": "District-wise Details of Livestock Population in West Bengal - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:549:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:556:    "resource_name": "District-wise Details of Livestock Population in Arunachal Pradesh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:558:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:565:    "resource_name": "District-wise Details of Livestock Population in Lakshadweep - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:567:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:574:    "resource_name": "District-wise Details of Livestock Population in Uttarakhand - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:576:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:583:    "resource_name": "District-wise Details of Livestock Population in Andhra Pradesh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:585:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:592:    "resource_name": "District-wise Details of Livestock Population in Kerala - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:594:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:601:    "resource_name": "District-wise Details of Livestock Population in Uttar Pradesh - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:603:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:610:    "resource_name": "District-wise Details of Livestock Population in Andaman Nicobar - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:612:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:619:    "resource_name": "District-wise Details of Livestock Population in Karnataka - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:621:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:628:    "resource_name": "District-wise Details of Livestock Population in Tripura - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:630:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:637:    "resource_name": "District-wise Details of Livestock Population in Jharkhand - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:639:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:646:    "resource_name": "District-wise Details of Livestock Population in Telangana - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:648:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:655:    "resource_name": "District-wise Details of Livestock Population in Jammu And Kashmir - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:657:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:664:    "resource_name": "District-wise Details of Livestock Population in Tamil Nadu - 20th Livestock Census 2019",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:666:    "primary_feature": "Livestock",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:687:    "primary_feature": "Weather",
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:689:      "Alerts"
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/data/dataGovResources.js:700:      "Crops"
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/FarmLedger.jsx:13:  income: ['Crop Sale', 'Livestock Sale', 'Government Subsidy', 'Other Income'],
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ProfileSettings.jsx:13:export default function ProfileSettings() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ProfileSettings.jsx:16:  const [profile, setProfile] = useState({ full_name: '', phone: '', state: '', district: '', mandal: '', village: '', geo_lat: null, geo_lng: null, preferred_language: 'en' });
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ProfileSettings.jsx:26:      setProfile({
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ProfileSettings.jsx:41:  const saveProfile = async () => {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ProfileSettings.jsx:76:        <div><Label className="mb-1 block">{t('fullName')}</Label><Input value={profile.full_name} onChange={(e) => setProfile({ ...profile, full_name: e.target.value })} /></div>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ProfileSettings.jsx:77:        <div><Label className="mb-1 block">{t('phone')}</Label><Input value={profile.phone} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} placeholder="10-digit mobile" /></div>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ProfileSettings.jsx:83:        <LocationFields value={profile} onChange={(v) => setProfile({ ...profile, ...v })} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ProfileSettings.jsx:89:          <Select value={profile.preferred_language} onValueChange={(v) => setProfile({ ...profile, preferred_language: v })}>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ProfileSettings.jsx:96:      <Button onClick={saveProfile} disabled={saving} className="w-full mb-4 bg-green-600 hover:bg-green-700">
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:10:export default function AlertsCenter() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:14:  const [priceAlerts, setPriceAlerts] = useState([]);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:51:      setPriceAlerts(pRes.data.alerts || []);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:53:      setPriceAlerts([]);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:62:  const totalAlerts = lowStockItems.length + forecastDays.length + priceAlerts.length;
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:66:      <PageHeader title="Alerts Center" icon={Bell} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:68:        {totalAlerts > 0
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:69:          ? `${totalAlerts} alert${totalAlerts > 1 ? 's' : ''} need your attention.`
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:96:      {/* Weather risk — not yet available; backend only fetches current
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:100:          <CloudRain className="h-4 w-4 text-blue-500" /> Weather Risk
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:128:        ) : priceAlerts.length === 0 ? (
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:130:            No price swings of 5% or more recorded yet. Alerts build up as prices are checked over time — visit Market Prices a few times to start tracking changes.
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/AlertsCenter.jsx:134:            {priceAlerts.map((p) => (
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Diagnose.jsx:28:export default function Diagnose() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Diagnose.jsx:197:        <h1 className="text-xl font-bold text-gray-800">Diagnose</h1>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Diagnose.jsx:287:              <PawPrint className="h-4 w-4" /> Animal / Livestock
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Diagnose.jsx:466:            Diagnose another
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAnalytics.jsx:34:export default function WeatherAnalytics() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAnalytics.jsx:47:  const loadWeather = () => {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAnalytics.jsx:80:              'Weather analytics unavailable. Check the backend weather provider.'
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAnalytics.jsx:114:    loadWeather();
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAnalytics.jsx:126:        title="Weather Analytics"
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAnalytics.jsx:134:          onClick={loadWeather}
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ExpertDirectory.jsx:7:  { icon: Stethoscope, title: 'Veterinarian', description: 'Livestock, poultry & fish health', helpline: '1962' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ExpertDirectory.jsx:8:  { icon: GraduationCap, title: 'KVK Expert', description: 'Krishi Vigyan Kendra farm scientist — see Near Me for your nearest KVK contact', helpline: null },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/ExpertDirectory.jsx:17:        Connect with the right expert for your farm issue. For a KVK scientist near you specifically, use Near Me — it lists actual KVK contacts from the ICAR directory.
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:3:export default function Livestock() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:5:    NearMe: '📍 Near Me',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:6:    Crops: '🌾 My Crops',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:7:    Dashboard: '📊 Dashboard',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:11:    Livestock: '🐄 Livestock Care',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:17:    Weather: '🌤️ Weather',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:21:    ProfileSettings: '👤 Profile Settings',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:30:    AlertsCenter: '🔔 Alerts Center',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:35:    FarmNotifications: '🔔 Farm Notifications',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:40:    Crops: 'Manage your crop inventory and planning',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:41:    Dashboard: 'Overview of your farm analytics',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:45:    Livestock: 'Track animal health and care',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:51:    Weather: 'Weather forecasts and alerts',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:55:    ProfileSettings: 'Manage your personal information',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:64:    AlertsCenter: 'View all alerts in one place',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:69:    FarmNotifications: 'Set up farm reminders',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Livestock.jsx:72:  const pageName = 'Livestock';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/LivestockCare.jsx:19:export default function LivestockCare() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/LivestockCare.jsx:29:      appClient.entities.LivestockCareLog.list('-scheduled_date').catch(() => []),
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/LivestockCare.jsx:39:    await appClient.entities.LivestockCareLog.create({
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/LivestockCare.jsx:60:    await appClient.entities.LivestockCareLog.update(log.id, { status: 'done', completed_date: new Date().toISOString().slice(0, 10) });
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Treatments.jsx:15:  const [crops, setCrops] = useState([]);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Treatments.jsx:21:  useEffect(() => { appClient.entities.Crop.list('name_en', 200).then(setCrops).catch(() => {}); }, []);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Dashboard.jsx:17:import DashboardCalendar from '../components/DashboardCalendar';
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Dashboard.jsx:45:export default function Dashboard() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Dashboard.jsx:49:  const [alerts, setAlerts] = useState([]);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Dashboard.jsx:50:  const [livestock, setLivestock] = useState([]);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Dashboard.jsx:61:      appClient.entities.LivestockCareLog.filter({ status: 'pending' }, 'scheduled_date', 100).catch(() => []),
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Dashboard.jsx:67:    setAlerts(dx);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Dashboard.jsx:68:    setLivestock(ls);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Dashboard.jsx:122:          <div className="text-[11px] text-gray-500">{t('urgentAlerts')}</div>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Dashboard.jsx:160:        <DashboardCalendar harvestEvents={harvestEvents} milestoneEvents={milestoneEvents} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Dashboard.jsx:164:        <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-1.5"><AlertTriangle className="h-4 w-4 text-red-500" />{t('urgentAlerts')}</h3>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Dashboard.jsx:167:        <p className="text-sm text-gray-400 mb-4">{t('noAlerts')}</p>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilize.jsx:16:  const [crops, setCrops] = useState([]);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilize.jsx:17:  const [soilProfiles, setSoilProfiles] = useState([]);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilize.jsx:23:    axios.get(`${API_URL}/api/crops`).then((res) => setCrops(res.data)).catch(() => setCrops([]));
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilize.jsx:24:    axios.get(`${API_URL}/api/soil-profiles`).then((res) => setSoilProfiles(res.data)).catch(() => setSoilProfiles([]));
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilize.jsx:27:  const stateDefault = soilProfiles.find((s) => s.state === form.state);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilize.jsx:94:            <SelectContent className="max-h-72">{soilProfiles.map((s) => <SelectItem key={s.state} value={s.state}>{s.state}</SelectItem>)}</SelectContent>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/CropPlanner.jsx:52:  const [crops, setCrops] = useState([]);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/CropPlanner.jsx:53:  const [profiles, setProfiles] = useState([]);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/CropPlanner.jsx:65:    base44.entities.Crop.list('name_en', 300).then(setCrops).catch(() => []);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/CropPlanner.jsx:66:    base44.entities.StateSoilProfile.list().then(setProfiles).catch(() => []);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:5:    NearMe: '📍 Near Me',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:6:    Crops: '🌾 My Crops',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:7:    Dashboard: '📊 Dashboard',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:11:    Livestock: '🐄 Livestock Care',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:17:    Weather: '🌤️ Weather',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:21:    ProfileSettings: '👤 Profile Settings',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:30:    AlertsCenter: '🔔 Alerts Center',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:35:    FarmNotifications: '🔔 Farm Notifications',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:40:    Crops: 'Manage your crop inventory and planning',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:41:    Dashboard: 'Overview of your farm analytics',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:45:    Livestock: 'Track animal health and care',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:51:    Weather: 'Weather forecasts and alerts',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:55:    ProfileSettings: 'Manage your personal information',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:64:    AlertsCenter: 'View all alerts in one place',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Schemes.jsx:69:    FarmNotifications: 'Set up farm reminders',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:5:    NearMe: '📍 Near Me',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:6:    Crops: '🌾 My Crops',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:7:    Dashboard: '📊 Dashboard',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:11:    Livestock: '🐄 Livestock Care',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:17:    Weather: '🌤️ Weather',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:21:    ProfileSettings: '👤 Profile Settings',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:30:    AlertsCenter: '🔔 Alerts Center',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:35:    FarmNotifications: '🔔 Farm Notifications',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:40:    Crops: 'Manage your crop inventory and planning',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:41:    Dashboard: 'Overview of your farm analytics',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:45:    Livestock: 'Track animal health and care',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:51:    Weather: 'Weather forecasts and alerts',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:55:    ProfileSettings: 'Manage your personal information',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:64:    AlertsCenter: 'View all alerts in one place',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Fertilizer.jsx:69:    FarmNotifications: 'Set up farm reminders',
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/LoanEligibility.jsx:23:  const farmProfile = farms.length
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/LoanEligibility.jsx:33:Farmer profile: ${farmProfile}
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Crops.jsx:21:export default function Crops() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/FarmNotifications.jsx:13:export default function FarmNotifications() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/FarmNotifications.jsx:75:      <PageHeader title="Farm Notifications" icon={BellRing} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Weather.jsx:9:export default function Weather() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Weather.jsx:10:  const [weather, setWeather] = useState(null);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Weather.jsx:14:  function fetchWeather(lat, lon) {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Weather.jsx:18:      .then((res) => setWeather(res.data))
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Weather.jsx:25:      fetchWeather(17.385, 78.4867);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Weather.jsx:29:      (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Weather.jsx:30:      () => fetchWeather(17.385, 78.4867)
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/PestLibrary.jsx:40:        <button onClick={() => setTab('livestock')} className={`px-3 py-1.5 rounded-full text-xs font-medium border ${tab === 'livestock' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-600 border-gray-200'}`}>Livestock vaccines</button>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:9:  { keys: ['disease', 'pest', 'yellow', 'leaf', 'rot', 'wilt', 'spot'], to: '/diagnose', label: 'Diagnose crop issue' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:13:  { keys: ['cow', 'goat', 'poultry', 'fish', 'bee', 'animal'], to: '/livestock-care', label: 'Livestock help' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:21:  const [weather, setWeather] = useState(null);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:26:      .then(res => setWeather(res.data))
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:46:    { to: '/diagnose', icon: Camera, label: 'Diagnose', color: 'bg-amber-50 text-amber-700' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:50:    { to: '/livestock-care', icon: Stethoscope, label: 'Livestock', color: 'bg-rose-50 text-rose-700' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:51:    { to: '/animal-encyclopedia', icon: PawPrint, label: 'Animal Encyclopedia', color: 'bg-fuchsia-50 text-fuchsia-700' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:53:    { to: '/near-me', icon: MapPin, label: 'Near Me', color: 'bg-indigo-50 text-indigo-700' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:58:    { to: '/weather', icon: CloudRain, label: 'Weather', color: 'bg-sky-50 text-sky-700' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:62:    { to: '/profile-settings', icon: User, label: 'Profile', color: 'bg-slate-50 text-slate-700' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:71:    { to: '/alerts-center', icon: Bell, label: 'Alerts', color: 'bg-amber-50 text-amber-700' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:76:    { to: '/farm-notifications', icon: BellRing, label: 'Notifications', color: 'bg-cyan-50 text-cyan-700' },
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:127:      {/* Weather Card */}
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:143:          <div className="text-center text-blue-100 py-4">Weather data unavailable</div>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/Home.jsx:148:        <h3 className="text-sm font-semibold text-gray-500 mb-3">All Tools</h3>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/CommunityForum.jsx:13:const CATEGORIES = ['Crops', 'Livestock', 'Soil', 'Weather', 'Market', 'Schemes', 'Equipment', 'Other'];
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/CommunityForum.jsx:20:  const [form, setForm] = useState({ title: '', body: '', category: 'Crops' });
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/CommunityForum.jsx:43:    setForm({ title: '', body: '', category: 'Crops' });
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAlerts.jsx:33:export default function WeatherAlerts() {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAlerts.jsx:40:  const fetchWeather = useCallback(() => {
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAlerts.jsx:54:  const plantedCrops = crops.filter((c) => c.status === 'growing' || c.status === 'sown').map((c) => c.crop_name).filter(Boolean);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAlerts.jsx:69:  const cropImpact = extremes.length > 0 && plantedCrops.length > 0
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAlerts.jsx:70:    ? `${t('cropImpactPrefix')} ${plantedCrops.join(', ')}. ${t('cropImpactAdvice')}`
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAlerts.jsx:75:      <PageHeader titleKey="weatherAlerts" icon={CloudRain} />
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAlerts.jsx:76:      <p className="text-xs text-gray-500 mb-3">{t('weatherAlertsIntro')}</p>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAlerts.jsx:78:      <Button onClick={fetchWeather} variant="outline" size="sm" className="mb-3"><Navigation className="h-3 w-3 mr-1" />{t('refresh')}</Button>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAlerts.jsx:80:      {plantedCrops.length > 0 && (
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAlerts.jsx:83:          <div className="flex flex-wrap gap-1.5">{plantedCrops.map((c, i) => <Badge key={i} className="bg-green-100 text-green-700">{c}</Badge>)}</div>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/WeatherAlerts.jsx:92:          <h3 className="text-sm font-bold text-red-700 flex items-center gap-1.5"><AlertTriangle className="h-4 w-4" />{t('extremeAlerts')}</h3>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/SoilPassport.jsx:38:  const [soilProfiles, setSoilProfiles] = useState([]);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/SoilPassport.jsx:42:      .then((res) => setSoilProfiles(res.data || []))
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/SoilPassport.jsx:43:      .catch(() => setSoilProfiles([]));
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/SoilPassport.jsx:45:  const refProfile = soilProfiles.find((p) => p.state === refState);
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/SoilPassport.jsx:125:      {soilProfiles.length > 0 && (
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/SoilPassport.jsx:130:            <SelectContent>{soilProfiles.map((p) => <SelectItem key={p.state} value={p.state}>{p.state}</SelectItem>)}</SelectContent>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/SoilPassport.jsx:132:          {refProfile && (
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/SoilPassport.jsx:134:              <p><span className="text-gray-400">Dominant soil type:</span> {refProfile.dominant_soil_type}</p>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/SoilPassport.jsx:135:              <p><span className="text-gray-400">Typical pH range:</span> {refProfile.typical_ph_range}</p>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/SoilPassport.jsx:136:              <p><span className="text-gray-400">Characteristics:</span> {refProfile.characteristics}</p>
+/Users/mamididilipkumar/Downloads/agrisaathi/frontend/src/pages/SoilPassport.jsx:137:              <p><span className="text-gray-400">Suitable crops:</span> {refProfile.suitable_crops}</p>

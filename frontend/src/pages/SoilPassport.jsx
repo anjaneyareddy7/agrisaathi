@@ -17,9 +17,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '.
 import { Image } from '../components/ui/image';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import PageHeader from '../components/PageHeader';
-import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const toHash = async (obj) => {
   const data = new TextEncoder().encode(JSON.stringify(obj));
