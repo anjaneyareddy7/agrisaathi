@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import AgriHelperWidget from './components/AgriHelperWidget.jsx';
@@ -61,6 +60,7 @@ import AnimalEncyclopediaDetail from './pages/AnimalEncyclopediaDetail.jsx';
 import CropEncyclopediaDetail from './pages/CropEncyclopediaDetail.jsx';
 import Weather from './pages/Weather.jsx';
 import Community from './pages/Community.jsx';
+import DataGovLiveData from './pages/DataGovLiveData';
 
 function App() {
   return (
@@ -77,11 +77,13 @@ function App() {
           <Route path="/crop-planner" element={<CropPlanner />} />
           <Route path="/livestock-care" element={<LivestockCare />} />
           <Route path="/market-prices" element={<MarketPrices />} />
+          <Route path="/data-gov" element={<DataGovLiveData />} />
           <Route path="/treatments" element={<Treatments />} />
           <Route path="/sensor-lab" element={<SensorLab />} />
           <Route path="/farm-ledger" element={<FarmLedger />} />
           <Route path="/crop-passport" element={<CropPassport />} />
           <Route path="/schemes" element={<GovernmentSchemes />} />
+          <Route path="/government-schemes" element={<Navigate to="/schemes" replace />} />
           <Route path="/irrigation-planner" element={<IrrigationPlanner />} />
           <Route path="/harvest-records" element={<HarvestRecords />} />
           <Route path="/profile-settings" element={<ProfileSettings />} />
@@ -93,11 +95,14 @@ function App() {
           <Route path="/training-center" element={<TrainingCenter />} />
           <Route path="/document-wallet" element={<DocumentWallet />} />
           <Route path="/insurance-hub" element={<InsuranceHub />} />
+          <Route path="/insurance" element={<Navigate to="/insurance-hub" replace />} />
           <Route path="/inventory-tracker" element={<InventoryTracker />} />
+          <Route path="/inventory" element={<Navigate to="/inventory-tracker" replace />} />
           <Route path="/export-reports" element={<ExportReports />} />
           <Route path="/sensor-hub" element={<SensorHub />} />
           <Route path="/loan-calculator" element={<LoanCalculator />} />
           <Route path="/marketplace" element={<ResourceMarketplace />} />
+          <Route path="/resource-marketplace" element={<Navigate to="/marketplace" replace />} />
           <Route path="/task-manager" element={<TaskManager />} />
           <Route path="/training-academy" element={<TrainingAcademy />} />
           <Route path="/expense-analytics" element={<ExpenseAnalytics />} />
@@ -109,7 +114,7 @@ function App() {
           <Route path="/sustainability-score" element={<SustainabilityScore />} />
           <Route path="/export-data" element={<ExportData />} />
           <Route path="/expert-directory" element={<ExpertDirectory />} />
-          <Route path="/insurance-vault" element={<InsuranceVault />} />
+          <Route path="/insurance-hub-vault" element={<InsuranceVault />} />
           <Route path="/feedback-corner" element={<FeedbackCorner />} />
           <Route path="/success-stories" element={<SuccessStories />} />
           <Route path="/weather-analytics" element={<WeatherAnalytics />} />

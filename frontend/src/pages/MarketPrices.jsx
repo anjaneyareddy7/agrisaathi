@@ -1,144 +1,409 @@
-import React, { useState, useEffect } from 'react';
-import { Wallet, Building2, Navigation, AlertCircle, TrendingUp } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react'
+import {
+  Wallet,
+  Building2,
+  Navigation,
+  AlertCircle,
+  TrendingUp,
+} from 'lucide-react';
+
 import { useLang } from '../lib/i18n';
-import axios from 'axios';
+import { getDataGovResourceRecords } from '../lib/dataGov';
+
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '../components/ui/select';
+
 import PageHeader from '../components/PageHeader';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
-const haversine = (lat1, lon1, lat2, lon2) => {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-};
+const normaliseRecord = (record) => ({
+  state: record?.state ?? record?.State ?? '',
+  district: record?.district ?? record?.District ?? '',
+  market: record?.market ?? record?.Market ?? '',
+  commodity: record?.commodity ?? record?.Commodity ?? '',
+  variety: record?.variety ?? record?.Variety ?? '',
+  grade: record?.grade ?? record?.Grade ?? '',
+  arrival_date: record?.arrival_date ?? record?.Arrival_Date ?? '',
+  min_price: Number(record?.min_price ?? record?.Min_Price ?? 0),
+  max_price: Number(record?.max_price ?? record?.Max_Price ?? 0),
+  modal_price: Number(record?.modal_price ?? record?.Modal_Price ?? 0),
+});
 
 export default function MarketPrices() {
   const { t } = useLang();
-  const [markets, setMarkets] = useState([]);
-  const [liveRecords, setLiveRecords] = useState([]);
-  const [liveSource, setLiveSource] = useState(null);
-  const [liveNote, setLiveNote] = useState(null);
-  const [liveLoading, setLiveLoading] = useState(false);
-  const [origin, setOrigin] = useState(null);
+
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [stateFilter, setStateFilter] = useState('');
+  const [commodityFilter, setCommodityFilter] = useState('');
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/gov-markets`)
-      .then((res) => setMarkets((res.data || []).map((m, idx) => ({
-        id: `market_${m.state}_${idx}`,
-        market_name: m.market_name,
-        state: m.state,
-        district_region: m.district_region,
-        lat_approx: m.lat,
-        lng_approx: m.lng,
-        commodities_traded: m.commodities_traded,
-      }))))
-      .catch(() => setMarkets([]));
+    let cancelled = false;
+
+    const loadPrices = async () => {
+      setLoading(true);
+      setError('');
+
+      try {
+        const data = await getDataGovResourceRecords(
+          'mandi_prices',
+          { limit: 100 }
+        );
+
+        if (!cancelled) {
+          setRecords(data.map(normaliseRecord));
+        }
+      } catch (err) {
+        console.error('Data.gov mandi prices error:', err);
+
+        if (!cancelled) {
+          setRecords([]);
+          setError(
+            err?.message || 'Could not load market prices.'
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadPrices();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  useEffect(() => {
-    if (!stateFilter) { setLiveRecords([]); setLiveSource(null); setLiveNote(null); return; }
-    setLiveLoading(true);
-    axios.get(`${API_URL}/api/mandi-prices`, { params: { state: stateFilter, limit: 30 } })
-      .then((res) => {
-        setLiveRecords(res.data?.records || []);
-        setLiveSource(res.data?.source || null);
-        setLiveNote(res.data?.note || null);
-      })
-      .catch(() => { setLiveRecords([]); setLiveSource(null); setLiveNote('Could not reach the price service.'); })
-      .finally(() => setLiveLoading(false));
-  }, [stateFilter]);
-
   const useLocation = () => {
-    if (!navigator.geolocation) { alert('Geolocation not supported'); return; }
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by this browser.');
+      return;
+    }
+
     navigator.geolocation.getCurrentPosition(
-      (pos) => setOrigin({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => alert('Could not get location.')
+      () => {
+        alert(
+          'Your location was detected. Current Data.gov mandi records do not include coordinates, so exact distance cannot be calculated.'
+        );
+      },
+      () => {
+        alert('Could not get your location.');
+      }
     );
   };
 
-  let list = markets.map((m) => ({ ...m, _dist: origin && m.lat_approx != null ? haversine(origin.lat, origin.lng, m.lat_approx, m.lng_approx) : null }));
-  if (stateFilter) list = list.filter((m) => m.state === stateFilter);
-  list.sort((a, b) => (a._dist == null) - (b._dist == null) || a._dist - b._dist);
-  list = list.slice(0, 15);
+  const states = useMemo(
+    () =>
+      [...new Set(
+        records.map((r) => r.state).filter(Boolean)
+      )].sort(),
+    [records]
+  );
 
-  const states = [...new Set(markets.map((m) => m.state))].sort();
+  const commodities = useMemo(
+    () =>
+      [...new Set(
+        records.map((r) => r.commodity).filter(Boolean)
+      )].sort(),
+    [records]
+  );
+
+  const filteredRecords = useMemo(() => {
+    return records.filter((r) => {
+      const stateOK =
+        !stateFilter || r.state === stateFilter;
+
+      const commodityOK =
+        !commodityFilter ||
+        r.commodity === commodityFilter;
+
+      return stateOK && commodityOK;
+    });
+  }, [records, stateFilter, commodityFilter]);
+
+  const mandis = useMemo(() => {
+    const map = new Map();
+
+    filteredRecords.forEach((r) => {
+      const key = `${r.state}|${r.district}|${r.market}`;
+
+      if (!map.has(key)) {
+        map.set(key, {
+          id: key,
+          market_name: r.market,
+          district: r.district,
+          state: r.state,
+          commodities: new Set(),
+        });
+      }
+
+      if (r.commodity) {
+        map.get(key).commodities.add(r.commodity);
+      }
+    });
+
+    return [...map.values()]
+      .map((m) => ({
+        ...m,
+        commodities: [...m.commodities]
+          .slice(0, 8)
+          .join(', '),
+      }))
+      .slice(0, 15);
+  }, [filteredRecords]);
 
   return (
     <div>
-      <PageHeader titleKey="marketPrices" icon={Wallet} />
+      <PageHeader
+        titleKey="marketPrices"
+        icon={Wallet}
+      />
 
-      <div className="flex gap-2 mb-3">
-        <Button onClick={useLocation} className="flex-1 bg-green-600 hover:bg-green-700"><Navigation className="h-4 w-4 mr-1" />{t('useMyLocation')}</Button>
-        <Select value={stateFilter} onValueChange={setStateFilter}>
-          <SelectTrigger className="w-40"><SelectValue placeholder={t('pickLocation')} /></SelectTrigger>
-          <SelectContent className="max-h-72">{states.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+      <div className="flex flex-col sm:flex-row gap-2 mb-3">
+        <Button
+          onClick={useLocation}
+          className="flex-1 bg-green-600 hover:bg-green-700"
+        >
+          <Navigation className="h-4 w-4 mr-1" />
+          {t('useMyLocation') || 'Use My Location'}
+        </Button>
+
+        <Select
+          value={stateFilter}
+          onValueChange={(value) =>
+            setStateFilter(
+              value === '__all__' ? '' : value
+            )
+          }
+        >
+          <SelectTrigger className="sm:w-48">
+            <SelectValue
+              placeholder={
+                t('pickLocation') || 'Select State'
+              }
+            />
+          </SelectTrigger>
+
+          <SelectContent className="max-h-72">
+            <SelectItem value="__all__">
+              All States
+            </SelectItem>
+
+            {states.map((state) => (
+              <SelectItem
+                key={state}
+                value={state}
+              >
+                {state}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={commodityFilter}
+          onValueChange={(value) =>
+            setCommodityFilter(
+              value === '__all__' ? '' : value
+            )
+          }
+        >
+          <SelectTrigger className="sm:w-52">
+            <SelectValue placeholder="Commodity" />
+          </SelectTrigger>
+
+          <SelectContent className="max-h-72">
+            <SelectItem value="__all__">
+              All Commodities
+            </SelectItem>
+
+            {commodities.map((commodity) => (
+              <SelectItem
+                key={commodity}
+                value={commodity}
+              >
+                {commodity}
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
       </div>
 
-      <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1"><TrendingUp className="h-4 w-4" />{t('livePrices') || 'Live Prices'}</h3>
+      <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
+        <TrendingUp className="h-4 w-4" />
+        {t('livePrices') || 'Live Market Prices'}
+      </h3>
 
-      {!stateFilter && (
-        <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-          <AlertCircle className="h-5 w-5 text-amber-600 shrink-0" />
-          <p className="text-xs text-amber-700">Pick a state above to see today's live commodity prices.</p>
+      {loading && (
+        <p className="text-xs text-gray-400 mb-3">
+          {t('loading') || 'Loading market prices...'}
+        </p>
+      )}
+
+      {!loading && error && (
+        <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+          <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
+          <p className="text-xs text-red-700">
+            {error}
+          </p>
         </div>
       )}
 
-      {stateFilter && liveLoading && <p className="text-xs text-gray-400 mb-3">{t('loading')}</p>}
-
-      {stateFilter && !liveLoading && liveSource === 'sample_fallback' && (
-        <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-          <AlertCircle className="h-5 w-5 text-amber-600 shrink-0" />
-          <p className="text-xs text-amber-700">{liveNote || 'Live prices unavailable right now, showing sample data.'}</p>
+      {!loading && !error && records.length > 0 && (
+        <div className="flex items-start gap-2 bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+          <TrendingUp className="h-5 w-5 text-green-600 shrink-0" />
+          <p className="text-xs text-green-700">
+            Current market prices loaded from
+            Data.gov.in.
+          </p>
         </div>
       )}
 
-      {stateFilter && !liveLoading && liveRecords.length > 0 && (
-        <div className="space-y-2 mb-4">
-          {liveRecords.map((r, idx) => (
-            <Card key={`price_${idx}`}><CardContent className="pt-3">
-              <div className="flex items-center justify-between">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">{r.commodity} <span className="text-gray-400 font-normal">· {r.variety}</span></p>
-                  <p className="text-xs text-gray-400 truncate">{r.market} · {r.district}</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-sm font-semibold text-green-700">₹{r.modal_price}</p>
-                  <p className="text-[10px] text-gray-400">{r.arrival_date}</p>
-                </div>
-              </div>
-            </CardContent></Card>
-          ))}
-        </div>
-      )}
+      {!loading &&
+        !error &&
+        filteredRecords.length > 0 && (
+          <div className="space-y-2 mb-5">
+            {filteredRecords
+              .slice(0, 30)
+              .map((r, index) => (
+                <Card
+                  key={`${r.state}-${r.district}-${r.market}-${r.commodity}-${index}`}
+                >
+                  <CardContent className="pt-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {r.commodity}
 
-      {stateFilter && !liveLoading && liveRecords.length === 0 && (
-        <p className="text-xs text-gray-400 mb-4">No live price records for {stateFilter} right now.</p>
-      )}
+                          {r.variety && (
+                            <span className="text-gray-400 font-normal">
+                              {' · '}
+                              {r.variety}
+                            </span>
+                          )}
+                        </p>
 
-      <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('nearestMandis')}</h3>
+                        <p className="text-xs text-gray-400 truncate">
+                          {r.market}
+                          {r.district &&
+                            ` · ${r.district}`}
+                          {r.state &&
+                            ` · ${r.state}`}
+                        </p>
+
+                        {r.grade && (
+                          <p className="text-[10px] text-gray-400 mt-0.5">
+                            Grade: {r.grade}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="text-right shrink-0">
+                        <p className="text-sm font-semibold text-green-700">
+                          ₹
+                          {r.modal_price.toLocaleString(
+                            'en-IN'
+                          )}
+                        </p>
+
+                        <p className="text-[10px] text-gray-400">
+                          Modal Price
+                        </p>
+
+                        {r.min_price > 0 &&
+                          r.max_price > 0 && (
+                            <p className="text-[10px] text-gray-400">
+                              ₹
+                              {r.min_price.toLocaleString(
+                                'en-IN'
+                              )}
+                              {' – '}
+                              ₹
+                              {r.max_price.toLocaleString(
+                                'en-IN'
+                              )}
+                            </p>
+                          )}
+
+                        {r.arrival_date && (
+                          <p className="text-[10px] text-gray-400">
+                            {r.arrival_date}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+        )}
+
+      {!loading &&
+        !error &&
+        filteredRecords.length === 0 && (
+          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+            <AlertCircle className="h-5 w-5 text-amber-600 shrink-0" />
+            <p className="text-xs text-amber-700">
+              No market price records found for
+              the selected filters.
+            </p>
+          </div>
+        )}
+
+      <h3 className="text-sm font-semibold text-gray-700 mb-2">
+        {t('nearestMandis') || 'Markets / Mandis'}
+      </h3>
+
       <div className="space-y-2">
-        {list.map((m) => (
-          <Card key={m.id}><CardContent className="pt-3">
-            <div className="flex items-start gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-orange-100 text-orange-700 shrink-0"><Building2 className="h-5 w-5" /></span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium truncate">{m.market_name}</p>
-                <p className="text-xs text-gray-400">{m.district_region} · {m.state}</p>
-                <p className="text-xs text-gray-500 mt-0.5"><span className="text-gray-400">{t('commodities')}:</span> {m.commodities_traded}</p>
-                {m._dist != null && <Badge className="mt-1 bg-gray-100 text-gray-600">{m._dist.toFixed(1)} {t('distance')}</Badge>}
+        {mandis.map((m) => (
+          <Card key={m.id}>
+            <CardContent className="pt-3">
+              <div className="flex items-start gap-2">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-orange-100 text-orange-700 shrink-0">
+                  <Building2 className="h-5 w-5" />
+                </span>
+
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate">
+                    {m.market_name ||
+                      'Unknown Market'}
+                  </p>
+
+                  <p className="text-xs text-gray-400">
+                    {m.district &&
+                      `${m.district} · `}
+                    {m.state}
+                  </p>
+
+                  {m.commodities && (
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      <span className="text-gray-400">
+                        {t('commodities') ||
+                          'Commodities'}:
+                      </span>{' '}
+                      {m.commodities}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-          </CardContent></Card>
+            </CardContent>
+          </Card>
         ))}
       </div>
+
+      <Badge className="mt-4 bg-green-100 text-green-700">
+        Data.gov.in
+      </Badge>
     </div>
   );
 }

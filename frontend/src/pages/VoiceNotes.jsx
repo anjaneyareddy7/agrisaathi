@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react'
 import { Mic, Square, Trash2, MapPin, Loader2 } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
@@ -21,8 +21,8 @@ export default function VoiceNotes() {
 
   const load = async () => {
     const [f, n] = await Promise.all([
-      base44.entities.Farm.list().catch(() => []),
-      base44.entities.VoiceNote.list('-created_date', 100).catch(() => []),
+      appClient.entities.Farm.list().catch(() => []),
+      appClient.entities.VoiceNote.list('-created_date', 100).catch(() => []),
     ]);
     setFarms(f); setNotes(n);
   };
@@ -60,7 +60,7 @@ export default function VoiceNotes() {
     setSaving(true);
     try {
       const plot = farms.find((f) => f.plot_name === selectedPlot);
-      await base44.entities.VoiceNote.create({
+      await appClient.entities.VoiceNote.create({
         transcript: transcript.trim(),
         plot_name: selectedPlot || undefined,
         farm_id: plot?.id || undefined,
@@ -71,7 +71,7 @@ export default function VoiceNotes() {
       load();
     } catch { alert(t('saveFailed')); } finally { setSaving(false); }
   };
-  const remove = async (id) => { await base44.entities.VoiceNote.delete(id); load(); };
+  const remove = async (id) => { await appClient.entities.VoiceNote.delete(id); load(); };
 
   return (
     <div>

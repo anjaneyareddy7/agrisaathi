@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { FileDown, FileText, Loader2, Download } from 'lucide-react';
+import { useState, useEffect } from 'react'
+import { FileDown, Loader2, Download } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Label } from '../components/ui/label';
@@ -17,9 +17,9 @@ export default function ExportReports() {
 
   useEffect(() => {
     Promise.all([
-      base44.entities.FarmLedgerEntry.list('-entry_date', 200).catch(() => []),
-      base44.entities.HarvestRecord.list('-harvest_date', 100).catch(() => []),
-      base44.entities.SoilRecord.list('-test_date', 100).catch(() => []),
+      appClient.entities.FarmLedgerEntry.list('-entry_date', 200).catch(() => []),
+      appClient.entities.HarvestRecord.list('-harvest_date', 100).catch(() => []),
+      appClient.entities.SoilRecord.list('-test_date', 100).catch(() => []),
     ]).then(([l, h, s]) => setData({ ledger: l, harvest: h, soil: s }));
   }, []);
 

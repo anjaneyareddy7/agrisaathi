@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react'
 import axios from 'axios';
 import { Gauge, Bluetooth } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
@@ -32,7 +32,7 @@ export default function SensorLab() {
     try {
       const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
       setBleStatus(`Connected: ${device.name || 'Unknown sensor'} (reading not yet wired to a specific sensor protocol — enter values manually for now)`);
-    } catch (err) {
+    } catch {
       setBleStatus('No device selected — enter readings manually below.');
     }
   };
@@ -51,8 +51,7 @@ export default function SensorLab() {
         ec: soilEc ? Number(soilEc) : null,
       });
       setSoilResult(res.data);
-    } catch (err) {
-      setSoilError(err?.response?.data?.detail?.[0]?.msg || 'Failed to analyze soil samples.');
+    } catch (err) {setSoilError(err?.response?.data?.detail?.[0]?.msg || 'Failed to analyze soil samples.');
     }
   };
 
@@ -70,8 +69,7 @@ export default function SensorLab() {
         hardness: hardness ? Number(hardness) : null,
       });
       setWaterResult(res.data);
-    } catch (err) {
-      setWaterError(err?.response?.data?.detail?.[0]?.msg || 'Failed to analyze water samples.');
+    } catch (err) {setWaterError(err?.response?.data?.detail?.[0]?.msg || 'Failed to analyze water samples.');
     }
   };
 

@@ -1,4 +1,3 @@
-import React from 'react';
 
 export default function PlaceholderPage({ title, icon, description }) {
   return (

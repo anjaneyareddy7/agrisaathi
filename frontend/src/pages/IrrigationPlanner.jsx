@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { Droplets, Plus, Check, Trash2, Calendar } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -21,8 +21,8 @@ export default function IrrigationPlanner() {
 
   const load = async () => {
     const [f, s] = await Promise.all([
-      base44.entities.Farm.list().catch(() => []),
-      base44.entities.IrrigationSession.list('-session_date', 100).catch(() => []),
+      appClient.entities.Farm.list().catch(() => []),
+      appClient.entities.IrrigationSession.list('-session_date', 100).catch(() => []),
     ]);
     setFarms(f); setSessions(s);
   };
@@ -30,7 +30,7 @@ export default function IrrigationPlanner() {
 
   const submit = async () => {
     if (!form.plot_name || !form.session_date) return;
-    await base44.entities.IrrigationSession.create({
+    await appClient.entities.IrrigationSession.create({
       ...form,
       duration_minutes: form.duration_minutes ? Number(form.duration_minutes) : undefined,
       water_litres: form.water_litres ? Number(form.water_litres) : undefined,
@@ -41,8 +41,8 @@ export default function IrrigationPlanner() {
     load();
   };
 
-  const markDone = async (id) => { await base44.entities.IrrigationSession.update(id, { status: 'done' }); load(); };
-  const remove = async (id) => { await base44.entities.IrrigationSession.delete(id); load(); };
+  const markDone = async (id) => { await appClient.entities.IrrigationSession.update(id, { status: 'done' }); load(); };
+  const remove = async (id) => { await appClient.entities.IrrigationSession.delete(id); load(); };
 
   const today = new Date().toISOString().slice(0, 10);
   const upcoming = sessions.filter((s) => s.status === 'scheduled' && s.session_date >= today);

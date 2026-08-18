@@ -1,15 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { LayoutGrid, CalendarDays, AlertTriangle, Plus, Leaf, Stethoscope, TrendingUp } from 'lucide-react';
+import {
+  useState,
+  useEffect
+} from 'react'
+import {
+  Link
+} from 'react-router-dom';
+import {
+  LayoutGrid,
+  CalendarDays,
+  AlertTriangle,
+  Plus,
+  Leaf,
+  Stethoscope,
+  TrendingUp
+} from 'lucide-react';
 import DashboardCalendar from '../components/DashboardCalendar';
-import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
-import { Card, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Badge } from '../components/ui/badge';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select';
+import {
+  useLang
+} from '../lib/i18n';
+import appClient from '../api/appClient';
+import {
+  Card,
+  CardContent
+} from '../components/ui/card';
+import {
+  Button
+} from '../components/ui/button';
+import {
+  Badge
+} from '../components/ui/badge';
+import {
+  Input
+} from '../components/ui/input';
+import {
+  Label
+} from '../components/ui/label';
+;
 import PageHeader from '../components/PageHeader';
 import ProfitCalculator from '../components/ProfitCalculator';
 
@@ -29,12 +55,12 @@ export default function Dashboard() {
 
   const load = async () => {
     const [f, c, dx, ls, lg, hv] = await Promise.all([
-      base44.entities.Farm.list().catch(() => []),
-      base44.entities.CropCycle.list().catch(() => []),
-      base44.entities.Diagnosis.filter({ escalate: true }, '-created_date', 10).catch(() => []),
-      base44.entities.LivestockCareLog.filter({ status: 'pending' }, 'scheduled_date', 100).catch(() => []),
-      base44.entities.FarmLedgerEntry.list('-entry_date', 100).catch(() => []),
-      base44.entities.HarvestRecord.list('-harvest_date', 50).catch(() => []),
+      appClient.entities.Farm.list().catch(() => []),
+      appClient.entities.CropCycle.list().catch(() => []),
+      appClient.entities.Diagnosis.filter({ escalate: true }, '-created_date', 10).catch(() => []),
+      appClient.entities.LivestockCareLog.filter({ status: 'pending' }, 'scheduled_date', 100).catch(() => []),
+      appClient.entities.FarmLedgerEntry.list('-entry_date', 100).catch(() => []),
+      appClient.entities.HarvestRecord.list('-harvest_date', 50).catch(() => []),
     ]);
     setFarms(f);
     setCycles(c);
@@ -58,14 +84,14 @@ export default function Dashboard() {
 
   const addPlot = async () => {
     if (!form.plot_name || !form.crop_name) { alert('Plot name and crop are required'); return; }
-    const farm = await base44.entities.Farm.create({
+    const farm = await appClient.entities.Farm.create({
       plot_name: form.plot_name,
       state: form.state,
       area_value: form.area_value ? Number(form.area_value) : undefined,
       current_crop: form.crop_name,
       farm_type: 'crop',
     });
-    await base44.entities.CropCycle.create({
+    await appClient.entities.CropCycle.create({
       farm_id: farm.id,
       plot_name: form.plot_name,
       crop_name: form.crop_name,

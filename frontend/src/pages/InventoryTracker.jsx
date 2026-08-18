@@ -26,7 +26,7 @@ export default function InventoryTracker() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_URL}/api/ledger/chain/inventory/${deviceId}`);
+      const res = await axios.get(`${API_URL}/api/ledger/chain/inventory-tracker/${deviceId}`);
       setBlocks(res.data.blocks || []);
       setValid(res.data.valid);
     } catch {
@@ -36,7 +36,7 @@ export default function InventoryTracker() {
     }
   }, [deviceId]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount, same pattern as FarmLedger/SoilPassport
+   
   useEffect(() => { load(); }, [load]);
 
   const submit = async () => {

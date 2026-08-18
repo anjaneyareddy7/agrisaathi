@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { files } from '../api/appClient';
+import { useState, useEffect } from 'react'
 import { FolderArchive, Plus, Trash2, FileText, Upload, Loader2 } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Label } from '../components/ui/label';
@@ -30,7 +31,7 @@ export default function DocumentWallet() {
   const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({ title: '', doc_type: 'land_deed', file_url: '', issued_date: '', expiry_date: '', notes: '' });
 
-  const load = () => base44.entities.DocumentWallet.list('-created_date').then(setDocs).catch(() => []);
+  const load = () => appClient.entities.DocumentWallet.list('-created_date').then(setDocs).catch(() => []);
   useEffect(() => { load(); }, []);
 
   const upload = async (e) => {
@@ -38,7 +39,7 @@ export default function DocumentWallet() {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await files.upload({ file });
       setForm((f) => ({ ...f, file_url }));
     } catch { alert('Upload failed. Try again.'); }
     finally { setUploading(false); }
@@ -46,7 +47,7 @@ export default function DocumentWallet() {
 
   const save = async () => {
     if (!form.title || !form.doc_type) { alert('Title and type are required'); return; }
-    await base44.entities.DocumentWallet.create({
+    await appClient.entities.DocumentWallet.create({
       title: form.title, doc_type: form.doc_type, file_url: form.file_url || undefined,
       issued_date: form.issued_date || undefined, expiry_date: form.expiry_date || undefined, notes: form.notes || undefined,
     });
@@ -55,7 +56,7 @@ export default function DocumentWallet() {
     load();
   };
 
-  const remove = async (id) => { await base44.entities.DocumentWallet.delete(id); load(); };
+  const remove = async (id) => { await appClient.entities.DocumentWallet.delete(id); load(); };
 
   return (
     <div>

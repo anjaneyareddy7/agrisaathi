@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { Landmark, CheckCircle2, XCircle, HelpCircle, ExternalLink, Loader2, MapPin } from 'lucide-react';
-import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { STATES } from '../lib/indianLocations';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -28,7 +27,6 @@ const ELIGIBILITY_QUESTIONS = {
 };
 
 export default function GovernmentSchemes() {
-  const { t } = useLang();
   const [schemes, setSchemes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,14 +37,9 @@ export default function GovernmentSchemes() {
   const [openScheme, setOpenScheme] = useState(null);
 
   useEffect(() => {
-    base44.auth.me().then((u) => { if (u?.state) setFilterState(u.state); }).catch(() => {});
-  }, []);
-
-  useEffect(() => {
     setLoading(true);
     setError(null);
-    base44
-      .call('/api/schemes', { params: filterState ? { state: filterState } : {} })
+    appClient.call('/api/schemes', { params: filterState ? { state: filterState } : {} })
       .then((res) => setSchemes(Array.isArray(res) ? res : []))
       .catch(() => setError('Could not load schemes. Backend may be unavailable — try again shortly.'))
       .finally(() => setLoading(false));
@@ -60,7 +53,7 @@ export default function GovernmentSchemes() {
     setChecking(schemeId);
     try {
       const payload = answers[schemeId] || {};
-      const res = await base44.call(`/api/schemes/${schemeId}/check-eligibility`, {
+      const res = await appClient.call(`/api/schemes/${schemeId}/check-eligibility`, {
         method: 'POST',
         data: payload,
       });

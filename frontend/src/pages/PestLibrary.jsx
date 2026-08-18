@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { Bug } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';

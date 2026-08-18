@@ -13,6 +13,18 @@ const api = axios.create({
 
 // API methods
 export const apiClient = {
+  dataGovResources: () => api.get('/api/data-gov/resources'),
+
+  dataGovResource: (resourceKey, params = {}) =>
+    api.get('/api/data-gov/resources/data', {
+      params: {
+        resource: resourceKey,
+        ...params,
+      },
+    }),
+
+  dataGovHealth: () => api.get('/api/data-gov/health'),
+
   // Health check
   health: () => api.get('/health'),
   

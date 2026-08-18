@@ -1,45 +1,86 @@
-"""
-Generic data.gov.in resource fetcher. Every feature route calls this with
-a resource key from datagov_resources.DATAGOV_RESOURCES instead of hardcoding
-resource IDs or query params.
-"""
+import asyncio
 import httpx
 from app.core.config import settings
-from app.core.datagov_resources import DATAGOV_RESOURCES
+from app.core.datagov_registry import RESOURCE_BY_KEY as DATAGOV_RESOURCES
 
 BASE_URL = "https://api.data.gov.in/resource"
 
 DEFAULT_HEADERS = {
-    "User-Agent": "AgriSaathi/1.0 (+https://agri-saathi-grow.base44.app)",
+    "User-Agent": "AgriSaathi/1.0",
+    "Accept": "application/json",
 }
 
+RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
 
-async def fetch_resource(resource_key: str, filters: dict | None = None, limit: int = 50, offset: int = 0):
+
+async def fetch_resource(
+    resource_key: str,
+    filters: dict | None = None,
+    limit: int = 50,
+    offset: int = 0,
+):
     if resource_key not in DATAGOV_RESOURCES:
         raise ValueError(f"Unknown data.gov.in resource key: {resource_key}")
 
+    if not settings.data_gov_api_key:
+        raise RuntimeError("DATA_GOV_API_KEY is not configured on the backend")
+
     meta = DATAGOV_RESOURCES[resource_key]
+
     params = {
         "api-key": settings.data_gov_api_key,
         "format": "json",
-        "limit": limit,
-        "offset": offset,
+        "limit": min(max(limit, 1), 100),
+        "offset": max(offset, 0),
     }
+
+    KNOWN_FILTER_FIELDS = {"state.keyword", "district", "market", "commodity", "variety", "grade"}
     if filters:
         for field, value in filters.items():
-            if field in meta["filters"]:
+            if field in KNOWN_FILTER_FIELDS:
                 params[f"filters[{field}]"] = value
 
     url = f"{BASE_URL}/{meta['resource_id']}"
-    async with httpx.AsyncClient(timeout=15, headers=DEFAULT_HEADERS) as client:
-        resp = await client.get(url, params=params)
-        resp.raise_for_status()
-        data = resp.json()
 
-    return {
-        "resource_key": resource_key,
-        "title": meta["title"],
-        "total": data.get("total"),
-        "count": data.get("count"),
-        "records": data.get("records", []),
-    }
+    last_error = None
+
+    async with httpx.AsyncClient(
+        timeout=httpx.Timeout(30.0, connect=10.0),
+        headers=DEFAULT_HEADERS,
+        follow_redirects=True,
+    ) as client:
+        for attempt in range(4):
+            try:
+                response = await client.get(url, params=params)
+
+                if response.status_code in RETRY_STATUS_CODES:
+                    last_error = f"HTTP {response.status_code}"
+                    if attempt < 3:
+                        await asyncio.sleep(2 ** attempt)
+                        continue
+
+                response.raise_for_status()
+
+                data = response.json()
+
+                return {
+                    "resource_key": resource_key,
+                    "resource_id": meta["resource_id"],
+                    "title": meta["resource_name"],
+                    "primary_feature": meta.get("primary_feature"),
+                    "secondary_features": meta.get("secondary_features", []),
+                    "temporal_status": meta.get("temporal_status", "UNKNOWN"),
+                    "total": data.get("total"),
+                    "count": data.get("count"),
+                    "records": data.get("records", []),
+                }
+
+            except (httpx.HTTPError, ValueError) as exc:
+                last_error = str(exc)
+                if attempt < 3:
+                    await asyncio.sleep(2 ** attempt)
+                    continue
+
+    raise RuntimeError(
+        f"data.gov.in request failed for {resource_key}: {last_error}"
+    )

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { ListTodo, Plus, Trash2, CheckCircle2, Circle, AlertCircle } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Label } from '../components/ui/label';
@@ -30,12 +30,12 @@ export default function TaskManager() {
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ title: '', category: 'planting', plot_name: '', due_date: '', priority: 'medium', notes: '' });
 
-  const load = () => base44.entities.FarmTask.list('-due_date').then(setTasks).catch(() => []);
+  const load = () => appClient.entities.FarmTask.list('-due_date').then(setTasks).catch(() => []);
   useEffect(() => { load(); }, []);
 
   const save = async () => {
     if (!form.title) { alert('Title required'); return; }
-    await base44.entities.FarmTask.create({
+    await appClient.entities.FarmTask.create({
       title: form.title, category: form.category, plot_name: form.plot_name || undefined,
       due_date: form.due_date || undefined, priority: form.priority, notes: form.notes || undefined,
     });
@@ -44,8 +44,8 @@ export default function TaskManager() {
     load();
   };
 
-  const toggle = async (task) => { await base44.entities.FarmTask.update(task.id, { status: task.status === 'done' ? 'pending' : 'done' }); load(); };
-  const remove = async (id) => { await base44.entities.FarmTask.delete(id); load(); };
+  const toggle = async (task) => { await appClient.entities.FarmTask.update(task.id, { status: task.status === 'done' ? 'pending' : 'done' }); load(); };
+  const remove = async (id) => { await appClient.entities.FarmTask.delete(id); load(); };
 
   const sorted = [...tasks].sort((a, b) => {
     if (a.status === 'done' && b.status !== 'done') return 1;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { Droplets, Leaf } from 'lucide-react';
 import { useLang } from '../lib/i18n';
@@ -50,7 +50,7 @@ export default function Fertilize() {
         event_type: 'recommendation_generated',
         payload: { crop: form.crop, area: form.area, unit: form.unit },
       }).catch(() => {});
-    } catch (err) {
+    } catch (_err) {
       alert('Calculation failed. Please try again.');
     } finally {
       setLoading(false);

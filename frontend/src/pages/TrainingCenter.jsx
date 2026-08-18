@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { GraduationCap, Play, FileText, Clock, ExternalLink, Search } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Input } from '../components/ui/input';
@@ -23,7 +23,7 @@ export default function TrainingCenter() {
   const [filter, setFilter] = useState('');
   const [search, setSearch] = useState('');
 
-  useEffect(() => { base44.entities.TrainingResource.list('title', 200).then(setResources).catch(() => {}); }, []);
+  useEffect(() => { appClient.entities.TrainingResource.list('title', 200).then(setResources).catch(() => {}); }, []);
 
   let list = resources
     .filter((r) => !filter || r.category === filter)

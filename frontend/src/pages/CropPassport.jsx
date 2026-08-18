@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { ShieldCheck, Search, CheckCircle2, XCircle } from 'lucide-react';
 import axios from 'axios';
 import PageHeader from '../components/PageHeader';

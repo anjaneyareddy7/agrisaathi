@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { Wheat, Plus, Trash2, TrendingUp } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -20,8 +20,8 @@ export default function HarvestRecords() {
 
   const load = async () => {
     const [f, r] = await Promise.all([
-      base44.entities.Farm.list().catch(() => []),
-      base44.entities.HarvestRecord.list('-harvest_date', 200).catch(() => []),
+      appClient.entities.Farm.list().catch(() => []),
+      appClient.entities.HarvestRecord.list('-harvest_date', 200).catch(() => []),
     ]);
     setFarms(f); setRecords(r);
   };
@@ -29,7 +29,7 @@ export default function HarvestRecords() {
 
   const submit = async () => {
     if (!form.plot_name || !form.crop_name || !form.harvest_date) return;
-    await base44.entities.HarvestRecord.create({
+    await appClient.entities.HarvestRecord.create({
       ...form,
       quantity: form.quantity ? Number(form.quantity) : undefined,
       area_harvested: form.area_harvested ? Number(form.area_harvested) : undefined,
@@ -40,7 +40,7 @@ export default function HarvestRecords() {
     setShowForm(false);
     load();
   };
-  const remove = async (id) => { await base44.entities.HarvestRecord.delete(id); load(); };
+  const remove = async (id) => { await appClient.entities.HarvestRecord.delete(id); load(); };
 
   const plots = [...new Set(records.map((r) => r.plot_name).filter(Boolean))].sort();
   const [trendPlot, setTrendPlot] = useState('');

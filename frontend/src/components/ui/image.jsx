@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 export function Image({ src, alt = '', className = '', fallback = null, ...props }) {
   const [error, setError] = React.useState(false);

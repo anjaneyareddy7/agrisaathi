@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { Store, Navigation, Phone, BadgeCheck, Star } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -30,7 +30,7 @@ export default function InputMarketplace() {
   const [origin, setOrigin] = useState(null);
   const [filter, setFilter] = useState('');
 
-  useEffect(() => { base44.entities.InputShop.list('name', 200).then(setShops).catch(() => {}); }, []);
+  useEffect(() => { appClient.entities.InputShop.list('name', 200).then(setShops).catch(() => {}); }, []);
 
   const useLocation = () => {
     if (!navigator.geolocation) { alert(t('geoUnsupported')); return; }

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLang } from '../lib/i18n';
 
 export default function PageHeader({ titleKey, title, icon: Icon, subtitle }) {

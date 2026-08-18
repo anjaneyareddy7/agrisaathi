@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { User, MapPin, Globe, Save, Plus, Trash2 } from 'lucide-react';
 import { useLang, LANGS } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -21,7 +21,7 @@ export default function ProfileSettings() {
   const [farmForm, setFarmForm] = useState({ plot_name: '', state: '', district: '', mandal: '', village: '', geo_lat: null, geo_lng: null, area_value: '', area_unit: 'acre' });
 
   useEffect(() => {
-    base44.auth.me().then((u) => {
+    appClient.auth.me().then((u) => {
       setUser(u);
       setProfile({
         full_name: u.full_name || '',
@@ -35,13 +35,13 @@ export default function ProfileSettings() {
         preferred_language: u.preferred_language || 'en',
       });
     }).catch(() => {});
-    base44.entities.Farm.list().then(setFarms).catch(() => {});
+    appClient.entities.Farm.list().then(setFarms).catch(() => {});
   }, []);
 
   const saveProfile = async () => {
     setSaving(true);
     try {
-      await base44.auth.updateMe({
+      await appClient.auth.updateMe({
         full_name: profile.full_name,
         phone: profile.phone,
         state: profile.state,
@@ -60,12 +60,12 @@ export default function ProfileSettings() {
 
   const addFarm = async () => {
     if (!farmForm.plot_name) return;
-    await base44.entities.Farm.create({ ...farmForm, area_value: farmForm.area_value ? Number(farmForm.area_value) : undefined, geo_lat: farmForm.geo_lat || undefined, geo_lng: farmForm.geo_lng || undefined });
+    await appClient.entities.Farm.create({ ...farmForm, area_value: farmForm.area_value ? Number(farmForm.area_value) : undefined, geo_lat: farmForm.geo_lat || undefined, geo_lng: farmForm.geo_lng || undefined });
     setFarmForm({ plot_name: '', state: '', district: '', mandal: '', village: '', geo_lat: null, geo_lng: null, area_value: '', area_unit: 'acre' });
     setShowFarm(false);
-    base44.entities.Farm.list().then(setFarms);
+    appClient.entities.Farm.list().then(setFarms);
   };
-  const removeFarm = async (id) => { await base44.entities.Farm.delete(id); base44.entities.Farm.list().then(setFarms); };
+  const removeFarm = async (id) => { await appClient.entities.Farm.delete(id); appClient.entities.Farm.list().then(setFarms); };
 
   return (
     <div>

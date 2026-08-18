@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback,  useState } from 'react'
 import { CloudRain, AlertTriangle, Sun, Cloud, Droplets, Wind, Navigation, Loader2 } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -35,15 +34,10 @@ export default function WeatherAlerts() {
   const { t } = useLang();
   const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [crops, setCrops] = useState([]);
+  const [crops] = useState([]);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    base44.entities.CropCycle.list().then(setCrops).catch(() => {});
-    fetchWeather();
-  }, []);
-
-  const fetchWeather = () => {
+  const fetchWeather = useCallback(() => {
     if (!navigator.geolocation) { setError(t('geoUnsupported')); setLoading(false); return; }
     setLoading(true);
     navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -55,7 +49,7 @@ export default function WeatherAlerts() {
         setForecast(data.daily);
       } catch { setError(t('weatherFailed')); } finally { setLoading(false); }
     }, () => { setError(t('locationDenied')); setLoading(false); });
-  };
+  }, [t]);
 
   const plantedCrops = crops.filter((c) => c.status === 'growing' || c.status === 'sown').map((c) => c.crop_name).filter(Boolean);
   const days = forecast?.time || [];

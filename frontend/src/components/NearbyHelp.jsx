@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 import { MapPin, Phone, ExternalLink, Stethoscope, Sprout } from 'lucide-react';
 
 // Point this at your own backend. No vendor SDK, no API keys baked in.

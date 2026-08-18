@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { ai } from '../api/appClient';
+import { useState, useEffect } from 'react'
 import { Banknote, CheckCircle2, FileText, ExternalLink, Loader2 } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -15,8 +16,8 @@ export default function LoanEligibility() {
   const [checking, setChecking] = useState(null);
 
   useEffect(() => {
-    base44.entities.GovLoan.list('name', 50).then(setLoans).catch(() => {});
-    base44.entities.Farm.list().then(setFarms).catch(() => {});
+    appClient.entities.GovLoan.list('name', 50).then(setLoans).catch(() => {});
+    appClient.entities.Farm.list().then(setFarms).catch(() => {});
   }, []);
 
   const farmProfile = farms.length
@@ -26,7 +27,7 @@ export default function LoanEligibility() {
   const check = async (loan) => {
     setChecking(loan.id);
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
+      const res = await ai.invoke({
         prompt: `You are a farm loan eligibility assistant for Indian government agricultural loans. Given the farmer's profile and loan details, assess eligibility as ELIGIBLE, PARTIALLY, or NOT eligible. List the documents the farmer should prepare. Be conservative; if unsure say PARTIALLY. Simple farmer-friendly language.
 
 Farmer profile: ${farmProfile}

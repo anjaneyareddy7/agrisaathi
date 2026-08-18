@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { MessageSquare, Plus, ArrowLeft, ThumbsUp, Send } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -22,17 +22,17 @@ export default function CommunityForum() {
   const [user, setUser] = useState(null);
 
   const load = async () => {
-    const p = await base44.entities.ForumPost.list('-created_date', 100).catch(() => []);
+    const p = await appClient.entities.ForumPost.list('-created_date', 100).catch(() => []);
     setPosts(p);
   };
   useEffect(() => {
     load();
-    base44.auth.me().then(setUser).catch(() => {});
+    appClient.auth.me().then(setUser).catch(() => {});
   }, []);
 
   const create = async () => {
     if (!form.title.trim() || !form.body.trim()) return;
-    await base44.entities.ForumPost.create({
+    await appClient.entities.ForumPost.create({
       title: form.title.trim(),
       body: form.body.trim(),
       category: form.category,
@@ -48,15 +48,15 @@ export default function CommunityForum() {
   const addReply = async () => {
     if (!reply.trim() || !active) return;
     const newReplies = [...(active.replies || []), { author_name: user?.full_name || user?.email || 'Anonymous', body: reply.trim(), ts: new Date().toISOString() }];
-    await base44.entities.ForumPost.update(active.id, { replies: newReplies });
+    await appClient.entities.ForumPost.update(active.id, { replies: newReplies });
     setReply('');
-    const updated = await base44.entities.ForumPost.get(active.id);
+    const updated = await appClient.entities.ForumPost.get(active.id);
     setActive(updated);
     load();
   };
 
   const upvote = async (post) => {
-    await base44.entities.ForumPost.update(post.id, { upvotes: (post.upvotes || 0) + 1 });
+    await appClient.entities.ForumPost.update(post.id, { upvotes: (post.upvotes || 0) + 1 });
     load();
     if (active?.id === post.id) setActive({ ...post, upvotes: (post.upvotes || 0) + 1 });
   };

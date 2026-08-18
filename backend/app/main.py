@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.routes import crop, fertilizer, diagnosis, health, weather, helper, ledger, animal_encyclopedia, livestock, crop_planner, crop_passport, livestock_encyclopedia, soil_profiles, kvk, gov_markets, mandi_prices, pest_library, livestock_details, sensor, translate, price_alerts, scheme, livestock_types
+from app.api.routes import data_gov, crop, fertilizer, diagnosis, health, weather, helper, ledger, animal_encyclopedia, livestock, crop_planner, crop_passport, livestock_encyclopedia, soil_profiles, kvk, gov_markets, mandi_prices, pest_library, livestock_details, sensor, translate, price_alerts, scheme, livestock_types, soil_records
 
 app = FastAPI(
     title="AgriSaathi API",
@@ -28,6 +28,7 @@ app.include_router(mandi_prices.router)
 app.include_router(pest_library.router)
 app.include_router(livestock_details.router)
 app.include_router(sensor.router)
+app.include_router(soil_records.router)
 app.include_router(gov_markets.router)
 app.include_router(kvk.router)
 app.include_router(soil_profiles.router)
@@ -50,3 +51,5 @@ def root():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+
+app.include_router(data_gov.router)

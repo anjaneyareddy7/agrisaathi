@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Search, Sprout, ChevronRight } from 'lucide-react';
 import { useLang } from '@/lib/i18n';

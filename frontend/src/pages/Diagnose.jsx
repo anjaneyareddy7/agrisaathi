@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React from 'react'
+import { useState, useMemo, useRef } from 'react'
 import {
   ArrowLeft, Camera, X, Sprout, PawPrint, Mic, AlertTriangle,
   Leaf, FlaskConical, ShieldAlert, ChevronRight,
 } from 'lucide-react';
 import axios from 'axios';
-import { base44 } from '@/api/base44Client';
+import appClient from '@/api/appClient';
 import cropData from '@/data/cropEncyclopedia.json';
 import animalData from '@/data/animalEncyclopedia.json';
 
@@ -58,9 +59,9 @@ export default function Diagnose() {
   }, [subjectOptions]);
 
   // Load plots (farms) once, best-effort — works with the localStorage-backed
-  // base44 entity shim even if none exist yet.
+  // appClient entity shim even if none exist yet.
   React.useEffect(() => {
-    base44.entities.Farm.list('plot_name', 50)
+    appClient.entities.Farm.list('plot_name', 50)
       .then((rows) => setPlots(Array.isArray(rows) ? rows : []))
       .catch(() => setPlots([]));
   }, []);

@@ -1,4 +1,3 @@
-import React from 'react';
 import PlaceholderPage from './Placeholder.jsx';
 
 export default function Fertilizer() {

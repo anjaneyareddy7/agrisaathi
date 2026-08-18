@@ -1,14 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { ShieldPlus, Plus, Trash2, ShieldCheck, AlertCircle, FileText } from 'lucide-react';
-import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
-import { Label } from '../components/ui/label';
-import { Input } from '../components/ui/input';
-import { Textarea } from '../components/ui/textarea';
-import { Badge } from '../components/ui/badge';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select';
+import {
+  useState,
+  useEffect
+} from 'react'
+import {
+  ShieldPlus,
+  Plus,
+  Trash2
+} from 'lucide-react';
+import {
+  useLang
+} from '../lib/i18n';
+import appClient from '../api/appClient';
+import {
+  Button
+} from '../components/ui/button';
+import {
+  Card,
+  CardContent
+} from '../components/ui/card';
+import {
+  Label
+} from '../components/ui/label';
+import {
+  Input
+} from '../components/ui/input';
+;
+import {
+  Badge
+} from '../components/ui/badge';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from '../components/ui/select';
 import PageHeader from '../components/PageHeader';
 
 const CLAIM_STATUS = {
@@ -25,12 +51,12 @@ export default function InsuranceHub() {
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ policy_name: '', provider: '', crop_name: '', plot_name: '', premium_amount: '', sum_insured: '', start_date: '', end_date: '' });
 
-  const load = () => base44.entities.InsurancePolicy.list('-created_date').then(setPolicies).catch(() => []);
+  const load = () => appClient.entities.InsurancePolicy.list('-created_date').then(setPolicies).catch(() => []);
   useEffect(() => { load(); }, []);
 
   const save = async () => {
     if (!form.policy_name) { alert('Policy name required'); return; }
-    await base44.entities.InsurancePolicy.create({
+    await appClient.entities.InsurancePolicy.create({
       policy_name: form.policy_name, provider: form.provider || undefined, crop_name: form.crop_name || undefined,
       plot_name: form.plot_name || undefined, premium_amount: form.premium_amount ? Number(form.premium_amount) : undefined,
       sum_insured: form.sum_insured ? Number(form.sum_insured) : undefined, start_date: form.start_date || undefined, end_date: form.end_date || undefined,
@@ -41,8 +67,8 @@ export default function InsuranceHub() {
     load();
   };
 
-  const updateClaim = async (p, claim_status) => { await base44.entities.InsurancePolicy.update(p.id, { claim_status }); load(); };
-  const remove = async (id) => { await base44.entities.InsurancePolicy.delete(id); load(); };
+  const updateClaim = async (p, claim_status) => { await appClient.entities.InsurancePolicy.update(p.id, { claim_status }); load(); };
+  const remove = async (id) => { await appClient.entities.InsurancePolicy.delete(id); load(); };
 
   const active = policies.filter((p) => p.status === 'active');
   const filedClaims = policies.filter((p) => p.claim_status !== 'none');

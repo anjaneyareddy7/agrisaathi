@@ -1,10 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingDown } from 'lucide-react';
-import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
-import { Card, CardContent } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  useState,
+  useEffect
+} from 'react'
+import {
+  BarChart3,
+  TrendingDown
+} from 'lucide-react';
+import {
+  useLang
+} from '../lib/i18n';
+import appClient from '../api/appClient';
+import {
+  Card,
+  CardContent
+} from '../components/ui/card';
+;
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend
+} from 'recharts';
 import PageHeader from '../components/PageHeader';
 
 const PIE_COLORS = ['#16a34a', '#f59e0b', '#ef4444', '#3b82f6', '#a855f7', '#ec4899', '#14b8a6', '#64748b'];
@@ -15,7 +38,7 @@ export default function ExpenseAnalytics() {
   const [entries, setEntries] = useState([]);
 
   useEffect(() => {
-    base44.entities.FarmLedgerEntry.list('-entry_date', 200).then(setEntries).catch(() => []);
+    appClient.entities.FarmLedgerEntry.list('-entry_date', 200).then(setEntries).catch(() => []);
   }, []);
 
   const expenses = entries.filter((e) => e.kind === 'expense');

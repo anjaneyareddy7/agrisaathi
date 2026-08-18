@@ -1,4 +1,3 @@
-import React from 'react';
 
 export function Checkbox({ checked, onCheckedChange, className = '', id, ...props }) {
   return (

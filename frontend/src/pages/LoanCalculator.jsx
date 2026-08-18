@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react'
 import { Calculator, TrendingUp } from 'lucide-react';
 import { useLang } from '../lib/i18n';
 import { Card, CardContent } from '../components/ui/card';

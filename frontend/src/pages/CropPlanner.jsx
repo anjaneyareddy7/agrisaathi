@@ -1,16 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, Droplets, Calendar, FlaskConical } from 'lucide-react';
-import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import {
+  TrendingUp,
+  FlaskConical
+} from 'lucide-react';
+import {
+  useLang
+} from '../lib/i18n';
+import {
+  base44
+} from '../api/base44Client';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-import { districtsOf } from '../lib/indianLocations';
-import { Card, CardContent } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select';
-import { Label } from '../components/ui/label';
-import { Button } from '../components/ui/button';
+import {
+  districtsOf
+} from '../lib/indianLocations';
+import {
+  Card,
+  CardContent
+} from '../components/ui/card';
+import {
+  Badge
+} from '../components/ui/badge';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from '../components/ui/select';
+import {
+  Label
+} from '../components/ui/label';
+import {
+  Button
+} from '../components/ui/button';
 import PageHeader from '../components/PageHeader';
 import YieldEstimator from '../components/YieldEstimator';
 
@@ -48,11 +72,13 @@ export default function CropPlanner() {
     try {
       const soilRecs = await base44.entities.SoilRecord.list('-test_date', 50);
       soil = soilRecs.find((r) => (!state || r.state === state) && (!district || r.district === district)) || soilRecs.find((r) => !state || r.state === state) || soilRecs[0];
-    } catch {}
+    } catch (err) {console.warn("CropPlanner data fetch failed:", err);
+    }
     try {
       const wqRecs = await base44.entities.SensorTest.filter({ test_type: 'water' }, '-test_date', 20).catch(() => []);
       wq = wqRecs[0];
-    } catch {}
+    } catch (err) {console.warn("CropPlanner data fetch failed:", err);
+    }
     setSoilCtx(soil); setWaterCtx(wq);
     const soilInfo = soil ? `Soil pH ${soil.ph ?? '?'}, N ${soil.nitrogen ?? '?'}, P ${soil.phosphorus ?? '?'}, K ${soil.potassium ?? '?'}, OC ${soil.organic_carbon ?? '?'}%, type ${soil.soil_type || '?'}` : 'unknown';
     const waterInfo = wq ? `Water pH ${wq.water_ph ?? '?'}, EC ${wq.water_ec ?? '?'}, TDS ${wq.water_tds ?? '?'}` : 'no water test data';
@@ -83,7 +109,7 @@ export default function CropPlanner() {
         event_type: 'plan_generated',
         payload: { state, district, water, season, top_crops: scored.slice(0, 3).map((c) => c.name_en) },
       }).catch(() => {});
-    } catch (err) {
+    } catch {
       setEstimates({});
     } finally {
       setLoading(false);

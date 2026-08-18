@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+/* eslint-disable react-hooks/rules-of-hooks */
+import { createContext, useContext, useEffect } from 'react'
 
 const DialogContext = createContext();
 

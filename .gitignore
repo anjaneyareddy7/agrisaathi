@@ -36,3 +36,20 @@ data_gov_resources.env
 data_gov_test/
 
 .env
+
+# Backup/audit sprawl from automated fix scripts — never track these
+backup_*/
+*_backup_v*/
+*.backup
+*.bak
+*.before-*
+.cleanup-backup-*/
+.migration-backup-*/
+frontend/src/agrisaathi_backup_v14_*/
+frontend/src/*_backup_v13/
+agrisaathi_v*_runtime_audit.md
+agrisaathi_v*_frontend_audit.md
+audit_*.sh
+fix-agrisaathi-*.sh
+frontend/fix-agrisaathi*.sh
+backend/app/data/storage/*.json

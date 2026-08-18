@@ -56,7 +56,7 @@ export default function AlertsCenter() {
     setLoading(false);
   }, [deviceId]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount, same pattern as FarmLedger/SoilPassport
+   
   useEffect(() => { load(); }, [load]);
 
   const totalAlerts = lowStockItems.length + forecastDays.length + priceAlerts.length;

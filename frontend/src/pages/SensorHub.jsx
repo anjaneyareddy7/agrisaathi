@@ -1,13 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { Activity, Plus, Trash2, Radio } from 'lucide-react';
-import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
-import { Label } from '../components/ui/label';
-import { Input } from '../components/ui/input';
-import { Badge } from '../components/ui/badge';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  useState,
+  useEffect
+} from 'react'
+import {
+  Activity,
+  Plus,
+  Trash2,
+  Radio
+} from 'lucide-react';
+import {
+  useLang
+} from '../lib/i18n';
+import appClient from '../api/appClient';
+import {
+  Button
+} from '../components/ui/button';
+import {
+  Card,
+  CardContent
+} from '../components/ui/card';
+import {
+  Label
+} from '../components/ui/label';
+import {
+  Input
+} from '../components/ui/input';
+;
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend
+} from 'recharts';
 import PageHeader from '../components/PageHeader';
 
 export default function SensorHub() {
@@ -16,11 +44,11 @@ export default function SensorHub() {
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ soil_ph: '', soil_moisture: '', soil_ec: '', soil_nitrogen: '', test_date: '' });
 
-  const load = () => base44.entities.SensorTest.list('-test_date', 30).then(setReadings).catch(() => []);
+  const load = () => appClient.entities.SensorTest.list('-test_date', 30).then(setReadings).catch(() => []);
   useEffect(() => { load(); }, []);
 
   const save = async () => {
-    await base44.entities.SensorTest.create({
+    await appClient.entities.SensorTest.create({
       test_type: 'soil',
       soil_ph: form.soil_ph ? Number(form.soil_ph) : undefined,
       soil_moisture: form.soil_moisture ? Number(form.soil_moisture) : undefined,
@@ -33,7 +61,7 @@ export default function SensorHub() {
     load();
   };
 
-  const remove = async (id) => { await base44.entities.SensorTest.delete(id); load(); };
+  const remove = async (id) => { await appClient.entities.SensorTest.delete(id); load(); };
 
   const latest = readings[0];
   const trendData = readings

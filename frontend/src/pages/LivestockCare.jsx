@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { Leaf, Plus, Check, Calendar } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -26,7 +26,7 @@ export default function LivestockCare() {
   const load = async () => {
     const [tpRes, lg] = await Promise.all([
       axios.get(`${API_URL}/api/livestock-types`).catch(() => ({ data: [] })),
-      base44.entities.LivestockCareLog.list('-scheduled_date').catch(() => []),
+      appClient.entities.LivestockCareLog.list('-scheduled_date').catch(() => []),
     ]);
     setTypes(tpRes.data);
     setLogs(lg);
@@ -36,7 +36,7 @@ export default function LivestockCare() {
   const add = async () => {
     if (!form.animal_type || !form.title) { alert('Animal/type and title are required'); return; }
     const tp = types.find((x) => x.name_en === form.animal_type);
-    await base44.entities.LivestockCareLog.create({
+    await appClient.entities.LivestockCareLog.create({
       animal_type: form.animal_type,
       category: tp?.category || '',
       care_type: form.care_type,
@@ -57,7 +57,7 @@ export default function LivestockCare() {
   };
 
   const markDone = async (log) => {
-    await base44.entities.LivestockCareLog.update(log.id, { status: 'done', completed_date: new Date().toISOString().slice(0, 10) });
+    await appClient.entities.LivestockCareLog.update(log.id, { status: 'done', completed_date: new Date().toISOString().slice(0, 10) });
     axios.post(`${API_URL}/api/ledger/log`, {
       entity_type: 'livestock_care',
       entity_id: log.animal_type,

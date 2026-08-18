@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { ai } from '../api/appClient';
+import { useState, useEffect } from 'react'
 import { FlaskConical, Leaf, Shield, Search } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Label } from '../components/ui/label';
@@ -17,13 +18,13 @@ export default function Treatments() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
 
-  useEffect(() => { base44.entities.Crop.list('name_en', 200).then(setCrops).catch(() => {}); }, []);
+  useEffect(() => { appClient.entities.Crop.list('name_en', 200).then(setCrops).catch(() => {}); }, []);
 
   const search = async () => {
     if (!crop || !issue) { alert('Select crop and enter issue'); return; }
     setLoading(true); setResult(null);
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
+      const res = await ai.invoke({
         prompt: `You are an AI agricultural treatment advisor for Indian farmers. Crop: ${crop}. Issue: ${issue}. Provide organic treatment (try first), chemical treatment with active ingredient, application method, timing, safety precautions, and pre-harvest interval if known. Cite general authoritative sources (ICAR/KVK). Never recommend banned substances or invent dosages. Simple language.`,
         response_json_schema: {
           type: 'object',

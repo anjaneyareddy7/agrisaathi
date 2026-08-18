@@ -30,7 +30,7 @@ export default function EquipmentRegistry() {
     }
   }, [deviceId]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount, same pattern as FarmLedger/SoilPassport
+   
   useEffect(() => { load(); }, [load]);
 
   const submit = async () => {

@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { files } from '../api/appClient';
+import { ai } from '../api/appClient';
+import { useState, useEffect } from 'react'
 import { Sprout, ShieldCheck, ScanLine, Plus, LineChart as LineChartIcon } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Label } from '../components/ui/label';
@@ -29,7 +34,7 @@ export default function SoilPassport() {
   const [scanning, setScanning] = useState(false);
   const [form, setForm] = useState({ plot_name: '', test_date: '', testing_organization: '', soil_type: '', ph: '', nitrogen: '', phosphorus: '', potassium: '', organic_carbon: '', ec: '', notes: '', card_file_url: '' });
 
-  const load = () => base44.entities.SoilRecord.list('-test_date').then(setRecords).catch(() => {});
+  const load = () => axios.get(`${API_URL}/api/soil-records`).then((res) => setRecords(res.data)).catch(() => {});
   useEffect(() => { load(); }, []);
 
   const [soilProfiles, setSoilProfiles] = useState([]);
@@ -58,7 +63,7 @@ export default function SoilPassport() {
       card_file_url: form.card_file_url || undefined,
     };
     const hash = await toHash({ ...payload, hashed_at: new Date().toISOString() });
-    await base44.entities.SoilRecord.create({ ...payload, record_hash: hash, hashed_at: new Date().toISOString() });
+    await axios.post(`${API_URL}/api/soil-records`, { ...payload, record_hash: hash, hashed_at: new Date().toISOString() });
     setForm({ plot_name: '', test_date: '', testing_organization: '', soil_type: '', ph: '', nitrogen: '', phosphorus: '', potassium: '', organic_carbon: '', ec: '', notes: '', card_file_url: '' });
     setShowAdd(false);
     load();
@@ -69,9 +74,9 @@ export default function SoilPassport() {
     if (!file) return;
     setScanning(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await files.upload({ file });
       setForm((f) => ({ ...f, card_file_url: file_url }));
-      const res = await base44.integrations.Core.InvokeLLM({
+      const res = await ai.invoke({
         prompt: 'Extract soil health values from this Soil Health Card image. Return available fields only. Leave blank if not visible.',
         file_urls: [file_url],
         response_json_schema: {
@@ -90,7 +95,7 @@ export default function SoilPassport() {
         ec: res.ec ?? f.ec, soil_type: res.soil_type || f.soil_type, testing_organization: res.testing_organization || f.testing_organization,
       }));
       alert(t('confirmValues'));
-    } catch (err) {
+    } catch (_err) {
       alert('Scan failed. You can enter values manually.');
     } finally {
       setScanning(false);

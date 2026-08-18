@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { FileSpreadsheet, Plus, ShieldCheck, ShieldAlert, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -26,7 +26,7 @@ export default function FarmLedger() {
   const load = async (uid) => {
     setLoading(true);
     try {
-      const res = await base44.call(`/api/ledger/chain/farm_ledger/${uid}`);
+      const res = await appClient.call(`/api/ledger/chain/farm_ledger/${uid}`);
       setBlocks(res.blocks || []);
       setValid(res.valid);
     } catch {
@@ -37,7 +37,7 @@ export default function FarmLedger() {
   };
 
   useEffect(() => {
-    base44.auth.me().then((user) => {
+    appClient.auth.me().then((user) => {
       setUserId(user.id);
       load(user.id);
     });
@@ -47,7 +47,7 @@ export default function FarmLedger() {
     if (!userId || !form.amount || Number(form.amount) <= 0) return;
     setSaving(true);
     try {
-      await base44.call('/api/ledger/log', {
+      await appClient.call('/api/ledger/log', {
         method: 'POST',
         data: {
           entity_type: 'farm_ledger',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { CloudSun, Wind, Droplets, MapPin } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
@@ -11,7 +11,7 @@ export default function Weather() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchWeather = (lat, lon) => {
+  function fetchWeather(lat, lon) {
     setLoading(true);
     setError(null);
     axios.get(`${API_URL}/api/weather/current`, { params: { lat, lon } })

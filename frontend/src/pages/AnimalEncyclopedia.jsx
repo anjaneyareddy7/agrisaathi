@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { BookOpen, Syringe, Wheat, Thermometer, TrendingUp, AlertTriangle, Loader2 } from 'lucide-react';
 import { useLang } from '../lib/i18n';
-import { base44 } from '../api/base44Client';
+import appClient from '../api/appClient';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import PageHeader from '../components/PageHeader';
@@ -27,7 +27,7 @@ export default function AnimalEncyclopedia() {
 
   useEffect(() => {
     setLoading(true);
-    base44
+    appClient
       .call('/api/livestock/encyclopedia/categories')
       .then((res) => {
         setCategories(res.categories || []);
@@ -36,12 +36,12 @@ export default function AnimalEncyclopedia() {
       })
       .catch(() => setError(t('encyclopediaLoadFailed') || 'Could not load the encyclopedia. Service may be unavailable.'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (!activeCategory) return;
     setLoadingEntries(true);
-    base44
+    appClient
       .call(`/api/livestock/encyclopedia/${activeCategory}`)
       .then((res) => setEntries(Array.isArray(res) ? res : []))
       .catch(() => setEntries([]))
