@@ -1,15 +1,11 @@
 import { ai } from '../api/appClient';
-import { useState, useEffect } from 'react'
-import { Banknote, CheckCircle2, FileText, ExternalLink, Loader2 } from 'lucide-react';
-import { useLang } from '../lib/i18n';
+import { useState, useEffect } from 'react';
+import { Banknote, CheckCircle2, FileText, ExternalLink, Loader2, Sparkles, ShieldQuestion } from 'lucide-react';
 import appClient from '../api/appClient';
-import { Card, CardContent } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { Button } from '../components/ui/button';
 import PageHeader from '../components/PageHeader';
+import { EmptyState } from '../components/kit';
 
 export default function LoanEligibility() {
-  const { t } = useLang();
   const [loans, setLoans] = useState([]);
   const [farms, setFarms] = useState([]);
   const [results, setResults] = useState({});
@@ -52,72 +48,100 @@ Known required documents: ${(loan.required_documents || []).join(', ')}`,
       });
       setResults((prev) => ({ ...prev, [loan.id]: res }));
     } catch {
-      setResults((prev) => ({ ...prev, [loan.id]: { status: 'partially', reason: t('checkFailed'), documents_needed: loan.required_documents || [] } }));
+      setResults((prev) => ({ ...prev, [loan.id]: { status: 'partially', reason: 'Check failed — try again.', documents_needed: loan.required_documents || [] } }));
     } finally {
       setChecking(null);
     }
   };
 
   const statusStyle = (s) =>
-    s === 'eligible' ? 'bg-green-100 text-green-700' :
-    s === 'partially' ? 'bg-amber-100 text-amber-700' :
+    s === 'eligible' ? 'bg-leaf-100 text-leaf-800' :
+    s === 'partially' ? 'bg-amber-100 text-amber-800' :
     'bg-red-100 text-red-700';
   const statusLabel = (s) =>
-    s === 'eligible' ? t('eligible') :
-    s === 'partially' ? t('partiallyEligible') :
-    t('notEligible');
+    s === 'eligible' ? 'Eligible' :
+    s === 'partially' ? 'Partially eligible' :
+    'Not eligible';
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
-      <PageHeader titleKey="loanEligibility" icon={Banknote} />
-      <p className="text-xs text-gray-500 mb-4">{t('loanIntro')}</p>
+      <PageHeader title="Loan Eligibility" subtitle="AI checks your farm profile against each government loan" icon={Banknote} />
+
+      {/* Hero */}
+      <div className="mb-4 overflow-hidden rounded-3xl bg-gradient-to-br from-harvest-500 to-harvest-700 p-5 text-white shadow-md animate-fade-up">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Government loans</p>
+            <p className="mt-1 text-4xl font-bold tracking-tight">{loans.length}</p>
+            <p className="mt-2 max-w-[280px] text-xs leading-relaxed text-white/80">
+              {farms.length > 0
+                ? `Checked against your ${farms.length} registered plot${farms.length > 1 ? 's' : ''}.`
+                : 'Add plots in Dashboard so checks use your real farm profile.'}
+            </p>
+          </div>
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15"><Banknote size={24} /></span>
+        </div>
+      </div>
 
       {loans.length === 0 ? (
-        <Card><CardContent className="pt-6 text-center text-sm text-gray-400">{t('noLoans')}</CardContent></Card>
+        <EmptyState icon={Banknote} title="No loans listed" subtitle="Government loan schemes will appear here once loaded." />
       ) : (
-        <div className="space-y-3">
-          {loans.map((l) => {
+        <div className="space-y-2">
+          {loans.map((l, i) => {
             const r = results[l.id];
             return (
-              <Card key={l.id}><CardContent className="pt-4 space-y-2">
+              <div key={l.id}
+                className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:border-leaf-300 animate-slide-in"
+                style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}>
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-semibold text-sm leading-tight">{l.name}</h3>
-                  {r && <Badge className={statusStyle(r.status)}>{statusLabel(r.status)}</Badge>}
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-semibold leading-snug text-gray-900">{l.name}</h3>
+                    {l.provider && <p className="mt-0.5 text-xs text-gray-500">{l.provider}</p>}
+                  </div>
+                  {r && <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${statusStyle(r.status)}`}>{statusLabel(r.status)}</span>}
                 </div>
-                {l.provider && <p className="text-xs text-gray-500">{l.provider}</p>}
-                <div className="flex flex-wrap gap-2 text-xs">
-                  {l.max_amount && <Badge variant="secondary">₹{l.max_amount.toLocaleString('en-IN')} max</Badge>}
-                  {l.interest_rate && <Badge variant="secondary">{l.interest_rate}</Badge>}
+
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {l.max_amount && <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-semibold text-gray-600">₹{l.max_amount.toLocaleString('en-IN')} max</span>}
+                  {l.interest_rate && <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-semibold text-gray-600">{l.interest_rate}</span>}
                 </div>
-                {l.purpose && <p className="text-sm text-gray-700">{l.purpose}</p>}
-                {l.eligibility_summary && <p className="text-xs text-gray-500"><span className="font-medium">Eligibility:</span> {l.eligibility_summary}</p>}
-                {r?.reason && <div className="bg-gray-50 rounded-lg p-2 text-xs text-gray-600">{r.reason}</div>}
+
+                {l.purpose && <p className="mt-2.5 text-xs leading-relaxed text-gray-600">{l.purpose}</p>}
+                {l.eligibility_summary && <p className="mt-1.5 text-xs text-gray-500"><span className="font-semibold text-gray-700">Eligibility:</span> {l.eligibility_summary}</p>}
+
+                {r?.reason && <div className="mt-3 rounded-xl bg-gray-50 px-3 py-2.5 text-xs leading-relaxed text-gray-600">{r.reason}</div>}
                 {r?.documents_needed?.length > 0 && (
-                  <div className="bg-blue-50 rounded-lg p-2">
-                    <p className="text-xs font-semibold text-blue-700 flex items-center gap-1 mb-1"><FileText className="h-3 w-3" />{t('documentsNeeded')}</p>
-                    <ul className="text-xs text-blue-600 list-disc pl-4">
-                      {r.documents_needed.map((d, i) => <li key={i}>{d}</li>)}
+                  <div className="mt-2 rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-2.5">
+                    <p className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-blue-700"><FileText size={11} /> Documents needed</p>
+                    <ul className="mt-1 space-y-0.5">
+                      {r.documents_needed.map((d, j) => <li key={j} className="text-xs text-blue-700/90">• {d}</li>)}
                     </ul>
                   </div>
                 )}
-                {r?.next_steps && <div className="bg-green-50 rounded-lg p-2 text-xs text-green-700">{r.next_steps}</div>}
-                <div className="flex gap-2 pt-1">
-                  <Button size="sm" variant="outline" onClick={() => check(l)} disabled={checking === l.id} className="flex-1">
-                    {checking === l.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
-                    {t('checkEligibility')}
-                  </Button>
+                {r?.next_steps && <div className="mt-2 rounded-xl border border-leaf-100 bg-leaf-50/70 px-3 py-2.5 text-xs leading-relaxed text-leaf-800">{r.next_steps}</div>}
+
+                <div className="mt-3 flex gap-2">
+                  <button onClick={() => check(l)} disabled={checking === l.id}
+                    className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-leaf-300 bg-leaf-50/50 py-2.5 text-xs font-semibold text-leaf-700 transition-colors hover:bg-leaf-50 disabled:opacity-60">
+                    {checking === l.id ? <Loader2 size={13} className="animate-spin" /> : r ? <CheckCircle2 size={13} /> : <Sparkles size={13} />}
+                    {checking === l.id ? 'Checking…' : r ? 'Re-check eligibility' : 'Check eligibility'}
+                  </button>
                   {l.apply_link && (
-                    <Button size="sm" variant="ghost" asChild>
-                      <a href={l.apply_link} target="_blank" rel="noreferrer"><ExternalLink className="h-3 w-3" /></a>
-                    </Button>
+                    <a href={l.apply_link} target="_blank" rel="noreferrer"
+                      className="flex items-center justify-center rounded-xl border border-gray-200 px-3 text-gray-500 transition-colors hover:bg-gray-50">
+                      <ExternalLink size={14} />
+                    </a>
                   )}
                 </div>
-              </CardContent>
-            </Card>
-          );
+              </div>
+            );
           })}
         </div>
       )}
+
+      <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-[11px] text-gray-400">
+        <ShieldQuestion size={12} /> AI guidance only — confirm with your bank before applying.
+      </p>
     </div>
   );
 }

@@ -1,68 +1,40 @@
-import {
-  useState,
-  useEffect
-} from 'react'
-import {
-  ShieldPlus,
-  Plus,
-  Trash2
-} from 'lucide-react';
-import {
-  useLang
-} from '../lib/i18n';
+import { useState, useEffect } from 'react';
+import { ShieldPlus, Plus, X, Trash2, ShieldCheck, IndianRupee } from 'lucide-react';
 import appClient from '../api/appClient';
-import {
-  Button
-} from '../components/ui/button';
-import {
-  Card,
-  CardContent
-} from '../components/ui/card';
-import {
-  Label
-} from '../components/ui/label';
-import {
-  Input
-} from '../components/ui/input';
-;
-import {
-  Badge
-} from '../components/ui/badge';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem
-} from '../components/ui/select';
+import { Input } from '../components/ui/input';
+import { Badge } from '../components/ui/badge';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select';
 import PageHeader from '../components/PageHeader';
+import { SectionCard, FormField, EmptyState } from '../components/kit';
 
 const CLAIM_STATUS = {
   none: { label: 'No claim', color: 'bg-gray-100 text-gray-600' },
-  filed: { label: 'Filed', color: 'bg-amber-100 text-amber-700' },
-  under_review: { label: 'Under review', color: 'bg-blue-100 text-blue-700' },
-  approved: { label: 'Approved', color: 'bg-green-100 text-green-700' },
+  filed: { label: 'Filed', color: 'bg-amber-100 text-amber-800' },
+  under_review: { label: 'Under review', color: 'bg-blue-100 text-blue-800' },
+  approved: { label: 'Approved', color: 'bg-leaf-100 text-leaf-800' },
   rejected: { label: 'Rejected', color: 'bg-red-100 text-red-700' },
 };
 
+const inputCls = 'h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-leaf-500 focus:outline-none focus:ring-4 focus:ring-leaf-100';
+const EMPTY = { policy_name: '', provider: '', crop_name: '', plot_name: '', premium_amount: '', sum_insured: '', start_date: '', end_date: '' };
+
 export default function InsuranceHub() {
-  const { t } = useLang();
   const [policies, setPolicies] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ policy_name: '', provider: '', crop_name: '', plot_name: '', premium_amount: '', sum_insured: '', start_date: '', end_date: '' });
+  const [form, setForm] = useState(EMPTY);
 
   const load = () => appClient.entities.InsurancePolicy.list('-created_date').then(setPolicies).catch(() => []);
   useEffect(() => { load(); }, []);
 
   const save = async () => {
-    if (!form.policy_name) { alert('Policy name required'); return; }
+    if (!form.policy_name) return;
     await appClient.entities.InsurancePolicy.create({
       policy_name: form.policy_name, provider: form.provider || undefined, crop_name: form.crop_name || undefined,
       plot_name: form.plot_name || undefined, premium_amount: form.premium_amount ? Number(form.premium_amount) : undefined,
       sum_insured: form.sum_insured ? Number(form.sum_insured) : undefined, start_date: form.start_date || undefined, end_date: form.end_date || undefined,
       status: 'active', claim_status: 'none',
     });
-    setForm({ policy_name: '', provider: '', crop_name: '', plot_name: '', premium_amount: '', sum_insured: '', start_date: '', end_date: '' });
+    setForm(EMPTY);
     setShowAdd(false);
     load();
   };
@@ -72,82 +44,110 @@ export default function InsuranceHub() {
 
   const active = policies.filter((p) => p.status === 'active');
   const filedClaims = policies.filter((p) => p.claim_status !== 'none');
+  const totalCover = policies.reduce((s, p) => s + (p.sum_insured || 0), 0);
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
-      <PageHeader titleKey="insuranceHub" icon={ShieldPlus} />
-      <p className="text-xs text-gray-500 mb-3">{t('insuranceIntro')}</p>
+      <PageHeader title="Insurance Hub" subtitle="Track crop insurance policies and claims" icon={ShieldPlus} />
 
-      <div className="grid grid-cols-2 gap-2 mb-4">
-        <Card className="bg-green-50 border-green-100"><CardContent className="pt-3 text-center">
-          <div className="text-2xl font-bold text-green-700">{active.length}</div>
-          <div className="text-[11px] text-gray-500">{t('activePolicies')}</div>
-        </CardContent></Card>
-        <Card className="bg-amber-50 border-amber-100"><CardContent className="pt-3 text-center">
-          <div className="text-2xl font-bold text-amber-700">{filedClaims.length}</div>
-          <div className="text-[11px] text-gray-500">{t('filedClaims')}</div>
-        </CardContent></Card>
+      {/* Hero */}
+      <div className="mb-4 overflow-hidden rounded-3xl bg-gradient-to-br from-leaf-800 to-leaf-950 p-5 text-white shadow-md animate-fade-up">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Active policies</p>
+            <p className="mt-1 text-4xl font-bold tracking-tight">{active.length}</p>
+          </div>
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15"><ShieldCheck size={24} /></span>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="rounded-2xl bg-white/15 px-3 py-2.5">
+            <p className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-white/70"><IndianRupee size={10} /> Total cover</p>
+            <p className="mt-0.5 text-sm font-bold">₹{totalCover.toLocaleString('en-IN')}</p>
+          </div>
+          <div className={`rounded-2xl px-3 py-2.5 ${filedClaims.length ? 'bg-harvest-400/30' : 'bg-white/15'}`}>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-white/70">Claims in progress</p>
+            <p className="mt-0.5 text-sm font-bold">{filedClaims.length}</p>
+          </div>
+        </div>
       </div>
 
-      <div className="space-y-2 mb-4">
-        {policies.length === 0 ? (
-          <p className="text-sm text-gray-400">{t('noPolicies')}</p>
-        ) : policies.map((p) => {
-          const cs = CLAIM_STATUS[p.claim_status] || CLAIM_STATUS.none;
-          return (
-            <Card key={p.id}><CardContent className="pt-3 space-y-2">
-              <div className="flex items-start justify-between">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">{p.policy_name}</p>
-                  <p className="text-xs text-gray-400">{p.provider}{p.crop_name ? ` · ${p.crop_name}` : ''}{p.plot_name ? ` · ${p.plot_name}` : ''}</p>
-                </div>
-                <button onClick={() => remove(p.id)} className="text-gray-300 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
-              </div>
-              <div className="flex flex-wrap gap-2 text-xs">
-                {p.sum_insured && <Badge variant="secondary">₹{p.sum_insured.toLocaleString('en-IN')} {t('covered')}</Badge>}
-                {p.premium_amount && <Badge variant="secondary">₹{p.premium_amount.toLocaleString('en-IN')} {t('premium')}</Badge>}
-                {p.end_date && <Badge variant="outline">{t('until')} {p.end_date}</Badge>}
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge className={cs.color}>{cs.label}</Badge>
-                {p.claim_status !== 'approved' && p.claim_status !== 'rejected' && (
-                  <Select value={p.claim_status} onValueChange={(v) => updateClaim(p, v)}>
-                    <SelectTrigger className="h-7 text-xs w-40"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(CLAIM_STATUS).map(([k, v]) => <SelectItem key={k} value={k}>{v.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                )}
-              </div>
-            </CardContent></Card>
-          );
-        })}
-      </div>
-
-      {showAdd ? (
-        <Card className="border-green-200"><CardContent className="pt-4 space-y-3">
-          <Label>{t('addPolicy')}</Label>
-          <div><Label className="mb-1 block text-xs">{t('policyName')}</Label><Input value={form.policy_name} onChange={(e) => setForm({ ...form, policy_name: e.target.value })} /></div>
-          <div><Label className="mb-1 block text-xs">{t('provider')}</Label><Input value={form.provider} onChange={(e) => setForm({ ...form, provider: e.target.value })} /></div>
-          <div className="grid grid-cols-2 gap-2">
-            <div><Label className="mb-1 block text-xs">{t('crop')}</Label><Input value={form.crop_name} onChange={(e) => setForm({ ...form, crop_name: e.target.value })} /></div>
-            <div><Label className="mb-1 block text-xs">{t('plotName')}</Label><Input value={form.plot_name} onChange={(e) => setForm({ ...form, plot_name: e.target.value })} /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div><Label className="mb-1 block text-xs">{t('premium')} (₹)</Label><Input type="number" value={form.premium_amount} onChange={(e) => setForm({ ...form, premium_amount: e.target.value })} /></div>
-            <div><Label className="mb-1 block text-xs">{t('sumInsured')} (₹)</Label><Input type="number" value={form.sum_insured} onChange={(e) => setForm({ ...form, sum_insured: e.target.value })} /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div><Label className="mb-1 block text-xs">{t('startDate')}</Label><Input type="date" value={form.start_date} onChange={(e) => setForm({ ...form, start_date: e.target.value })} /></div>
-            <div><Label className="mb-1 block text-xs">{t('endDate')}</Label><Input type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} /></div>
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={save} className="flex-1 bg-green-600 hover:bg-green-700">{t('save')}</Button>
-            <Button onClick={() => setShowAdd(false)} variant="outline" className="flex-1">{t('cancel')}</Button>
-          </div>
-        </CardContent></Card>
+      {/* Add policy */}
+      {!showAdd ? (
+        <button onClick={() => setShowAdd(true)}
+          className="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-leaf-400 bg-leaf-50/50 py-3 text-sm font-semibold text-leaf-700 transition-colors hover:bg-leaf-50 animate-fade-up">
+          <Plus size={16} /> Add policy
+        </button>
       ) : (
-        <Button onClick={() => setShowAdd(true)} variant="outline" className="w-full border-green-300 text-green-700"><Plus className="h-4 w-4 mr-1" />{t('addPolicy')}</Button>
+        <div className="mb-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm animate-fade-up">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-900">New policy</h3>
+            <button onClick={() => setShowAdd(false)} className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"><X size={16} /></button>
+          </div>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="Policy name"><Input className={inputCls} value={form.policy_name} onChange={(e) => setForm({ ...form, policy_name: e.target.value })} placeholder="PMFBY 2026" /></FormField>
+              <FormField label="Provider"><Input className={inputCls} value={form.provider} onChange={(e) => setForm({ ...form, provider: e.target.value })} placeholder="Insurance company" /></FormField>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="Crop"><Input className={inputCls} value={form.crop_name} onChange={(e) => setForm({ ...form, crop_name: e.target.value })} placeholder="e.g. Paddy" /></FormField>
+              <FormField label="Plot"><Input className={inputCls} value={form.plot_name} onChange={(e) => setForm({ ...form, plot_name: e.target.value })} placeholder="Plot name" /></FormField>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="Premium (₹)"><Input className={inputCls} type="number" value={form.premium_amount} onChange={(e) => setForm({ ...form, premium_amount: e.target.value })} placeholder="0" /></FormField>
+              <FormField label="Sum insured (₹)"><Input className={inputCls} type="number" value={form.sum_insured} onChange={(e) => setForm({ ...form, sum_insured: e.target.value })} placeholder="0" /></FormField>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="Start date"><Input className={inputCls} type="date" value={form.start_date} onChange={(e) => setForm({ ...form, start_date: e.target.value })} /></FormField>
+              <FormField label="End date"><Input className={inputCls} type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} /></FormField>
+            </div>
+            <button onClick={save} disabled={!form.policy_name}
+              className="w-full rounded-xl bg-leaf-700 py-3 text-sm font-semibold text-white transition-colors hover:bg-leaf-800 disabled:opacity-50">
+              Save policy
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Policies */}
+      {policies.length === 0 ? (
+        <EmptyState icon={ShieldPlus} title="No policies yet" subtitle="Add your crop insurance policy to track premiums and claims." />
+      ) : (
+        <SectionCard title="Your policies" icon={ShieldCheck}>
+          <ul className="divide-y divide-gray-100">
+            {policies.map((p, i) => {
+              const cs = CLAIM_STATUS[p.claim_status] || CLAIM_STATUS.none;
+              return (
+                <li key={p.id} className="px-4 py-3.5 animate-slide-in" style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-gray-900">{p.policy_name}</p>
+                      <p className="mt-0.5 truncate text-xs text-gray-500">
+                        {[p.provider, p.crop_name, p.plot_name].filter(Boolean).join(' · ')}
+                      </p>
+                    </div>
+                    <button onClick={() => remove(p.id)} className="rounded-lg p-1.5 text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"><Trash2 size={15} /></button>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {p.sum_insured && <Badge className="bg-leaf-50 text-leaf-700 hover:bg-leaf-50">₹{p.sum_insured.toLocaleString('en-IN')} covered</Badge>}
+                    {p.premium_amount && <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-100">₹{p.premium_amount.toLocaleString('en-IN')} premium</Badge>}
+                    {p.end_date && <Badge className="border border-gray-200 text-gray-500 hover:bg-transparent" variant="outline">until {new Date(p.end_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</Badge>}
+                  </div>
+                  <div className="mt-2.5 flex items-center gap-2">
+                    <Badge className={`${cs.color} hover:bg-inherit}`}>{cs.label}</Badge>
+                    {p.claim_status !== 'approved' && p.claim_status !== 'rejected' && (
+                      <Select value={p.claim_status} onValueChange={(v) => updateClaim(p, v)}>
+                        <SelectTrigger className="h-8 w-40 rounded-xl border-gray-200 text-xs"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(CLAIM_STATUS).map(([k, v]) => <SelectItem key={k} value={k}>{v.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </SectionCard>
       )}
     </div>
   );
