@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import WeatherWidget from '../components/WeatherWidget';
 
 const INTENTS = [
   { keys: ['disease', 'pest', 'yellow', 'leaf', 'rot', 'wilt', 'spot'], to: '/diagnose', label: 'Diagnose crop issue' },
@@ -69,28 +70,13 @@ const QUICK_ACTIONS = [
   { to: '/crop-planner', emoji: '📅', label: 'Planner', tint: 'bg-violet-50' },
 ];
 
-function weatherEmoji(description) {
-  const d = (description || '').toLowerCase();
-  if (d.includes('thunder')) return '⛈️';
-  if (d.includes('rain')) return '🌧️';
-  if (d.includes('drizzle')) return '🌦️';
-  if (d.includes('mist') || d.includes('haze') || d.includes('fog')) return '🌫️';
-  if (d.includes('clear')) return '☀️';
-  return '⛅';
-}
-
 export default function Home() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
   const [listening, setListening] = useState(false);
-  const [weather, setWeather] = useState(null);
   const [prices, setPrices] = useState(null);
 
   useEffect(() => {
-    axios.get('/api/weather/current?lat=17.3850&lon=78.4867')
-      .then((res) => setWeather(res.data))
-      .catch(() => setWeather(false));
-
     Promise.all(
       ['onion', 'tomato', 'potato'].map((c) =>
         axios.get('/api/mandi-prices', { params: { commodity: c } })
@@ -132,8 +118,11 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-5">
+      {/* Weather forecast */}
+      <WeatherWidget />
+
       {/* Search + voice */}
-      <div className="flex animate-fade-up items-center gap-2.5 rounded-full border border-gray-300 bg-white py-2.5 pl-4 pr-2.5 shadow-sm transition-all focus-within:border-leaf-500 focus-within:ring-4 focus-within:ring-leaf-100">
+      <div className="mt-5 flex animate-fade-up items-center gap-2.5 rounded-full border border-gray-300 bg-white py-2.5 pl-4 pr-2.5 shadow-sm transition-all focus-within:border-leaf-500 focus-within:ring-4 focus-within:ring-leaf-100">
         <span className="shrink-0 text-base">🔍</span>
         <input
           value={query}
@@ -182,41 +171,6 @@ export default function Home() {
           <span>→</span>
         </Link>
       )}
-
-      {/* Weather */}
-      <Link
-        to="/weather"
-        className="mt-5 flex animate-fade-up items-center justify-between rounded-2xl border border-gray-200 p-4 transition-all hover:border-leaf-300 hover:shadow-sm active:scale-[0.99]"
-        style={{ animationDelay: '80ms' }}
-      >
-        {weather && weather.temperature != null ? (
-          <>
-            <div className="flex items-center gap-3">
-              <span className="animate-bounce-soft text-4xl">{weatherEmoji(weather.description)}</span>
-              <div>
-                <p className="text-lg font-semibold leading-tight text-gray-900">
-                  {Math.round(weather.temperature)}°C{' '}
-                  <span className="text-sm font-normal capitalize text-gray-500">
-                    {weather.description || '—'}
-                  </span>
-                </p>
-                <p className="text-xs text-gray-400">
-                  Humidity {weather.humidity ?? '—'}% · Wind {weather.wind_speed ?? '—'} m/s
-                </p>
-              </div>
-            </div>
-            <span className="text-lg text-gray-300">›</span>
-          </>
-        ) : (
-          <>
-            <div className="flex items-center gap-3">
-              <span className="animate-bounce-soft text-3xl">⛅</span>
-              <p className="text-sm text-gray-600">Check the 7-day forecast for your farm</p>
-            </div>
-            <span className="text-lg text-gray-300">›</span>
-          </>
-        )}
-      </Link>
 
       {/* Quick actions */}
       <div className="mt-6 grid grid-cols-4 gap-2">
