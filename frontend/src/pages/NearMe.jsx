@@ -1,14 +1,11 @@
-import { useState, useEffect } from 'react'
-import { MapPin, Phone, Building2, Sprout, Navigation, ExternalLink, Store, Leaf, FlaskConical } from 'lucide-react';
-import { useLang } from '../lib/i18n';
+import { useState, useEffect } from 'react';
+import { MapPin, Phone, Building2, Sprout, Navigation, ExternalLink, Store, Leaf, FlaskConical, X } from 'lucide-react';
 import axios from 'axios';
+import { CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import PageHeader from '../components/PageHeader';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
-import { Card, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Badge } from '../components/ui/badge';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select';
-import PageHeader from '../components/PageHeader';
 
 const haversine = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
@@ -19,14 +16,20 @@ const haversine = (lat1, lon1, lat2, lon2) => {
 };
 
 const SHOP_TYPES = {
-  agrarian: { label: 'Agro shop (pesticides/fertilizers)', icon: FlaskConical, color: 'bg-purple-100 text-purple-700' },
-  garden_centre: { label: 'Nursery / seeds', icon: Sprout, color: 'bg-green-100 text-green-700' },
+  agrarian: { label: 'Agro shop (pesticides/fertilizers)', icon: FlaskConical, color: 'bg-violet-100 text-violet-700' },
+  garden_centre: { label: 'Nursery / seeds', icon: Sprout, color: 'bg-leaf-100 text-leaf-700' },
   health_food: { label: 'Organic products', icon: Leaf, color: 'bg-emerald-100 text-emerald-700' },
   florist: { label: 'Florist / seeds', icon: Leaf, color: 'bg-teal-100 text-teal-700' },
 };
 
+const FILTERS = [
+  { id: 'all', label: 'All' },
+  { id: 'kvk', label: 'KVKs' },
+  { id: 'market', label: 'Markets' },
+  { id: 'shop', label: 'Shops' },
+];
+
 export default function NearMe() {
-  const { t } = useLang();
   const [kvks, setKvks] = useState([]);
   const [markets, setMarkets] = useState([]);
   const [shops, setShops] = useState([]);
@@ -40,25 +43,16 @@ export default function NearMe() {
     axios.get(`${API_URL}/api/kvk`)
       .then((res) => setKvks((res.data || []).map((k, idx) => ({
         id: `kvk_${k.state}_${k.serial_no ?? idx}`,
-        address: k.address,
-        state_ut: k.state,
-        host_institution_approx: k.host_institution,
-        year_of_sanction: k.year_of_sanction,
-        kvk_type: k.type,
-        lat_approx: null,
-        lng_approx: null,
-        VERIFY_AT: k.verify_at,
+        address: k.address, state_ut: k.state, host_institution_approx: k.host_institution,
+        year_of_sanction: k.year_of_sanction, kvk_type: k.type,
+        lat_approx: null, lng_approx: null, VERIFY_AT: k.verify_at,
       }))))
       .catch(() => setKvks([]));
     axios.get(`${API_URL}/api/gov-markets`)
       .then((res) => setMarkets((res.data || []).map((m) => ({
         id: `market_${m.market_name}_${m.state}`,
-        market_name: m.market_name,
-        state: m.state,
-        district_region: m.district_region,
-        lat_approx: m.lat,
-        lng_approx: m.lng,
-        commodities_traded: m.commodities_traded,
+        market_name: m.market_name, state: m.state, district_region: m.district_region,
+        lat_approx: m.lat, lng_approx: m.lng, commodities_traded: m.commodities_traded,
       }))))
       .catch(() => setMarkets([]));
   }, []);
@@ -88,20 +82,14 @@ export default function NearMe() {
       setShops((data.elements || []).map((e) => ({
         id: 'shop_' + e.id,
         name: e.tags?.name || SHOP_TYPES[e.tags?.shop]?.label || 'Shop',
-        shop_type: e.tags?.shop,
-        lat_approx: e.lat,
-        lng_approx: e.lon,
-        _type: 'shop',
+        shop_type: e.tags?.shop, lat_approx: e.lat, lng_approx: e.lon, _type: 'shop',
       })));
     } catch { setShops([]); }
     finally { setShopsLoading(false); }
   };
 
   const withDist = (items) =>
-    items.map((i) => ({
-      ...i,
-      _dist: origin && i.lat_approx != null ? haversine(origin.lat, origin.lng, i.lat_approx, i.lng_approx) : null,
-    }));
+    items.map((i) => ({ ...i, _dist: origin && i.lat_approx != null ? haversine(origin.lat, origin.lng, i.lat_approx, i.lng_approx) : null }));
 
   let all = [
     ...withDist(kvks.map((k) => ({ ...k, _type: 'kvk' }))),
@@ -122,8 +110,8 @@ export default function NearMe() {
     return i._type === 'kvk' ? Sprout : Building2;
   };
   const colorFor = (i) => {
-    if (i._type === 'shop') return SHOP_TYPES[i.shop_type]?.color || 'bg-gray-100 text-gray-700';
-    return i._type === 'kvk' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700';
+    if (i._type === 'shop') return SHOP_TYPES[i.shop_type]?.color || 'bg-gray-100 text-gray-600';
+    return i._type === 'kvk' ? 'bg-leaf-100 text-leaf-700' : 'bg-amber-100 text-amber-700';
   };
   const nameFor = (i) => i.name || i.market_name || i.address || 'KVK';
   const subFor = (i) => {
@@ -134,97 +122,175 @@ export default function NearMe() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
-      <PageHeader titleKey="nearMe" icon={MapPin} />
+      <PageHeader title="Near Me" icon={MapPin} subtitle="KVKs, markets and agro shops around you" />
 
-      <div className="rounded-xl overflow-hidden border mb-3 h-44">
-        <iframe src={mapSrc} width="100%" height="100%" style={{ border: 0 }} loading="lazy" title="map" />
+      {/* Map card */}
+      <div className="animate-fade-up overflow-hidden rounded-3xl border border-gray-200 shadow-sm">
+        <div className="h-44">
+          <iframe src={mapSrc} width="100%" height="100%" style={{ border: 0 }} loading="lazy" title="map" />
+        </div>
+        <button
+          onClick={useLocation}
+          className="flex w-full items-center justify-center gap-1.5 bg-leaf-700 py-3 text-sm font-semibold text-white transition-colors hover:bg-leaf-800 active:bg-leaf-900"
+        >
+          <Navigation size={15} /> {origin ? 'Refresh my location' : 'Use my location'}
+        </button>
       </div>
 
-      <div className="flex gap-2 mb-3">
-        <Button onClick={useLocation} className="flex-1 bg-green-600 hover:bg-green-700"><Navigation className="h-4 w-4 mr-1" />{t('useMyLocation')}</Button>
+      {/* Filters */}
+      <div className="mt-4 flex animate-fade-up items-center gap-2" style={{ animationDelay: '60ms' }}>
+        <div className="flex flex-1 gap-1.5 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {FILTERS.map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setFilter(f.id)}
+              className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all active:scale-95 ${
+                filter === f.id ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-400'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+        {origin && (
+          <select
+            value={radius}
+            onChange={(e) => setRadius(Number(e.target.value))}
+            className="shrink-0 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 outline-none"
+          >
+            {[5, 10, 25, 50, 100].map((r) => <option key={r} value={r}>{r} km</option>)}
+          </select>
+        )}
       </div>
 
-      <div className="flex gap-2 mb-3">
-        <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="flex-1"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="kvk">{t('kvks')}</SelectItem>
-            <SelectItem value="market">{t('markets')}</SelectItem>
-            <SelectItem value="shop">{t('shops')}</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={String(radius)} onValueChange={(v) => setRadius(Number(v))}>
-          <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {[5, 10, 25, 50, 100].map((r) => <SelectItem key={r} value={String(r)}>{r} km</SelectItem>)}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {!origin && <p className="text-xs text-gray-400 mb-3">Showing saved centres. Tap "{t('useMyLocation')}" to find nearby shops and sort by distance.</p>}
-      {shopsLoading && <p className="text-xs text-gray-400 mb-3">{t('loading')}</p>}
-
-      <div className="space-y-2">
-        {all.map((i) => {
-          const Icon = iconFor(i);
-          return (
-            <Card key={i.id} className="hover:shadow-md cursor-pointer" onClick={() => setSelected(i)}>
-              <CardContent className="pt-3 flex items-start gap-3">
-                <span className={`flex h-9 w-9 items-center justify-center rounded-full shrink-0 ${colorFor(i)}`}>
-                  <Icon className="h-5 w-5" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium truncate">{nameFor(i)}</p>
-                  <p className="text-xs text-gray-400 truncate">{subFor(i)}</p>
-                  {i._dist != null && <Badge className="mt-1 bg-gray-100 text-gray-600">{i._dist.toFixed(1)} {t('distance')}</Badge>}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {selected && (
-        <div className="fixed inset-0 z-50 flex items-end bg-black/40" onClick={() => setSelected(null)}>
-          <Card className="w-full max-w-md mx-auto rounded-t-2xl" onClick={(e) => e.stopPropagation()}>
-            <CardContent className="pt-5 pb-6 space-y-3">
-              <div className="flex items-center gap-2">
-                <span className={`flex h-10 w-10 items-center justify-center rounded-full ${colorFor(selected)}`}>
-                  {(() => { const Icon = iconFor(selected); return <Icon className="h-5 w-5" />; })()}
-                </span>
-                <h3 className="font-bold">{nameFor(selected)}</h3>
-              </div>
-              <p className="text-sm text-gray-600">{subFor(selected)}</p>
-              {selected._dist != null && <Badge className="bg-green-100 text-green-700">{selected._dist.toFixed(1)} {t('distance')}</Badge>}
-              {selected.host_institution_approx && <p className="text-sm"><span className="text-gray-400">Host:</span> {selected.host_institution_approx}</p>}
-              {selected.commodities_traded && <p className="text-sm"><span className="text-gray-400">{t('commodities')}:</span> {selected.commodities_traded}</p>}
-              {selected.shop_type && <p className="text-sm"><span className="text-gray-400">{t('type')}:</span> {SHOP_TYPES[selected.shop_type]?.label}</p>}
-              <p className="text-xs text-gray-400">{selected.VERIFY_AT ? `Verify at: ${selected.VERIFY_AT}` : 'Verify on official portal'}</p>
-              {selected.phone && (
-                <a href={`tel:${selected.phone}`}><Button className="w-full bg-green-600 hover:bg-green-700"><Phone className="h-4 w-4 mr-1" />{t('callNow')}</Button></a>
-              )}
-              {selected._type === 'kvk' && (
-                <a href="https://kvk.icar.gov.in/" target="_blank" rel="noopener noreferrer"><Button variant="outline" className="w-full"><ExternalLink className="h-4 w-4 mr-1" />{t('kvkPortal')}</Button></a>
-              )}
-              {selected._type === 'market' && (
-                <>
-                  <a href="https://agmarknet.gov.in/" target="_blank" rel="noopener noreferrer"><Button variant="outline" className="w-full"><ExternalLink className="h-4 w-4 mr-1" />{t('marketPortal')}</Button></a>
-                  <a href="https://enam.gov.in/" target="_blank" rel="noopener noreferrer"><Button variant="outline" className="w-full"><ExternalLink className="h-4 w-4 mr-1" />eNAM Portal</Button></a>
-                </>
-              )}
-              {selected.lat_approx != null && (
-                <a href={`https://www.google.com/maps/dir/?api=1&destination=${selected.lat_approx},${selected.lng_approx}`} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" className="w-full"><Navigation className="h-4 w-4 mr-1" />{t('directions')}</Button>
-                </a>
-              )}
-              {selected._type === 'kvk' && (
-                <a href="/near-me"><Button variant="outline" className="w-full">{t('consultExpert')}</Button></a>
-              )}
-            </CardContent>
-          </Card>
+      {!origin && (
+        <p className="mt-3 text-[11px] leading-relaxed text-gray-400">
+          Showing saved centres from the ICAR KVK directory and government market list. Tap "Use my location" to find shops nearby and sort by distance.
+        </p>
+      )}
+      {shopsLoading && (
+        <div className="mt-3 space-y-2.5">
+          {[0, 1, 2].map((i) => <div key={i} className="animate-shimmer h-16 rounded-2xl bg-gray-100 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:400px_100%]" />)}
         </div>
       )}
+
+      {/* Results */}
+      <div className="mt-3 space-y-2.5">
+        {all.slice(0, 40).map((i, idx) => {
+          const Icon = iconFor(i);
+          return (
+            <ResultCard key={i.id} onClick={() => setSelected(i)} delay={Math.min(idx, 8) * 35}>
+              <CardContent className="flex items-start gap-3 pt-3.5 pb-3.5">
+                <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${colorFor(i)}`}>
+                  <Icon size={17} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-gray-900">{nameFor(i)}</p>
+                  <p className="truncate text-xs text-gray-400">{subFor(i)}</p>
+                </div>
+                {i._dist != null && (
+                  <span className="shrink-0 rounded-full bg-leaf-50 px-2 py-1 text-[10px] font-bold text-leaf-700">
+                    {i._dist.toFixed(1)} km
+                  </span>
+                )}
+              </CardContent>
+            </ResultCard>
+          );
+        })}
+        {all.length === 0 && !shopsLoading && (
+          <div className="rounded-2xl border border-dashed border-gray-300 py-10 text-center">
+            <MapPin size={26} className="mx-auto text-gray-300" />
+            <p className="mt-2 text-sm font-medium text-gray-600">Nothing found nearby</p>
+            <p className="text-xs text-gray-400">Try a larger radius or a different filter.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Detail bottom sheet */}
+      {selected && (
+        <div className="fixed inset-0 z-50 flex items-end bg-black/40 backdrop-blur-[2px]" onClick={() => setSelected(null)}>
+          <div
+            className="mx-auto w-full max-w-md animate-fade-up rounded-t-3xl bg-white shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-center pt-3">
+              <span className="h-1 w-10 rounded-full bg-gray-200" />
+            </div>
+            <CardContent className="space-y-3 pb-7 pt-4">
+              <div className="flex items-start gap-3">
+                <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${colorFor(selected)}`}>
+                  {(() => { const Icon = iconFor(selected); return <Icon size={19} />; })()}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-base font-semibold leading-snug text-gray-900">{nameFor(selected)}</h3>
+                  <p className="text-xs text-gray-500">{subFor(selected)}</p>
+                </div>
+                <button onClick={() => setSelected(null)} className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100" aria-label="Close">
+                  <X size={16} />
+                </button>
+              </div>
+
+              {selected._dist != null && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-leaf-50 px-2.5 py-1 text-[11px] font-bold text-leaf-700">
+                  <Navigation size={11} /> {selected._dist.toFixed(1)} km away
+                </span>
+              )}
+              {selected.host_institution_approx && <InfoRow label="Host" value={selected.host_institution_approx} />}
+              {selected.address && <InfoRow label="Address" value={selected.address} />}
+              {selected.commodities_traded && <InfoRow label="Commodities" value={selected.commodities_traded} />}
+              {selected.shop_type && <InfoRow label="Type" value={SHOP_TYPES[selected.shop_type]?.label} />}
+              <p className="text-[10px] text-gray-300">{selected.VERIFY_AT ? `Verify at: ${selected.VERIFY_AT}` : 'Verify details on the official portal'}</p>
+
+              <div className="space-y-2 pt-1">
+                {selected.lat_approx != null && (
+                  <a href={`https://www.google.com/maps/dir/?api=1&destination=${selected.lat_approx},${selected.lng_approx}`} target="_blank" rel="noopener noreferrer">
+                    <Button className="w-full"><Navigation size={15} /> Get directions</Button>
+                  </a>
+                )}
+                {selected.phone && (
+                  <a href={`tel:${selected.phone}`}><Button className="w-full"><Phone size={15} /> Call now</Button></a>
+                )}
+                {selected._type === 'kvk' && (
+                  <a href="https://kvk.icar.gov.in/" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" className="w-full"><ExternalLink size={15} /> KVK portal</Button>
+                  </a>
+                )}
+                {selected._type === 'market' && (
+                  <>
+                    <a href="https://agmarknet.gov.in/" target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" className="w-full"><ExternalLink size={15} /> AGMARKNET prices</Button>
+                    </a>
+                    <a href="https://enam.gov.in/" target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" className="w-full"><ExternalLink size={15} /> eNAM portal</Button>
+                    </a>
+                  </>
+                )}
+              </div>
+            </CardContent>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ResultCard({ children, onClick, delay = 0 }) {
+  return (
+    <div
+      onClick={onClick}
+      className="animate-fade-up cursor-pointer rounded-2xl border border-gray-200 bg-white shadow-sm transition-all hover:border-leaf-300 hover:shadow-md active:scale-[0.99]"
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function InfoRow({ label, value }) {
+  return (
+    <div className="rounded-xl bg-gray-50 px-3.5 py-2.5">
+      <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400">{label}</p>
+      <p className="mt-0.5 text-sm leading-relaxed text-gray-700">{value}</p>
     </div>
   );
 }

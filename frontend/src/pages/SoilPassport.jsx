@@ -1,23 +1,15 @@
-import { files } from '../api/appClient';
-import { ai } from '../api/appClient';
-import { useState, useEffect } from 'react'
-import { Sprout, ShieldCheck, ScanLine, Plus, LineChart as LineChartIcon } from 'lucide-react';
-import { useLang } from '../lib/i18n';
-import appClient from '../api/appClient';
+import { useState, useEffect } from 'react';
+import { Sprout, ShieldCheck, ScanLine, Plus, LineChart as LineChartIcon, X, BookOpen } from 'lucide-react';
+import appClient, { files, ai } from '../api/appClient';
 import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || '';
 import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
-import { Label } from '../components/ui/label';
-import { Input } from '../components/ui/input';
-import { Badge } from '../components/ui/badge';
-import { Textarea } from '../components/ui/textarea';
+import { SectionCard, FormField } from '../components/kit';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select';
-import { Image } from '../components/ui/image';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import PageHeader from '../components/PageHeader';
 
+const API_URL = import.meta.env.VITE_API_URL || '';
+const inputCls = 'w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm outline-none transition-all focus:border-leaf-500 focus:ring-4 focus:ring-leaf-100';
 
 const toHash = async (obj) => {
   const data = new TextEncoder().encode(JSON.stringify(obj));
@@ -26,7 +18,6 @@ const toHash = async (obj) => {
 };
 
 export default function SoilPassport() {
-  const { t } = useLang();
   const [records, setRecords] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
   const [scanning, setScanning] = useState(false);
@@ -45,7 +36,7 @@ export default function SoilPassport() {
   const refProfile = soilProfiles.find((p) => p.state === refState);
 
   const save = async () => {
-    if (!form.plot_name) { alert('Plot name required'); return; }
+    if (!form.plot_name) { alert('Plot name is required'); return; }
     const payload = {
       plot_name: form.plot_name,
       test_date: form.test_date || undefined,
@@ -92,8 +83,8 @@ export default function SoilPassport() {
         potassium: res.potassium ?? f.potassium, organic_carbon: res.organic_carbon ?? f.organic_carbon,
         ec: res.ec ?? f.ec, soil_type: res.soil_type || f.soil_type, testing_organization: res.testing_organization || f.testing_organization,
       }));
-      alert(t('confirmValues'));
-    } catch (_err) {
+      alert('Scanned — please check the values before saving.');
+    } catch {
       alert('Scan failed. You can enter values manually.');
     } finally {
       setScanning(false);
@@ -110,123 +101,166 @@ export default function SoilPassport() {
     .sort((a, b) => new Date(a.test_date) - new Date(b.test_date))
     .map((r) => ({
       date: new Date(r.test_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
-      pH: r.ph ?? null,
-      N: r.nitrogen ?? null,
-      P: r.phosphorus ?? null,
-      K: r.potassium ?? null,
-      OC: r.organic_carbon ?? null,
+      pH: r.ph ?? null, N: r.nitrogen ?? null, P: r.phosphorus ?? null, K: r.potassium ?? null, OC: r.organic_carbon ?? null,
     }));
   const hasTrend = trendData.filter((d) => d.pH != null || d.N != null || d.P != null || d.K != null).length >= 2;
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
-      <PageHeader titleKey="soilPassport" icon={Sprout} />
+      <PageHeader title="Soil Passport" icon={Sprout} subtitle="Your soil health history, plot by plot" />
 
-      {soilProfiles.length > 0 && (
-        <Card className="mb-4 border-blue-200"><CardContent className="pt-4">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">Government soil reference (state-level)</h3>
-          <Select value={refState} onValueChange={setRefState}>
-            <SelectTrigger className="h-8 text-sm mb-2"><SelectValue placeholder="Select your state" /></SelectTrigger>
-            <SelectContent>{soilProfiles.map((p) => <SelectItem key={p.state} value={p.state}>{p.state}</SelectItem>)}</SelectContent>
-          </Select>
-          {refProfile && (
-            <div className="text-sm space-y-1">
-              <p><span className="text-gray-400">Dominant soil type:</span> {refProfile.dominant_soil_type}</p>
-              <p><span className="text-gray-400">Typical pH range:</span> {refProfile.typical_ph_range}</p>
-              <p><span className="text-gray-400">Characteristics:</span> {refProfile.characteristics}</p>
-              <p><span className="text-gray-400">Suitable crops:</span> {refProfile.suitable_crops}</p>
-            </div>
-          )}
-          <p className="text-[10px] text-gray-300 mt-2">Reference values only — not a substitute for your own soil test.</p>
-        </CardContent></Card>
-      )}
-
-      <div className="space-y-2 mb-4">
-        {records.length === 0 ? (
-          <p className="text-sm text-gray-400">No soil records yet. Add one or scan a Soil Health Card.</p>
-        ) : records.map((r) => (
-          <Card key={r.id}><CardContent className="pt-3">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium">{r.plot_name}</p>
-              {r.record_hash && <Badge className="bg-green-100 text-green-700 flex items-center gap-1"><ShieldCheck className="h-3 w-3" />{t('verifiedBadge')}</Badge>}
-            </div>
-            <p className="text-xs text-gray-400">{r.test_date || 'No date'} {r.testing_organization ? `· ${r.testing_organization}` : ''}</p>
-            <div className="grid grid-cols-5 gap-1 mt-2 text-center">
-              {[['pH', num(r.ph)], ['N', num(r.nitrogen)], ['P', num(r.phosphorus)], ['K', num(r.potassium)], ['OC', num(r.organic_carbon)]].map(([k, v]) => (
-                <div key={k} className="bg-gray-50 rounded p-1"><div className="text-[10px] text-gray-400">{k}</div><div className="text-xs font-medium">{v}</div></div>
-              ))}
-            </div>
-            {r.notes && <p className="text-xs text-gray-500 mt-2">{r.notes}</p>}
-            <p className="text-[10px] text-gray-300 mt-1 truncate">hash: {r.record_hash?.slice(0, 24)}…</p>
-          </CardContent></Card>
-        ))}
-      </div>
-
-      {plots.length > 0 && (
-        <Card className="mb-4"><CardContent className="pt-4">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
-            <LineChartIcon className="h-4 w-4 text-green-600" /> {t('soilTrend')}
-          </h3>
-          {plots.length > 1 && (
-            <Select value={trendPlot} onValueChange={setTrendPlot}>
-              <SelectTrigger className="h-8 text-sm mb-2"><SelectValue /></SelectTrigger>
-              <SelectContent>{plots.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
-            </Select>
-          )}
-          {hasTrend ? (
-            <div className="h-56">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={trendData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                  <YAxis tick={{ fontSize: 10 }} />
-                  <Tooltip />
-                  <Legend wrapperStyle={{ fontSize: 10 }} />
-                  <Line type="monotone" dataKey="pH" stroke="#16a34a" dot={{ r: 3 }} connectNulls />
-                  <Line type="monotone" dataKey="N" stroke="#3b82f6" dot={{ r: 3 }} connectNulls />
-                  <Line type="monotone" dataKey="P" stroke="#f59e0b" dot={{ r: 3 }} connectNulls />
-                  <Line type="monotone" dataKey="K" stroke="#ef4444" dot={{ r: 3 }} connectNulls />
-                  <Line type="monotone" dataKey="OC" stroke="#a855f7" dot={{ r: 3 }} connectNulls />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <p className="text-xs text-gray-400">{t('soilTrendEmpty')}</p>
-          )}
-        </CardContent></Card>
-      )}
-
-      <p className="text-xs text-gray-400 mb-3">{t('blockchainUnavailable')}</p>
-
-      {showAdd ? (
-        <Card className="border-green-200"><CardContent className="pt-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <Label>{t('addSoilRecord')}</Label>
-            <label className="cursor-pointer">
-              <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 px-2.5 py-1.5 rounded-lg"><ScanLine className="h-3.5 w-3.5" />{scanning ? t('loading') : t('scanCard')}</span>
-              <input type="file" accept="image/*" capture="environment" className="hidden" onChange={scanCard} />
-            </label>
-          </div>
-          {form.card_file_url && <Image src={form.card_file_url} className="w-full h-32 rounded-lg" fittingType="fit" />}
-          <div className="grid grid-cols-2 gap-2">
-            <div><Label className="mb-1 block text-xs">{t('plotName')}</Label><Input value={form.plot_name} onChange={(e) => setForm({ ...form, plot_name: e.target.value })} /></div>
-            <div><Label className="mb-1 block text-xs">Test date</Label><Input type="date" value={form.test_date} onChange={(e) => setForm({ ...form, test_date: e.target.value })} /></div>
-          </div>
-          <div className="grid grid-cols-5 gap-1">
-            {[['ph', 'pH'], ['nitrogen', 'N'], ['phosphorus', 'P'], ['potassium', 'K'], ['organic_carbon', 'OC']].map(([k, lbl]) => (
-              <div key={k}><Label className="mb-1 block text-xs">{lbl}</Label><Input type="number" value={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.value })} /></div>
-            ))}
-          </div>
-          <Input placeholder={t('soilType')} value={form.soil_type} onChange={(e) => setForm({ ...form, soil_type: e.target.value })} />
-          <Textarea placeholder={t('notes')} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2} />
-          <div className="flex gap-2">
-            <Button onClick={save} className="flex-1 bg-green-600 hover:bg-green-700">{t('save')}</Button>
-            <Button onClick={() => setShowAdd(false)} variant="outline" className="flex-1">{t('cancel')}</Button>
-          </div>
-        </CardContent></Card>
+      {/* Records */}
+      {records.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-gray-300 py-10 text-center">
+          <Sprout size={26} className="mx-auto text-gray-300" />
+          <p className="mt-2 text-sm font-medium text-gray-600">No soil records yet</p>
+          <p className="text-xs text-gray-400">Add one below, or scan your Soil Health Card.</p>
+        </div>
       ) : (
-        <Button onClick={() => setShowAdd(true)} variant="outline" className="w-full border-green-300 text-green-700"><Plus className="h-4 w-4 mr-1" />{t('addSoilRecord')}</Button>
+        <div className="space-y-3">
+          {records.map((r, i) => (
+            <div key={r.id} className="animate-fade-up overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm" style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}>
+              <div className="flex items-center justify-between gap-2 bg-gradient-to-r from-leaf-800 to-leaf-950 px-4 py-3 text-white">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold">{r.plot_name}</p>
+                  <p className="truncate text-[11px] text-leaf-200/75">
+                    {r.test_date ? new Date(r.test_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'No date'}
+                    {r.testing_organization ? ` · ${r.testing_organization}` : ''}
+                  </p>
+                </div>
+                {r.record_hash && (
+                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-bold text-leaf-100">
+                    <ShieldCheck size={11} /> Verified
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-5 gap-1.5 p-3">
+                {[['pH', num(r.ph)], ['N', num(r.nitrogen)], ['P', num(r.phosphorus)], ['K', num(r.potassium)], ['OC', num(r.organic_carbon)]].map(([k, v]) => (
+                  <div key={k} className="rounded-xl bg-gray-50 py-2 text-center">
+                    <div className="text-[10px] font-bold uppercase tracking-wide text-gray-400">{k}</div>
+                    <div className="text-sm font-semibold text-gray-800">{v}</div>
+                  </div>
+                ))}
+              </div>
+              {r.notes && <p className="px-4 pb-2 text-xs text-gray-500">{r.notes}</p>}
+              {r.record_hash && <p className="truncate px-4 pb-3 text-[10px] text-gray-300">hash: {r.record_hash.slice(0, 32)}…</p>}
+            </div>
+          ))}
+        </div>
       )}
+
+      {/* Trend chart */}
+      {plots.length > 0 && (
+        <div className="mt-4">
+          <SectionCard icon={LineChartIcon} title="Soil trend" tone="bg-leaf-100 text-leaf-700">
+            <div className="p-4">
+              {plots.length > 1 && (
+                <Select value={trendPlot} onValueChange={setTrendPlot}>
+                  <SelectTrigger className="mb-3"><SelectValue /></SelectTrigger>
+                  <SelectContent>{plots.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
+                </Select>
+              )}
+              {hasTrend ? (
+                <div className="h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={trendData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0fdf4" />
+                      <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                      <YAxis tick={{ fontSize: 10 }} />
+                      <Tooltip />
+                      <Legend wrapperStyle={{ fontSize: 10 }} />
+                      <Line type="monotone" dataKey="pH" stroke="#16a34a" dot={{ r: 3 }} connectNulls strokeWidth={2} />
+                      <Line type="monotone" dataKey="N" stroke="#3b82f6" dot={{ r: 3 }} connectNulls strokeWidth={2} />
+                      <Line type="monotone" dataKey="P" stroke="#f59e0b" dot={{ r: 3 }} connectNulls strokeWidth={2} />
+                      <Line type="monotone" dataKey="K" stroke="#ef4444" dot={{ r: 3 }} connectNulls strokeWidth={2} />
+                      <Line type="monotone" dataKey="OC" stroke="#a855f7" dot={{ r: 3 }} connectNulls strokeWidth={2} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <p className="py-4 text-center text-xs text-gray-400">Add two or more dated records for this plot to see the trend.</p>
+              )}
+            </div>
+          </SectionCard>
+        </div>
+      )}
+
+      {/* Government reference */}
+      {soilProfiles.length > 0 && (
+        <div className="mt-4">
+          <SectionCard icon={BookOpen} title="State soil reference" tone="bg-blue-100 text-blue-700">
+            <div className="p-4">
+              <Select value={refState} onValueChange={setRefState}>
+                <SelectTrigger><SelectValue placeholder="Select your state" /></SelectTrigger>
+                <SelectContent className="max-h-72">{soilProfiles.map((p) => <SelectItem key={p.state} value={p.state}>{p.state}</SelectItem>)}</SelectContent>
+              </Select>
+              {refProfile && (
+                <div className="mt-3 space-y-1.5 text-sm">
+                  <p><span className="text-gray-400">Soil type:</span> <span className="font-medium text-gray-800">{refProfile.dominant_soil_type}</span></p>
+                  <p><span className="text-gray-400">Typical pH:</span> <span className="font-medium text-gray-800">{refProfile.typical_ph_range}</span></p>
+                  <p className="text-xs leading-relaxed text-gray-500">{refProfile.characteristics}</p>
+                  <p className="text-xs leading-relaxed text-gray-500"><span className="font-semibold text-gray-600">Suitable crops:</span> {refProfile.suitable_crops}</p>
+                </div>
+              )}
+              <p className="mt-2 text-[10px] text-gray-300">Reference values only — not a substitute for your own soil test.</p>
+            </div>
+          </SectionCard>
+        </div>
+      )}
+
+      {/* Add record */}
+      {showAdd ? (
+        <div className="mt-4 animate-fade-in rounded-2xl border border-leaf-200 bg-white p-4 shadow-sm">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-900">Add soil record</h3>
+            <div className="flex items-center gap-2">
+              <label className="cursor-pointer">
+                <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all active:scale-95 ${scanning ? 'bg-gray-100 text-gray-400' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'}`}>
+                  <ScanLine size={13} /> {scanning ? 'Scanning…' : 'Scan card'}
+                </span>
+                <input type="file" accept="image/*" capture="environment" className="hidden" onChange={scanCard} />
+              </label>
+              <button onClick={() => setShowAdd(false)} className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100" aria-label="Close"><X size={16} /></button>
+            </div>
+          </div>
+          {form.card_file_url && <img src={form.card_file_url} alt="Soil card" className="mb-3 h-32 w-full rounded-xl object-contain" />}
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="Plot name"><input value={form.plot_name} onChange={(e) => setForm({ ...form, plot_name: e.target.value })} placeholder="e.g. Paddy field" className={inputCls} /></FormField>
+              <FormField label="Test date"><input type="date" value={form.test_date} onChange={(e) => setForm({ ...form, test_date: e.target.value })} className={inputCls} /></FormField>
+            </div>
+            <div>
+              <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500">Measurements</span>
+              <div className="grid grid-cols-5 gap-2">
+                {[['ph', 'pH'], ['nitrogen', 'N'], ['phosphorus', 'P'], ['potassium', 'K'], ['organic_carbon', 'OC']].map(([k, lbl]) => (
+                  <div key={k} className="rounded-xl border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center">
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400">{lbl}</p>
+                    <input type="number" value={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.value })} placeholder="—"
+                      className="w-full bg-transparent text-center text-sm font-semibold text-gray-800 outline-none placeholder:text-gray-300" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="Soil type"><input value={form.soil_type} onChange={(e) => setForm({ ...form, soil_type: e.target.value })} placeholder="e.g. Black cotton" className={inputCls} /></FormField>
+              <FormField label="Testing org"><input value={form.testing_organization} onChange={(e) => setForm({ ...form, testing_organization: e.target.value })} placeholder="Optional" className={inputCls} /></FormField>
+            </div>
+            <FormField label="Notes">
+              <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2} placeholder="Optional…" className={`${inputCls} resize-none`} />
+            </FormField>
+            <div className="flex gap-2">
+              <Button onClick={save} className="flex-1">Save record</Button>
+              <Button onClick={() => setShowAdd(false)} variant="outline" className="flex-1">Cancel</Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button onClick={() => setShowAdd(true)} className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-leaf-400 bg-leaf-50/50 py-3 text-sm font-semibold text-leaf-700 transition-all hover:bg-leaf-50 active:scale-[0.98]">
+          <Plus size={15} /> Add soil record
+        </button>
+      )}
+
+      <p className="mt-4 text-center text-[10px] text-gray-300">Records are SHA-256 hashed for tamper-evidence (local verification).</p>
     </div>
   );
 }
