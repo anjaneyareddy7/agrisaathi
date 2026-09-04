@@ -1,5 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  Mic, Camera, Droplets, Sprout, MapPin, Wallet, Stethoscope, TrendingUp, FlaskConical,
+  ShieldCheck, Landmark, Wheat, User, Banknote, MessageSquare, Store, GraduationCap,
+  FolderArchive, ShieldPlus, Package, ListTodo, Bug, Gauge, UserCheck, Trophy, BellRing,
+  Contact, Bell, FileSpreadsheet, PawPrint, Search, X, ChevronRight, SearchX,
+  CloudSun, Tractor, ScanSearch, Database, BarChart3,
+} from 'lucide-react';
 import axios from 'axios';
 import WeatherWidget from '../components/WeatherWidget';
 
@@ -24,50 +31,66 @@ const CATEGORIES = [
   { id: 'manage', label: 'Management' },
 ];
 
+/* Designed tonal tiles: soft tinted background + matching deep icon colour */
+const TONES = {
+  green: 'bg-leaf-100 text-leaf-700',
+  amber: 'bg-amber-100 text-amber-700',
+  blue: 'bg-blue-100 text-blue-700',
+  violet: 'bg-violet-100 text-violet-700',
+  rose: 'bg-rose-100 text-rose-700',
+  cyan: 'bg-cyan-100 text-cyan-700',
+  indigo: 'bg-indigo-100 text-indigo-700',
+  teal: 'bg-teal-100 text-teal-700',
+  red: 'bg-red-100 text-red-600',
+  slate: 'bg-slate-100 text-slate-600',
+  lime: 'bg-lime-100 text-lime-700',
+  emerald: 'bg-emerald-100 text-emerald-700',
+};
+
 const TOOLS = [
-  { to: '/diagnose', emoji: '📷', label: 'Diagnosis', cat: 'protect' },
-  { to: '/treatments', emoji: '💊', label: 'Treatments', cat: 'protect' },
-  { to: '/pest-library', emoji: '🐛', label: 'Pest Library', cat: 'protect' },
-  { to: '/weather', emoji: '⛅', label: 'Weather', cat: 'protect' },
-  { to: '/alerts-center', emoji: '🔔', label: 'Alerts', cat: 'protect' },
-  { to: '/fertilizer', emoji: '💧', label: 'Fertilizer', cat: 'grow' },
-  { to: '/soil-passport', emoji: '🌱', label: 'Soil Passport', cat: 'grow' },
-  { to: '/crop-planner', emoji: '📅', label: 'Crop Planner', cat: 'grow' },
-  { to: '/crops', emoji: '🌾', label: 'Crop Guides', cat: 'grow' },
-  { to: '/irrigation-planner', emoji: '🚿', label: 'Irrigation', cat: 'grow' },
-  { to: '/sensor-lab', emoji: '🔬', label: 'Sensor Lab', cat: 'grow' },
-  { to: '/sustainability-score', emoji: '♻️', label: 'Sustainability', cat: 'grow' },
-  { to: '/livestock-care', emoji: '🐄', label: 'Livestock', cat: 'animals' },
-  { to: '/animal-encyclopedia', emoji: '🐾', label: 'Animal Guides', cat: 'animals' },
-  { to: '/market-prices', emoji: '💰', label: 'Mandi Prices', cat: 'market' },
-  { to: '/farm-ledger', emoji: '🧾', label: 'Farm Ledger', cat: 'market' },
-  { to: '/loan-eligibility', emoji: '🏦', label: 'Loan Help', cat: 'market' },
-  { to: '/insurance-hub', emoji: '🛡️', label: 'Insurance', cat: 'market' },
-  { to: '/input-marketplace', emoji: '🛒', label: 'Marketplace', cat: 'market' },
-  { to: '/vendor-contacts', emoji: '🤝', label: 'Vendors', cat: 'market' },
-  { to: '/schemes', emoji: '🏛️', label: 'Gov Schemes', cat: 'learn' },
-  { to: '/near-me', emoji: '📍', label: 'Near Me', cat: 'learn' },
-  { to: '/community', emoji: '💬', label: 'Community', cat: 'learn' },
-  { to: '/expert-directory', emoji: '👨‍🌾', label: 'Experts', cat: 'learn' },
-  { to: '/training-center', emoji: '🎓', label: 'Training', cat: 'learn' },
-  { to: '/success-stories', emoji: '🏆', label: 'Success Stories', cat: 'learn' },
-  { to: '/data-gov', emoji: '🗄️', label: 'Gov Data', cat: 'learn' },
-  { to: '/dashboard', emoji: '📊', label: 'Dashboard', cat: 'manage' },
-  { to: '/crop-passport', emoji: '📜', label: 'Crop Passport', cat: 'manage' },
-  { to: '/harvest-records', emoji: '🧺', label: 'Harvest', cat: 'manage' },
-  { to: '/task-manager', emoji: '✅', label: 'Tasks', cat: 'manage' },
-  { to: '/inventory-tracker', emoji: '📦', label: 'Inventory', cat: 'manage' },
-  { to: '/document-wallet', emoji: '🗂️', label: 'Documents', cat: 'manage' },
-  { to: '/voice-notes', emoji: '🎙️', label: 'Voice Notes', cat: 'manage' },
-  { to: '/farm-notifications', emoji: '📣', label: 'Notifications', cat: 'manage' },
-  { to: '/profile-settings', emoji: '⚙️', label: 'Profile', cat: 'manage' },
+  { to: '/diagnose', icon: Camera, label: 'Diagnosis', cat: 'protect', tone: 'amber' },
+  { to: '/treatments', icon: ScanSearch, label: 'Treatments', cat: 'protect', tone: 'red' },
+  { to: '/pest-library', icon: Bug, label: 'Pest Library', cat: 'protect', tone: 'red' },
+  { to: '/weather', icon: CloudSun, label: 'Weather', cat: 'protect', tone: 'blue' },
+  { to: '/alerts-center', icon: Bell, label: 'Alerts', cat: 'protect', tone: 'amber' },
+  { to: '/fertilizer', icon: Droplets, label: 'Fertilizer', cat: 'grow', tone: 'cyan' },
+  { to: '/soil-passport', icon: Sprout, label: 'Soil Passport', cat: 'grow', tone: 'green' },
+  { to: '/crop-planner', icon: TrendingUp, label: 'Crop Planner', cat: 'grow', tone: 'violet' },
+  { to: '/crops', icon: Tractor, label: 'Crop Guides', cat: 'grow', tone: 'lime' },
+  { to: '/irrigation-planner', icon: Droplets, label: 'Irrigation', cat: 'grow', tone: 'cyan' },
+  { to: '/sensor-lab', icon: FlaskConical, label: 'Sensor Lab', cat: 'grow', tone: 'teal' },
+  { to: '/sustainability-score', icon: Gauge, label: 'Sustainability', cat: 'grow', tone: 'green' },
+  { to: '/livestock-care', icon: Stethoscope, label: 'Livestock', cat: 'animals', tone: 'rose' },
+  { to: '/animal-encyclopedia', icon: PawPrint, label: 'Animal Guides', cat: 'animals', tone: 'rose' },
+  { to: '/market-prices', icon: Wallet, label: 'Mandi Prices', cat: 'market', tone: 'amber' },
+  { to: '/farm-ledger', icon: FileSpreadsheet, label: 'Farm Ledger', cat: 'market', tone: 'lime' },
+  { to: '/loan-eligibility', icon: Banknote, label: 'Loan Help', cat: 'market', tone: 'indigo' },
+  { to: '/insurance-hub', icon: ShieldPlus, label: 'Insurance', cat: 'market', tone: 'violet' },
+  { to: '/input-marketplace', icon: Store, label: 'Marketplace', cat: 'market', tone: 'amber' },
+  { to: '/vendor-contacts', icon: Contact, label: 'Vendors', cat: 'market', tone: 'teal' },
+  { to: '/schemes', icon: Landmark, label: 'Gov Schemes', cat: 'learn', tone: 'blue' },
+  { to: '/near-me', icon: MapPin, label: 'Near Me', cat: 'learn', tone: 'indigo' },
+  { to: '/community', icon: MessageSquare, label: 'Community', cat: 'learn', tone: 'violet' },
+  { to: '/expert-directory', icon: UserCheck, label: 'Experts', cat: 'learn', tone: 'blue' },
+  { to: '/training-center', icon: GraduationCap, label: 'Training', cat: 'learn', tone: 'teal' },
+  { to: '/success-stories', icon: Trophy, label: 'Success Stories', cat: 'learn', tone: 'amber' },
+  { to: '/data-gov', icon: Database, label: 'Gov Data', cat: 'learn', tone: 'slate' },
+  { to: '/dashboard', icon: BarChart3, label: 'Dashboard', cat: 'manage', tone: 'emerald' },
+  { to: '/crop-passport', icon: ShieldCheck, label: 'Crop Passport', cat: 'manage', tone: 'emerald' },
+  { to: '/harvest-records', icon: Wheat, label: 'Harvest', cat: 'manage', tone: 'amber' },
+  { to: '/task-manager', icon: ListTodo, label: 'Tasks', cat: 'manage', tone: 'green' },
+  { to: '/inventory-tracker', icon: Package, label: 'Inventory', cat: 'manage', tone: 'blue' },
+  { to: '/document-wallet', icon: FolderArchive, label: 'Documents', cat: 'manage', tone: 'slate' },
+  { to: '/voice-notes', icon: Mic, label: 'Voice Notes', cat: 'manage', tone: 'rose' },
+  { to: '/farm-notifications', icon: BellRing, label: 'Notifications', cat: 'manage', tone: 'cyan' },
+  { to: '/profile-settings', icon: User, label: 'Profile', cat: 'manage', tone: 'slate' },
 ];
 
 const QUICK_ACTIONS = [
-  { to: '/diagnose', emoji: '📷', label: 'Diagnose', tint: 'bg-leaf-50' },
-  { to: '/market-prices', emoji: '💰', label: 'Prices', tint: 'bg-amber-50' },
-  { to: '/schemes', emoji: '🏛️', label: 'Schemes', tint: 'bg-blue-50' },
-  { to: '/crop-planner', emoji: '📅', label: 'Planner', tint: 'bg-violet-50' },
+  { to: '/diagnose', icon: Camera, label: 'Diagnose', tone: 'amber' },
+  { to: '/market-prices', icon: Wallet, label: 'Prices', tone: 'green' },
+  { to: '/schemes', icon: Landmark, label: 'Schemes', tone: 'blue' },
+  { to: '/crop-planner', icon: TrendingUp, label: 'Planner', tone: 'violet' },
 ];
 
 export default function Home() {
@@ -123,7 +146,7 @@ export default function Home() {
 
       {/* Search + voice */}
       <div className="mt-5 flex animate-fade-up items-center gap-2.5 rounded-full border border-gray-300 bg-white py-2.5 pl-4 pr-2.5 shadow-sm transition-all focus-within:border-leaf-500 focus-within:ring-4 focus-within:ring-leaf-100">
-        <span className="shrink-0 text-base">🔍</span>
+        <Search size={18} className="shrink-0 text-gray-400" />
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -133,16 +156,16 @@ export default function Home() {
         {query && (
           <button
             onClick={() => setQuery('')}
-            className="rounded-full px-2 py-1 text-xs text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
             aria-label="Clear"
           >
-            ✕
+            <X size={15} />
           </button>
         )}
         <button
           onClick={startVoice}
           aria-label="Speak"
-          className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm text-white transition-all active:scale-90 ${
+          className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white transition-all active:scale-90 ${
             listening ? 'bg-red-500' : 'bg-leaf-600 hover:bg-leaf-700'
           }`}
         >
@@ -152,7 +175,7 @@ export default function Home() {
               <span className="absolute inset-0 animate-pulse-ring rounded-full bg-red-300" style={{ animationDelay: '0.5s' }} />
             </>
           )}
-          <span className={`relative ${listening ? 'animate-bounce-soft' : ''}`}>🎙️</span>
+          <Mic size={16} className={`relative ${listening ? 'animate-bounce-soft' : ''}`} />
         </button>
       </div>
 
@@ -168,21 +191,23 @@ export default function Home() {
           <span>
             <span className="text-gray-500">You asked:</span> “{query}” — open {intent.label}
           </span>
-          <span>→</span>
+          <ChevronRight size={16} />
         </Link>
       )}
 
       {/* Quick actions */}
       <div className="mt-6 grid grid-cols-4 gap-2">
-        {QUICK_ACTIONS.map(({ to, emoji, label, tint }, i) => (
+        {QUICK_ACTIONS.map(({ to, icon: Icon, label, tone }, i) => (
           <Link
             key={to}
             to={to}
             className="group flex animate-pop flex-col items-center gap-2 rounded-2xl py-3 transition-colors hover:bg-gray-50 active:scale-95"
             style={{ animationDelay: `${120 + i * 70}ms` }}
           >
-            <span className={`flex h-12 w-12 items-center justify-center rounded-full text-xl transition-transform group-hover:scale-110 ${tint}`}>
-              <span className="transition-transform group-hover:animate-wiggle">{emoji}</span>
+            <span
+              className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-transform group-hover:scale-110 ${TONES[tone]}`}
+            >
+              <Icon size={21} strokeWidth={2} />
             </span>
             <span className="text-xs font-medium text-gray-700">{label}</span>
           </Link>
@@ -192,11 +217,12 @@ export default function Home() {
       {/* Mandi prices */}
       <div className="mt-6 animate-fade-up overflow-hidden rounded-2xl border border-gray-200" style={{ animationDelay: '200ms' }}>
         <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-          <h2 className="text-sm font-semibold text-gray-900">
-            Today's mandi prices <span className="ml-1">📈</span>
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+            <TrendingUp size={15} className="text-leaf-600" />
+            Today's mandi prices
           </h2>
-          <Link to="/market-prices" className="text-xs font-medium text-leaf-700 hover:text-leaf-800">
-            See all
+          <Link to="/market-prices" className="flex items-center gap-0.5 text-xs font-medium text-leaf-700 hover:text-leaf-800">
+            See all <ChevronRight size={13} />
           </Link>
         </div>
 
@@ -260,15 +286,17 @@ export default function Home() {
       </div>
 
       <div className="mt-4 grid grid-cols-4 gap-x-2 gap-y-5 sm:grid-cols-5">
-        {filteredTools.map(({ to, emoji, label }, i) => (
+        {filteredTools.map(({ to, icon: Icon, label, tone }, i) => (
           <Link
             key={`${category}-${to}`}
             to={to}
             className="group flex animate-pop flex-col items-center gap-2 rounded-xl py-1 transition-all active:scale-90"
             style={{ animationDelay: `${(i % 10) * 30}ms` }}
           >
-            <span className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-gray-50 text-[24px] transition-all group-hover:scale-110 group-hover:bg-leaf-50">
-              {emoji}
+            <span
+              className={`flex h-[52px] w-[52px] items-center justify-center rounded-2xl transition-all group-hover:scale-110 ${TONES[tone]}`}
+            >
+              <Icon size={23} strokeWidth={1.9} />
             </span>
             <span className="max-w-[72px] truncate text-center text-xs text-gray-600 transition-colors group-hover:text-gray-900">
               {label}
@@ -279,7 +307,7 @@ export default function Home() {
 
       {filteredTools.length === 0 && (
         <div className="mt-6 animate-pop rounded-2xl border border-dashed border-gray-300 py-10 text-center">
-          <p className="text-2xl">🔎</p>
+          <SearchX size={26} className="mx-auto text-gray-300" />
           <p className="mt-2 text-sm font-medium text-gray-700">No tools match your search</p>
           <button
             onClick={() => {

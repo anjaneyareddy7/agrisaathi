@@ -98,7 +98,7 @@ export default function SustainabilityScore() {
           </div>
 
           <Button className="w-full" onClick={submit} disabled={saving}>
-            {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save my checklist'}
+            {saving ? 'Saving…' : saved ? 'Saved' : 'Save my checklist'}
           </Button>
         </>
       )}

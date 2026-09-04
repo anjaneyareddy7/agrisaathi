@@ -136,7 +136,7 @@ export default function AlertsCenter() {
                 <CardContent className="pt-3 pb-3">
                   <p className="text-sm font-medium">{p.commodity} — {p.market}</p>
                   <p className={`text-xs ${p.direction === 'up' ? 'text-green-700' : 'text-red-700'}`}>
-                    ₹{p.previous_price} → ₹{p.current_price} ({p.direction === 'up' ? '+' : ''}{p.pct_change}%)
+                    ₹{p.previous_price} to ₹{p.current_price} ({p.direction === 'up' ? '+' : ''}{p.pct_change}%)
                   </p>
                 </CardContent>
               </Card>

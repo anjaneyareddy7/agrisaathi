@@ -48,7 +48,7 @@ export default function Treatments() {
   return (
     <div>
       <PageHeader titleKey="treatments" icon={FlaskConical} />
-      <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2 mb-4">⚠️ {t('aiAssisted')}</p>
+      <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2 mb-4">{t('aiAssisted')}</p>
 
       <div className="space-y-3 mb-4">
         <div><Label className="mb-1.5 block">{t('selectCrop')}</Label>

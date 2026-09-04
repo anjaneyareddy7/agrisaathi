@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { Home, Camera, MapPin, Wheat, PawPrint, Bell, UserCircle } from 'lucide-react';
 import Logo from './Logo.jsx';
 
 const NAV_LINKS = [
@@ -11,11 +12,11 @@ const NAV_LINKS = [
 ];
 
 const MOBILE_NAV = [
-  { path: '/', emoji: '🏠', label: 'Home' },
-  { path: '/diagnose', emoji: '📷', label: 'Diagnose' },
-  { path: '/near-me', emoji: '📍', label: 'Near Me' },
-  { path: '/crops', emoji: '🌾', label: 'Crops' },
-  { path: '/animal-encyclopedia', emoji: '🐾', label: 'Animals' },
+  { path: '/', icon: Home, label: 'Home' },
+  { path: '/diagnose', icon: Camera, label: 'Diagnose' },
+  { path: '/near-me', icon: MapPin, label: 'Near Me' },
+  { path: '/crops', icon: Wheat, label: 'Crops' },
+  { path: '/animal-encyclopedia', icon: PawPrint, label: 'Animals' },
 ];
 
 export default function Layout({ children }) {
@@ -50,17 +51,17 @@ export default function Layout({ children }) {
           <div className="flex items-center gap-1.5">
             <Link
               to="/alerts-center"
-              className="rounded-full p-2 text-base transition-transform hover:scale-110"
+              className="rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
               aria-label="Alerts"
             >
-              🔔
+              <Bell size={19} />
             </Link>
             <Link
               to="/profile-settings"
-              className="rounded-full p-2 text-base transition-transform hover:scale-110"
+              className="rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
               aria-label="Profile"
             >
-              👤
+              <UserCircle size={19} />
             </Link>
             <Link
               to="/dashboard"
@@ -78,11 +79,11 @@ export default function Layout({ children }) {
           <Logo />
         </Link>
         <div className="flex items-center gap-1">
-          <Link to="/alerts-center" className="rounded-full p-2 text-lg transition-transform active:scale-90" aria-label="Alerts">
-            🔔
+          <Link to="/alerts-center" className="rounded-full p-2 text-gray-500 transition-colors active:bg-gray-100" aria-label="Alerts">
+            <Bell size={20} />
           </Link>
-          <Link to="/profile-settings" className="rounded-full p-2 text-lg transition-transform active:scale-90" aria-label="Profile">
-            👤
+          <Link to="/profile-settings" className="rounded-full p-2 text-gray-500 transition-colors active:bg-gray-100" aria-label="Profile">
+            <UserCircle size={20} />
           </Link>
         </div>
       </div>
@@ -94,7 +95,7 @@ export default function Layout({ children }) {
 
       {/* ── Minimal footer ─────────────────────────────── */}
       <footer className="px-4 py-10 text-center text-xs text-gray-400">
-        🌾 AgriSaathi · Free for every farmer · 22 languages
+        AgriSaathi · Free for every farmer · 22 languages
       </footer>
 
       {/* Spacer so content clears the mobile bottom nav */}
@@ -103,7 +104,7 @@ export default function Layout({ children }) {
       {/* ── Mobile bottom nav ──────────────────────────── */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white lg:hidden">
         <div className="mx-auto flex h-16 max-w-md items-center justify-around px-2">
-          {MOBILE_NAV.map(({ path, emoji, label }) => {
+          {MOBILE_NAV.map(({ path, icon: Icon, label }) => {
             const active =
               isActive(path)
               || (path === '/animal-encyclopedia' && location.pathname.startsWith('/animal-encyclopedia'));
@@ -112,16 +113,15 @@ export default function Layout({ children }) {
                 key={path}
                 to={path}
                 aria-label={label}
-                className={`flex w-16 flex-col items-center gap-0.5 rounded-xl py-1.5 transition-colors ${
+                className={`flex w-16 flex-col items-center gap-1 rounded-xl py-1.5 transition-colors ${
                   active ? 'text-leaf-700' : 'text-gray-400'
                 }`}
               >
-                <span
-                  key={`${path}-${active}`}
-                  className={`text-xl leading-none transition-transform ${active ? 'animate-pop' : ''}`}
-                >
-                  {emoji}
-                </span>
+                <Icon
+                  size={22}
+                  strokeWidth={active ? 2.3 : 1.7}
+                  className={`transition-transform ${active ? 'animate-pop' : ''}`}
+                />
                 <span className={`text-[10px] ${active ? 'font-semibold' : ''}`}>{label}</span>
               </Link>
             );

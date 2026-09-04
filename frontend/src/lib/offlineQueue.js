@@ -30,6 +30,6 @@ export const flush = async () => {
 if (typeof window !== 'undefined') {
   window.addEventListener('online', flush);
   window.addEventListener('offline', () => {
-    console.log('📴 Offline - items will be queued');
+    console.log('Offline - items will be queued');
   });
 }

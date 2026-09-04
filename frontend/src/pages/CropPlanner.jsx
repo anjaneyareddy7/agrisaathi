@@ -119,7 +119,7 @@ export default function CropPlanner() {
   return (
     <div>
       <PageHeader titleKey="cropPlanner" icon={TrendingUp} />
-      <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2 mb-4">⚠️ {t('estimate')}</p>
+      <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2 mb-4">{t('estimate')}</p>
 
       <div className="mb-4">
         <YieldEstimator />

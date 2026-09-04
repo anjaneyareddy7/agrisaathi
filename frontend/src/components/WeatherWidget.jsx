@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { MapPin, Droplets, Wind, CloudRain } from 'lucide-react';
 import axios from 'axios';
+import { weatherIconEl, WCloudFog, DecoCloud, DecoStar } from './icons/WeatherIcons';
 
 /* Nearest-city lookup (offline, no geocoding API needed) */
 const CITIES = [
@@ -29,20 +31,6 @@ function nearestCity(lat, lon) {
     if (d < bestD) { bestD = d; best = c; }
   }
   return { name: best.n, near: bestD > 55 };
-}
-
-function weatherEmoji(description) {
-  const d = (description || '').toLowerCase();
-  if (d.includes('thunder')) return '⛈️';
-  if (d.includes('heavy rain')) return '🌧️';
-  if (d.includes('moderate rain')) return '🌧️';
-  if (d.includes('light rain')) return '🌦️';
-  if (d.includes('drizzle')) return '🌦️';
-  if (d.includes('mist') || d.includes('haze') || d.includes('fog')) return '🌫️';
-  if (d.includes('overcast')) return '☁️';
-  if (d.includes('cloud')) return '⛅';
-  if (d.includes('clear')) return '☀️';
-  return '⛅';
 }
 
 function isRainy(description) {
@@ -92,7 +80,7 @@ export default function WeatherWidget() {
     return () => clearInterval(t);
   }, []);
 
-  /* Locate (geolocation → fallback Hyderabad) then fetch */
+  /* Locate (geolocation, fallback Hyderabad) then fetch */
   useEffect(() => {
     let settled = false;
 
@@ -143,14 +131,14 @@ export default function WeatherWidget() {
   if (current === null || forecast === null) {
     /* Loading skeleton */
     return (
-      <div className="animate-shimmer h-[430px] rounded-3xl bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:400px_100%]" />
+      <div className="animate-shimmer h-[350px] rounded-3xl bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:400px_100%]" />
     );
   }
 
   if (current === false || current.temperature == null) {
     return (
       <div className="rounded-3xl border border-gray-200 p-6 text-center text-sm text-gray-500">
-        <span className="text-2xl">🌫️</span>
+        <WCloudFog className="mx-auto h-10 w-10 text-gray-300" />
         <p className="mt-2">Weather unavailable right now — please retry.</p>
       </div>
     );
@@ -158,11 +146,9 @@ export default function WeatherWidget() {
 
   const hour = now.getHours();
   const day = hour >= 6 && hour < 18;
-  const emoji = weatherEmoji(current.description);
   const rainy = isRainy(current.description);
   const cloudy = (current.description || '').toLowerCase().includes('cloud') || rainy;
   const clearSky = (current.description || '').toLowerCase().includes('clear');
-  const days = forecast && forecast.days ? forecast.days : [];
   const hourly = forecast && forecast.hourly ? forecast.hourly : [];
   const sample = current.source === 'sample' || (forecast && forecast.source === 'sample');
 
@@ -170,23 +156,23 @@ export default function WeatherWidget() {
     <section
       className={`relative animate-fade-up overflow-hidden rounded-3xl bg-gradient-to-br text-white shadow-sm ${skyClasses(current.description, day)}`}
     >
-      {/* ── Animated sky decorations ─────────────────── */}
+      {/* ── Animated sky decorations (pure graphics) ── */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         {clearSky && day && (
           <div className="absolute -right-8 -top-10 h-36 w-36 animate-sun-pulse rounded-full bg-yellow-300/60 blur-2xl" />
         )}
-        {!day && clearSky && (
+        {!day && (
           <>
-            <span className="absolute right-10 top-6 text-lg opacity-70">⭐</span>
-            <span className="absolute right-24 top-12 text-xs opacity-50">✨</span>
-            <span className="absolute right-16 top-20 text-[10px] opacity-40">✨</span>
+            <DecoStar className="absolute right-10 top-6 h-4 w-4 text-white/70" />
+            <DecoStar className="absolute right-24 top-12 h-2.5 w-2.5 text-white/50" />
+            <DecoStar className="absolute right-16 top-20 h-2 w-2 text-white/40" />
           </>
         )}
         {cloudy && (
           <>
-            <span className="absolute -left-4 top-8 animate-drift text-5xl opacity-25">☁️</span>
-            <span className="absolute right-12 top-16 animate-drift text-6xl opacity-20" style={{ animationDelay: '-4s', animationDuration: '14s' }}>☁️</span>
-            <span className="absolute left-1/3 top-2 animate-drift text-4xl opacity-15" style={{ animationDelay: '-8s', animationDuration: '17s' }}>☁️</span>
+            <DecoCloud className="absolute -left-4 top-8 h-10 w-20 animate-drift text-white/25" />
+            <DecoCloud className="absolute right-12 top-16 h-12 w-24 animate-drift text-white/20" style={{ animationDelay: '-4s', animationDuration: '14s' }} />
+            <DecoCloud className="absolute left-1/3 top-2 h-8 w-16 animate-drift text-white/15" style={{ animationDelay: '-8s', animationDuration: '17s' }} />
           </>
         )}
         {rainy && (
@@ -194,11 +180,9 @@ export default function WeatherWidget() {
             {Array.from({ length: 14 }).map((_, i) => (
               <span
                 key={i}
-                className="absolute top-0 animate-rain-fall text-[9px] opacity-0"
+                className="absolute top-0 h-3.5 w-[3px] animate-rain-fall rounded-full bg-white/45 opacity-0"
                 style={{ left: `${(i * 7.3) % 100}%`, animationDelay: `${(i % 7) * 0.16}s` }}
-              >
-                💧
-              </span>
+              />
             ))}
           </>
         )}
@@ -209,8 +193,8 @@ export default function WeatherWidget() {
         {/* Location + live clock */}
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="flex items-center gap-1 text-sm font-semibold">
-              <span>📍</span> {place}
+            <p className="flex items-center gap-1.5 text-sm font-semibold">
+              <MapPin size={15} strokeWidth={2.4} /> {place}
             </p>
             <p className="mt-0.5 text-xs text-white/70">
               {now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' })}
@@ -229,7 +213,9 @@ export default function WeatherWidget() {
 
         {/* Current temperature */}
         <div className="mt-4 flex items-center gap-4">
-          <span className="animate-bounce-soft text-6xl drop-shadow-lg">{emoji}</span>
+          <span className="animate-bounce-soft drop-shadow-lg">
+            {weatherIconEl(current.description, 'h-16 w-16')}
+          </span>
           <div>
             <p className="text-5xl font-bold leading-none tracking-tight">
               {displayTemp}<span className="align-top text-2xl font-medium">°C</span>
@@ -243,17 +229,26 @@ export default function WeatherWidget() {
 
         {/* Stats */}
         <div className="mt-4 grid grid-cols-3 gap-2">
-          <div className="rounded-xl bg-white/15 px-3 py-2 text-center backdrop-blur-sm">
-            <p className="text-sm font-semibold">💧 {current.humidity ?? '—'}%</p>
-            <p className="text-[10px] uppercase tracking-wide text-white/65">Humidity</p>
+          <div className="flex items-center justify-center gap-2 rounded-xl bg-white/15 px-3 py-2 backdrop-blur-sm">
+            <Droplets size={17} className="shrink-0 text-sky-100" />
+            <div>
+              <p className="text-sm font-semibold leading-none">{current.humidity ?? '—'}%</p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-wide text-white/65">Humidity</p>
+            </div>
           </div>
-          <div className="rounded-xl bg-white/15 px-3 py-2 text-center backdrop-blur-sm">
-            <p className="text-sm font-semibold">🌬️ {current.wind_speed ?? '—'} m/s</p>
-            <p className="text-[10px] uppercase tracking-wide text-white/65">Wind</p>
+          <div className="flex items-center justify-center gap-2 rounded-xl bg-white/15 px-3 py-2 backdrop-blur-sm">
+            <Wind size={17} className="shrink-0 text-teal-50" />
+            <div>
+              <p className="text-sm font-semibold leading-none">{current.wind_speed ?? '—'} m/s</p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-wide text-white/65">Wind</p>
+            </div>
           </div>
-          <div className="rounded-xl bg-white/15 px-3 py-2 text-center backdrop-blur-sm">
-            <p className="text-sm font-semibold">☔ {days[0] ? Math.round(days[0].rain_probability) : '—'}%</p>
-            <p className="text-[10px] uppercase tracking-wide text-white/65">Rain chance</p>
+          <div className="flex items-center justify-center gap-2 rounded-xl bg-white/15 px-3 py-2 backdrop-blur-sm">
+            <CloudRain size={17} className="shrink-0 text-indigo-50" />
+            <div>
+              <p className="text-sm font-semibold leading-none">{forecast?.days?.[0] ? Math.round(forecast.days[0].rain_probability) : '—'}%</p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-wide text-white/65">Rain chance</p>
+            </div>
           </div>
         </div>
 
@@ -271,8 +266,8 @@ export default function WeatherWidget() {
               >
                 <div className="w-[62px] shrink-0 snap-start animate-pop rounded-2xl border border-white/40 bg-white/20 py-2.5 text-center backdrop-blur-sm">
                   <p className="text-[10px] font-medium text-white/75">Now</p>
-                  <p className="my-1 text-xl">{emoji}</p>
-                  <p className="text-sm font-semibold">{Math.round(current.temperature)}°</p>
+                  <span className="mt-1 block h-6 w-6">{weatherIconEl(current.description, 'h-6 w-6')}</span>
+                  <p className="mt-1 text-sm font-semibold">{Math.round(current.temperature)}°</p>
                 </div>
                 {hourly.map((h, i) => (
                   <div
@@ -281,8 +276,8 @@ export default function WeatherWidget() {
                     style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
                   >
                     <p className="text-[10px] font-medium text-white/75">{hourLabel(h.ts)}</p>
-                    <p className="my-1 text-xl">{weatherEmoji(h.description)}</p>
-                    <p className="text-sm font-semibold">{Math.round(h.temp)}°</p>
+                    <span className="mt-1 block h-6 w-6">{weatherIconEl(h.description, 'h-6 w-6')}</span>
+                    <p className="mt-1 text-sm font-semibold">{Math.round(h.temp)}°</p>
                   </div>
                 ))}
               </div>
@@ -292,18 +287,18 @@ export default function WeatherWidget() {
                 <button
                   onClick={() => stripRef.current.scrollBy({ left: -220, behavior: 'smooth' })}
                   aria-label="Earlier hours"
-                  className="absolute -left-1 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/25 text-sm font-bold text-white shadow-sm backdrop-blur transition-transform hover:scale-110 active:scale-95"
+                  className="absolute -left-1 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/25 shadow-sm backdrop-blur transition-transform hover:scale-110 active:scale-95"
                 >
-                  ‹
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
                 </button>
               )}
               {canRight && (
                 <button
                   onClick={() => stripRef.current.scrollBy({ left: 220, behavior: 'smooth' })}
                   aria-label="Later hours"
-                  className="absolute -right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 animate-bounce-soft items-center justify-center rounded-full bg-white/25 text-sm font-bold text-white shadow-sm backdrop-blur transition-transform hover:scale-110 active:scale-95"
+                  className="absolute -right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 animate-bounce-soft items-center justify-center rounded-full bg-white/25 shadow-sm backdrop-blur transition-transform hover:scale-110 active:scale-95"
                 >
-                  ›
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
                 </button>
               )}
             </div>
@@ -312,9 +307,10 @@ export default function WeatherWidget() {
 
         <Link
           to="/weather"
-          className="mt-4 block text-center text-xs font-medium text-white/75 transition-colors hover:text-white"
+          className="mt-4 flex items-center justify-center gap-1 text-xs font-medium text-white/75 transition-colors hover:text-white"
         >
-          Full forecast & advisories ›
+          Full forecast & advisories
+          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
         </Link>
       </div>
     </section>

@@ -196,7 +196,7 @@ export default function SoilPassport() {
         </CardContent></Card>
       )}
 
-      <p className="text-xs text-gray-400 mb-3">⚠️ {t('blockchainUnavailable')}</p>
+      <p className="text-xs text-gray-400 mb-3">{t('blockchainUnavailable')}</p>
 
       {showAdd ? (
         <Card className="border-green-200"><CardContent className="pt-4 space-y-3">
