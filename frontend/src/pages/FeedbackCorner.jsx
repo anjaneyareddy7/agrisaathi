@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { MessageSquareHeart, Star, Plus } from 'lucide-react';
+import { MessageSquareHeart, Star, Plus, X, Loader2, CheckCircle2 } from 'lucide-react';
 import axios from 'axios';
 import { getDeviceId } from '../lib/deviceId';
-import { Card, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
 import { Textarea } from '../components/ui/textarea';
 import PageHeader from '../components/PageHeader';
+import { SectionCard, EmptyState } from '../components/kit';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
@@ -31,7 +30,6 @@ export default function FeedbackCorner() {
     }
   }, [deviceId]);
 
-   
   useEffect(() => { load(); }, [load]);
 
   const submit = async () => {
@@ -56,67 +54,92 @@ export default function FeedbackCorner() {
   };
 
   const history = [...blocks].reverse();
+  const avgRating = history.length ? history.reduce((s, b) => s + (b.payload?.rating || 0), 0) / history.length : 0;
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
-      <PageHeader title="Feedback Corner" icon={MessageSquareHeart} />
-      <p className="text-xs text-gray-500 mb-3">
-        Tell us what's working and what isn't. Your feedback shapes what gets built next.
-      </p>
+      <PageHeader title="Feedback Corner" subtitle="Tell us what's working and what isn't — it shapes what gets built next" icon={MessageSquareHeart} />
 
-      {submitted && !showForm && (
-        <Card className="mb-3 border-green-300 bg-green-50">
-          <CardContent className="pt-3 text-sm text-green-800">Thank you — your feedback was recorded.</CardContent>
-        </Card>
-      )}
-
-      <div className="flex justify-end mb-3">
-        <Button size="sm" onClick={() => { setShowForm((s) => !s); setSubmitted(false); }}>
-          <Plus className="h-4 w-4 mr-1" /> Share feedback
-        </Button>
+      {/* Hero */}
+      <div className="mb-4 overflow-hidden rounded-3xl bg-gradient-to-br from-leaf-800 to-leaf-950 p-5 text-white shadow-md animate-fade-up">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Your average rating</p>
+            <p className="mt-1 flex items-baseline gap-1 text-4xl font-bold tracking-tight">
+              {avgRating ? avgRating.toFixed(1) : '—'}
+              {avgRating > 0 && <Star size={18} className="self-center fill-harvest-300 text-harvest-300" />}
+            </p>
+          </div>
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15"><MessageSquareHeart size={24} /></span>
+        </div>
+        <div className="mt-4 rounded-2xl bg-white/15 px-3 py-2.5">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-white/70">Feedback shared</p>
+          <p className="mt-0.5 text-sm font-bold">{history.length}</p>
+        </div>
       </div>
 
-      {showForm && (
-        <Card className="mb-4">
-          <CardContent className="pt-4 space-y-3">
-            <div>
-              <p className="text-sm mb-1">How's your experience?</p>
-              <div className="flex gap-1">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <button key={n} onClick={() => setRating(n)} aria-label={`${n} star`}>
-                    <Star className={`h-6 w-6 ${n <= rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`} />
-                  </button>
-                ))}
-              </div>
-            </div>
-            <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="What worked well, what didn't, what would you like to see?" rows={4} />
-            <Button className="w-full" onClick={submit} disabled={saving || !rating || !message.trim()}>
-              {saving ? 'Sending…' : 'Send feedback'}
-            </Button>
-          </CardContent>
-        </Card>
+      {submitted && !showForm && (
+        <div className="mb-4 flex items-center gap-2 rounded-2xl border border-leaf-200 bg-leaf-50 px-4 py-3 text-sm font-semibold text-leaf-800 animate-pop">
+          <CheckCircle2 size={16} /> Thank you — your feedback was recorded.
+        </div>
       )}
 
-      {loading ? (
-        <p className="text-sm text-gray-400 text-center py-8">Loading your feedback history…</p>
-      ) : history.length === 0 ? (
-        <Card><CardContent className="pt-6 text-center text-sm text-gray-400">No feedback submitted yet.</CardContent></Card>
+      {/* Form */}
+      {!showForm ? (
+        <button onClick={() => { setShowForm(true); setSubmitted(false); }}
+          className="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-leaf-400 bg-leaf-50/50 py-3 text-sm font-semibold text-leaf-700 transition-colors hover:bg-leaf-50 animate-fade-up">
+          <Plus size={16} /> Share feedback
+        </button>
       ) : (
+        <div className="mb-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm animate-fade-up">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-900">How's your experience?</h3>
+            <button onClick={() => setShowForm(false)} className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"><X size={16} /></button>
+          </div>
+          <div className="mb-3 flex gap-1.5">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <button key={n} onClick={() => setRating(n)} aria-label={`${n} star`} className="transition-transform hover:scale-110">
+                <Star size={28} className={n <= rating ? 'fill-harvest-400 text-harvest-400' : 'text-gray-200'} />
+              </button>
+            ))}
+          </div>
+          <Textarea value={message} onChange={(e) => setMessage(e.target.value)}
+            placeholder="What worked well, what didn't, what would you like to see?"
+            rows={4} className="rounded-xl border-gray-200 focus:border-leaf-500 focus:ring-4 focus:ring-leaf-100" />
+          <button onClick={submit} disabled={saving || !rating || !message.trim()}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-leaf-700 py-3 text-sm font-semibold text-white transition-colors hover:bg-leaf-800 disabled:opacity-50">
+            {saving && <Loader2 size={15} className="animate-spin" />} Send feedback
+          </button>
+        </div>
+      )}
+
+      {/* History */}
+      {loading ? (
         <div className="space-y-2">
-          {history.map((b) => (
-            <Card key={b.index}>
-              <CardContent className="pt-3 pb-3">
-                <div className="flex items-center gap-1 mb-1">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <Star key={n} className={`h-3.5 w-3.5 ${n <= (b.payload?.rating || 0) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}`} />
-                  ))}
-                  <span className="text-[11px] text-gray-400 ml-2">{new Date(b.timestamp).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                </div>
-                <p className="text-xs text-gray-600">{b.payload?.message}</p>
-              </CardContent>
-            </Card>
+          {[0, 1].map((i) => (
+            <div key={i} className="h-[84px] rounded-2xl border border-gray-200 bg-gray-100 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:400px_100%] animate-shimmer" />
           ))}
         </div>
+      ) : history.length === 0 ? (
+        <EmptyState icon={MessageSquareHeart} title="No feedback yet" subtitle="Your ratings and notes appear here after you send them." />
+      ) : (
+        <SectionCard title="Your feedback" icon={MessageSquareHeart}>
+          <ul className="divide-y divide-gray-100">
+            {history.map((b, i) => (
+              <li key={b.index} className="px-4 py-3.5 animate-slide-in" style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}>
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <Star key={n} size={13} className={n <= (b.payload?.rating || 0) ? 'fill-harvest-400 text-harvest-400' : 'text-gray-200'} />
+                  ))}
+                  <span className="ml-2 text-[11px] font-medium text-gray-400">
+                    {new Date(b.timestamp).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </span>
+                </div>
+                <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{b.payload?.message}</p>
+              </li>
+            ))}
+          </ul>
+        </SectionCard>
       )}
     </div>
   );
