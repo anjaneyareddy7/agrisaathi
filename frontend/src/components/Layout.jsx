@@ -1,26 +1,28 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useLang } from '../lib/i18n';
 import { Home, Camera, MapPin, Wheat, PawPrint, Bell, UserCircle } from 'lucide-react';
 import Logo from './Logo.jsx';
 
 const NAV_LINKS = [
-  { path: '/', label: 'Home' },
-  { path: '/diagnose', label: 'Diagnose' },
-  { path: '/market-prices', label: 'Prices' },
-  { path: '/weather', label: 'Weather' },
-  { path: '/schemes', label: 'Schemes' },
-  { path: '/near-me', label: 'Near Me' },
+  { path: '/', labelKey: 'nav_home' },
+  { path: '/diagnose', labelKey: 'nav_diagnose' },
+  { path: '/market-prices', labelKey: 'nav_prices' },
+  { path: '/weather', labelKey: 'nav_weather' },
+  { path: '/schemes', labelKey: 'nav_schemes' },
+  { path: '/near-me', labelKey: 'nav_nearMe' },
 ];
 
 const MOBILE_NAV = [
-  { path: '/', icon: Home, label: 'Home' },
-  { path: '/diagnose', icon: Camera, label: 'Diagnose' },
-  { path: '/near-me', icon: MapPin, label: 'Near Me' },
-  { path: '/crops', icon: Wheat, label: 'Crops' },
-  { path: '/animal-encyclopedia', icon: PawPrint, label: 'Animals' },
+  { path: '/', icon: Home, labelKey: 'nav_home' },
+  { path: '/diagnose', icon: Camera, labelKey: 'nav_diagnose' },
+  { path: '/near-me', icon: MapPin, labelKey: 'nav_nearMe' },
+  { path: '/crops', icon: Wheat, labelKey: 'nav_crops' },
+  { path: '/animal-encyclopedia', icon: PawPrint, labelKey: 'nav_animals' },
 ];
 
 export default function Layout({ children }) {
   const location = useLocation();
+  const { t } = useLang();
 
   const isActive = (path) =>
     location.pathname === path
@@ -36,7 +38,7 @@ export default function Layout({ children }) {
             <Logo />
           </Link>
           <nav className="flex items-center gap-6">
-            {NAV_LINKS.map(({ path, label }) => (
+            {NAV_LINKS.map(({ path, labelKey }) => (
               <Link
                 key={path}
                 to={path}
@@ -44,7 +46,7 @@ export default function Layout({ children }) {
                   isActive(path) ? 'text-leaf-700' : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                {label}
+                {t(labelKey)}
               </Link>
             ))}
           </nav>
@@ -67,7 +69,7 @@ export default function Layout({ children }) {
               to="/dashboard"
               className="ml-1 rounded-lg bg-leaf-600 px-3.5 py-1.5 text-sm font-medium text-white transition-all hover:bg-leaf-700 active:scale-95"
             >
-              My Farm
+              {t('my_farm')}
             </Link>
           </div>
         </div>
@@ -104,7 +106,7 @@ export default function Layout({ children }) {
       {/* ── Mobile bottom nav ──────────────────────────── */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white lg:hidden">
         <div className="mx-auto flex h-16 max-w-md items-center justify-around px-2">
-          {MOBILE_NAV.map(({ path, icon: Icon, label }) => {
+          {MOBILE_NAV.map(({ path, icon: Icon, labelKey }) => {
             const active =
               isActive(path)
               || (path === '/animal-encyclopedia' && location.pathname.startsWith('/animal-encyclopedia'));
@@ -112,7 +114,7 @@ export default function Layout({ children }) {
               <Link
                 key={path}
                 to={path}
-                aria-label={label}
+                aria-label={t(labelKey)}
                 className={`flex w-16 flex-col items-center gap-1 rounded-xl py-1.5 transition-colors ${
                   active ? 'text-leaf-700' : 'text-gray-400'
                 }`}
@@ -122,7 +124,7 @@ export default function Layout({ children }) {
                   strokeWidth={active ? 2.3 : 1.7}
                   className={`transition-transform ${active ? 'animate-pop' : ''}`}
                 />
-                <span className={`text-[10px] ${active ? 'font-semibold' : ''}`}>{label}</span>
+                <span className={`text-[10px] ${active ? 'font-semibold' : ''}`}>{t(labelKey)}</span>
               </Link>
             );
           })}

@@ -8,6 +8,7 @@ import {
   CloudSun, Tractor, ScanSearch, Database, BarChart3, ChevronDown,
 } from 'lucide-react';
 import axios from 'axios';
+import { useLang } from '../lib/i18n';
 import WeatherWidget from '../components/WeatherWidget';
 import LanguageBar from '../components/LanguageBar';
 
@@ -39,67 +40,68 @@ const TONES = {
 };
 
 const TOOLS = [
-  { to: '/diagnose', icon: Camera, label: 'Diagnosis', cat: 'protect', tone: 'amber' },
-  { to: '/treatments', icon: ScanSearch, label: 'Treatments', cat: 'protect', tone: 'red' },
-  { to: '/pest-library', icon: Bug, label: 'Pest Library', cat: 'protect', tone: 'red' },
-  { to: '/weather', icon: CloudSun, label: 'Weather', cat: 'protect', tone: 'blue' },
-  { to: '/alerts-center', icon: Bell, label: 'Alerts', cat: 'protect', tone: 'amber' },
-  { to: '/fertilizer', icon: Droplets, label: 'Fertilizer', cat: 'grow', tone: 'cyan' },
-  { to: '/soil-passport', icon: Sprout, label: 'Soil Passport', cat: 'grow', tone: 'green' },
-  { to: '/crop-planner', icon: TrendingUp, label: 'Crop Planner', cat: 'grow', tone: 'violet' },
-  { to: '/crops', icon: Tractor, label: 'Crop Guides', cat: 'grow', tone: 'lime' },
-  { to: '/irrigation-planner', icon: Droplets, label: 'Irrigation', cat: 'grow', tone: 'cyan' },
-  { to: '/sensor-lab', icon: FlaskConical, label: 'Sensor Lab', cat: 'grow', tone: 'teal' },
-  { to: '/sustainability-score', icon: Gauge, label: 'Sustainability', cat: 'grow', tone: 'green' },
-  { to: '/livestock-care', icon: Stethoscope, label: 'Livestock', cat: 'animals', tone: 'rose' },
-  { to: '/animal-encyclopedia', icon: PawPrint, label: 'Animal Guides', cat: 'animals', tone: 'rose' },
-  { to: '/market-prices', icon: Wallet, label: 'Mandi Prices', cat: 'market', tone: 'amber' },
-  { to: '/farm-ledger', icon: FileSpreadsheet, label: 'Farm Ledger', cat: 'market', tone: 'lime' },
-  { to: '/loan-eligibility', icon: Banknote, label: 'Loan Help', cat: 'market', tone: 'indigo' },
-  { to: '/insurance-hub', icon: ShieldPlus, label: 'Insurance', cat: 'market', tone: 'violet' },
-  { to: '/input-marketplace', icon: Store, label: 'Marketplace', cat: 'market', tone: 'amber' },
-  { to: '/vendor-contacts', icon: Contact, label: 'Vendors', cat: 'market', tone: 'teal' },
-  { to: '/schemes', icon: Landmark, label: 'Gov Schemes', cat: 'learn', tone: 'blue' },
-  { to: '/near-me', icon: MapPin, label: 'Near Me', cat: 'learn', tone: 'indigo' },
-  { to: '/community', icon: MessageSquare, label: 'Community', cat: 'learn', tone: 'violet' },
-  { to: '/expert-directory', icon: UserCheck, label: 'Experts', cat: 'learn', tone: 'blue' },
-  { to: '/training-center', icon: GraduationCap, label: 'Training', cat: 'learn', tone: 'teal' },
-  { to: '/success-stories', icon: Trophy, label: 'Success Stories', cat: 'learn', tone: 'amber' },
-  { to: '/data-gov', icon: Database, label: 'Gov Data', cat: 'learn', tone: 'slate' },
-  { to: '/dashboard', icon: BarChart3, label: 'Dashboard', cat: 'manage', tone: 'emerald' },
-  { to: '/crop-passport', icon: ShieldCheck, label: 'Crop Passport', cat: 'manage', tone: 'emerald' },
-  { to: '/harvest-records', icon: Wheat, label: 'Harvest', cat: 'manage', tone: 'amber' },
-  { to: '/task-manager', icon: ListTodo, label: 'Tasks', cat: 'manage', tone: 'green' },
-  { to: '/inventory-tracker', icon: Package, label: 'Inventory', cat: 'manage', tone: 'blue' },
-  { to: '/document-wallet', icon: FolderArchive, label: 'Documents', cat: 'manage', tone: 'slate' },
-  { to: '/voice-notes', icon: Mic, label: 'Voice Notes', cat: 'manage', tone: 'rose' },
-  { to: '/farm-notifications', icon: BellRing, label: 'Notifications', cat: 'manage', tone: 'cyan' },
-  { to: '/profile-settings', icon: User, label: 'Profile', cat: 'manage', tone: 'slate' },
+  { to: '/diagnose', icon: Camera, label: 'Diagnosis', key: 'tool_diagnosis', cat: 'protect', tone: 'amber' },
+  { to: '/treatments', icon: ScanSearch, label: 'Treatments', key: 'tool_treatments', cat: 'protect', tone: 'red' },
+  { to: '/pest-library', icon: Bug, label: 'Pest Library', key: 'tool_pest_library', cat: 'protect', tone: 'red' },
+  { to: '/weather', icon: CloudSun, label: 'Weather', key: 'tool_weather', cat: 'protect', tone: 'blue' },
+  { to: '/alerts-center', icon: Bell, label: 'Alerts', key: 'tool_alerts', cat: 'protect', tone: 'amber' },
+  { to: '/fertilizer', icon: Droplets, label: 'Fertilizer', key: 'tool_fertilizer', cat: 'grow', tone: 'cyan' },
+  { to: '/soil-passport', icon: Sprout, label: 'Soil Passport', key: 'tool_soil_passport', cat: 'grow', tone: 'green' },
+  { to: '/crop-planner', icon: TrendingUp, label: 'Crop Planner', key: 'tool_crop_planner', cat: 'grow', tone: 'violet' },
+  { to: '/crops', icon: Tractor, label: 'Crop Guides', key: 'tool_crop_guides', cat: 'grow', tone: 'lime' },
+  { to: '/irrigation-planner', icon: Droplets, label: 'Irrigation', key: 'tool_irrigation', cat: 'grow', tone: 'cyan' },
+  { to: '/sensor-lab', icon: FlaskConical, label: 'Sensor Lab', key: 'tool_sensor_lab', cat: 'grow', tone: 'teal' },
+  { to: '/sustainability-score', icon: Gauge, label: 'Sustainability', key: 'tool_sustainability', cat: 'grow', tone: 'green' },
+  { to: '/livestock-care', icon: Stethoscope, label: 'Livestock', key: 'tool_livestock', cat: 'animals', tone: 'rose' },
+  { to: '/animal-encyclopedia', icon: PawPrint, label: 'Animal Guides', key: 'tool_animal_guides', cat: 'animals', tone: 'rose' },
+  { to: '/market-prices', icon: Wallet, label: 'Mandi Prices', key: 'tool_mandi_prices', cat: 'market', tone: 'amber' },
+  { to: '/farm-ledger', icon: FileSpreadsheet, label: 'Farm Ledger', key: 'tool_farm_ledger', cat: 'market', tone: 'lime' },
+  { to: '/loan-eligibility', icon: Banknote, label: 'Loan Help', key: 'tool_loan_help', cat: 'market', tone: 'indigo' },
+  { to: '/insurance-hub', icon: ShieldPlus, label: 'Insurance', key: 'tool_insurance', cat: 'market', tone: 'violet' },
+  { to: '/input-marketplace', icon: Store, label: 'Marketplace', key: 'tool_marketplace', cat: 'market', tone: 'amber' },
+  { to: '/vendor-contacts', icon: Contact, label: 'Vendors', key: 'tool_vendors', cat: 'market', tone: 'teal' },
+  { to: '/schemes', icon: Landmark, label: 'Gov Schemes', key: 'tool_gov_schemes', cat: 'learn', tone: 'blue' },
+  { to: '/near-me', icon: MapPin, label: 'Near Me', key: 'tool_near_me', cat: 'learn', tone: 'indigo' },
+  { to: '/community', icon: MessageSquare, label: 'Community', key: 'tool_community', cat: 'learn', tone: 'violet' },
+  { to: '/expert-directory', icon: UserCheck, label: 'Experts', key: 'tool_experts', cat: 'learn', tone: 'blue' },
+  { to: '/training-center', icon: GraduationCap, label: 'Training', key: 'tool_training', cat: 'learn', tone: 'teal' },
+  { to: '/success-stories', icon: Trophy, label: 'Success Stories', key: 'tool_success_stories', cat: 'learn', tone: 'amber' },
+  { to: '/data-gov', icon: Database, label: 'Gov Data', key: 'tool_gov_data', cat: 'learn', tone: 'slate' },
+  { to: '/dashboard', icon: BarChart3, label: 'Dashboard', key: 'tool_dashboard', cat: 'manage', tone: 'emerald' },
+  { to: '/crop-passport', icon: ShieldCheck, label: 'Crop Passport', key: 'tool_crop_passport', cat: 'manage', tone: 'emerald' },
+  { to: '/harvest-records', icon: Wheat, label: 'Harvest', key: 'tool_harvest', cat: 'manage', tone: 'amber' },
+  { to: '/task-manager', icon: ListTodo, label: 'Tasks', key: 'tool_tasks', cat: 'manage', tone: 'green' },
+  { to: '/inventory-tracker', icon: Package, label: 'Inventory', key: 'tool_inventory', cat: 'manage', tone: 'blue' },
+  { to: '/document-wallet', icon: FolderArchive, label: 'Documents', key: 'tool_documents', cat: 'manage', tone: 'slate' },
+  { to: '/voice-notes', icon: Mic, label: 'Voice Notes', key: 'tool_voice_notes', cat: 'manage', tone: 'rose' },
+  { to: '/farm-notifications', icon: BellRing, label: 'Notifications', key: 'tool_notifications', cat: 'manage', tone: 'cyan' },
+  { to: '/profile-settings', icon: User, label: 'Profile', key: 'tool_profile', cat: 'manage', tone: 'slate' },
 ];
 
 /* Sections in a logical farmer's journey: grow, protect, livestock, money, learn, manage */
 const SECTIONS = [
   {
-    id: 'grow', title: 'Grow & Plan', subtitle: 'Sowing, soil, water and nutrients', icon: Sprout, tone: 'green', openByDefault: true,
+    id: 'grow', titleKey: 'sec_grow', subKey: 'sec_grow_sub', icon: Sprout, tone: 'green', openByDefault: true,
   },
   {
-    id: 'protect', title: 'Protect & Cure', subtitle: 'Diagnose problems and act early', icon: ShieldCheck, tone: 'amber', openByDefault: false,
+    id: 'protect', titleKey: 'sec_protect', subKey: 'sec_protect_sub', icon: ShieldCheck, tone: 'amber', openByDefault: false,
   },
   {
-    id: 'animals', title: 'Livestock', subtitle: 'Care for cows, goats, poultry and fish', icon: PawPrint, tone: 'rose', openByDefault: false,
+    id: 'animals', titleKey: 'sec_animals', subKey: 'sec_animals_sub', icon: PawPrint, tone: 'rose', openByDefault: false,
   },
   {
-    id: 'market', title: 'Market & Money', subtitle: 'Prices, selling, loans and insurance', icon: Wallet, tone: 'indigo', openByDefault: true,
+    id: 'market', titleKey: 'sec_market', subKey: 'sec_market_sub', icon: Wallet, tone: 'indigo', openByDefault: true,
   },
   {
-    id: 'learn', title: 'Learn & Community', subtitle: 'Schemes, experts and fellow farmers', icon: GraduationCap, tone: 'blue', openByDefault: false,
+    id: 'learn', titleKey: 'sec_learn', subKey: 'sec_learn_sub', icon: GraduationCap, tone: 'blue', openByDefault: false,
   },
   {
-    id: 'manage', title: 'Manage My Farm', subtitle: 'Records, tasks and reminders', icon: ListTodo, tone: 'cyan', openByDefault: false,
+    id: 'manage', titleKey: 'sec_manage', subKey: 'sec_manage_sub', icon: ListTodo, tone: 'cyan', openByDefault: false,
   },
 ];
 
 export default function Home() {
+  const { t } = useLang();
   const [query, setQuery] = useState('');
   const [listening, setListening] = useState(false);
   const [prices, setPrices] = useState(null);
@@ -175,7 +177,7 @@ export default function Home() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search all tools…"
+          placeholder={t('search_placeholder')}
           className="min-w-0 flex-1 bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
         />
         {query && (
@@ -205,7 +207,7 @@ export default function Home() {
       </div>
 
       {listening && (
-        <p className="mt-2 animate-fade-in text-center text-xs text-gray-400">Listening… speak now</p>
+        <p className="mt-2 animate-fade-in text-center text-xs text-gray-400">{t('listening')}</p>
       )}
 
       {intent && (
@@ -214,7 +216,7 @@ export default function Home() {
           className="mt-3 flex animate-fade-up items-center justify-between rounded-xl bg-leaf-50 px-4 py-3 text-sm font-medium text-leaf-800 transition-all hover:bg-leaf-100 active:scale-[0.98]"
         >
           <span>
-            <span className="text-gray-500">You asked:</span> “{query}” — open {intent.label}
+            <span className="text-gray-500">{t('you_asked')}</span> “{query}” — {t('open_action')} {intent.label}
           </span>
           <ChevronRight size={16} />
         </Link>
@@ -225,10 +227,10 @@ export default function Home() {
         <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
           <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
             <TrendingUp size={15} className="text-leaf-600" />
-            Today's mandi prices
+            {t('mandi_title')}
           </h2>
           <Link to="/market-prices" className="flex items-center gap-0.5 text-xs font-medium text-leaf-700 hover:text-leaf-800">
-            See all <ChevronRight size={13} />
+            {t('see_all')} <ChevronRight size={13} />
           </Link>
         </div>
 
@@ -264,7 +266,7 @@ export default function Home() {
           </ul>
         ) : (
           <div className="px-4 py-6 text-center text-sm text-gray-400">
-            Prices unavailable right now
+            {t('prices_unavailable')}
           </div>
         )}
       </div>
@@ -277,7 +279,7 @@ export default function Home() {
       {isSearching && totalMatches === 0 && (
         <div className="mt-3 animate-pop rounded-2xl border border-dashed border-gray-300 py-10 text-center">
           <SearchX size={26} className="mx-auto text-gray-300" />
-          <p className="mt-2 text-sm font-medium text-gray-700">No tools match “{query}”</p>
+          <p className="mt-2 text-sm font-medium text-gray-700">{t('no_matches')}</p>
           <button onClick={() => setQuery('')} className="mt-1 text-xs font-medium text-leaf-700">
             Clear search
           </button>
@@ -307,8 +309,8 @@ export default function Home() {
                   <SectionIcon size={18} strokeWidth={2} />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold text-gray-900">{section.title}</span>
-                  <span className="block truncate text-xs text-gray-400">{section.subtitle}</span>
+                  <span className="block text-sm font-semibold text-gray-900">{t(section.titleKey, section.title)}</span>
+                  <span className="block truncate text-xs text-gray-400">{t(section.subKey, section.subtitle)}</span>
                 </span>
                 <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-gray-500">
                   {matches.length}
@@ -327,7 +329,7 @@ export default function Home() {
               >
                 <div className="overflow-hidden">
                   <div className="grid grid-cols-4 gap-x-2 gap-y-5 border-t border-gray-100 px-4 py-4 sm:grid-cols-5">
-                    {matches.map(({ to, icon: Icon, label, tone }) => (
+                    {matches.map(({ to, icon: Icon, label, key, tone }) => (
                       <Link
                         key={to}
                         to={to}
@@ -339,7 +341,7 @@ export default function Home() {
                           <Icon size={23} strokeWidth={1.9} />
                         </span>
                         <span className="max-w-[72px] truncate text-center text-xs text-gray-600 transition-colors group-hover:text-gray-900">
-                          {label}
+                          {t(key, label)}
                         </span>
                       </Link>
                     ))}

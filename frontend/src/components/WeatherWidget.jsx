@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Droplets, Wind, CloudRain } from 'lucide-react';
 import axios from 'axios';
+import { useLang } from '../lib/i18n';
 import { weatherIconEl, WCloudFog, DecoCloud, DecoStar } from './icons/WeatherIcons';
 
 /* Nearest-city lookup (offline, no geocoding API needed) */
@@ -54,8 +55,9 @@ function hourLabel(ts) {
 }
 
 export default function WeatherWidget() {
+  const { t } = useLang();
   const [now, setNow] = useState(new Date());
-  const [place, setPlace] = useState('Locating…');
+  const [place, setPlace] = useState(null);
   const [current, setCurrent] = useState(null);
   const [forecast, setForecast] = useState(null);
   const [displayTemp, setDisplayTemp] = useState(0);
@@ -139,7 +141,7 @@ export default function WeatherWidget() {
     return (
       <div className="rounded-3xl border border-gray-200 p-6 text-center text-sm text-gray-500">
         <WCloudFog className="mx-auto h-10 w-10 text-gray-300" />
-        <p className="mt-2">Weather unavailable right now — please retry.</p>
+        <p className="mt-2">{t('w_unavailable')}</p>
       </div>
     );
   }
@@ -194,7 +196,7 @@ export default function WeatherWidget() {
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="flex items-center gap-1.5 text-sm font-semibold">
-              <MapPin size={15} strokeWidth={2.4} /> {place}
+              <MapPin size={15} strokeWidth={2.4} /> {place || t('w_locating')}
             </p>
             <p className="mt-0.5 text-xs text-white/70">
               {now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' })}
@@ -206,7 +208,7 @@ export default function WeatherWidget() {
             </p>
             <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium">
               <span className={`h-1.5 w-1.5 rounded-full ${sample ? 'bg-amber-300' : 'animate-ping bg-emerald-300'}`} />
-              {sample ? 'Sample · offline' : 'Live'}
+              {sample ? t('w_sample') : t('w_live')}
             </span>
           </div>
         </div>
@@ -233,21 +235,21 @@ export default function WeatherWidget() {
             <Droplets size={17} className="shrink-0 text-sky-100" />
             <div>
               <p className="text-sm font-semibold leading-none">{current.humidity ?? '—'}%</p>
-              <p className="mt-0.5 text-[10px] uppercase tracking-wide text-white/65">Humidity</p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-wide text-white/65">{t('w_humidity')}</p>
             </div>
           </div>
           <div className="flex items-center justify-center gap-2 rounded-xl bg-white/15 px-3 py-2 backdrop-blur-sm">
             <Wind size={17} className="shrink-0 text-teal-50" />
             <div>
               <p className="text-sm font-semibold leading-none">{current.wind_speed ?? '—'} m/s</p>
-              <p className="mt-0.5 text-[10px] uppercase tracking-wide text-white/65">Wind</p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-wide text-white/65">{t('w_wind')}</p>
             </div>
           </div>
           <div className="flex items-center justify-center gap-2 rounded-xl bg-white/15 px-3 py-2 backdrop-blur-sm">
             <CloudRain size={17} className="shrink-0 text-indigo-50" />
             <div>
               <p className="text-sm font-semibold leading-none">{forecast?.days?.[0] ? Math.round(forecast.days[0].rain_probability) : '—'}%</p>
-              <p className="mt-0.5 text-[10px] uppercase tracking-wide text-white/65">Rain chance</p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-wide text-white/65">{t('w_rain_chance')}</p>
             </div>
           </div>
         </div>
@@ -256,7 +258,7 @@ export default function WeatherWidget() {
         {hourly.length > 0 && (
           <div className="mt-5">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-white/70">
-              Hourly · swipe to check later hours
+              {t('w_hourly')}
             </p>
             <div className="relative mt-2">
               <div
@@ -265,7 +267,7 @@ export default function WeatherWidget() {
                 className="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
                 <div className="w-[62px] shrink-0 snap-start animate-pop rounded-2xl border border-white/40 bg-white/20 py-2.5 text-center backdrop-blur-sm">
-                  <p className="text-[10px] font-medium text-white/75">Now</p>
+                  <p className="text-[10px] font-medium text-white/75">{t('w_now')}</p>
                   <span className="mt-1 block h-6 w-6">{weatherIconEl(current.description, 'h-6 w-6')}</span>
                   <p className="mt-1 text-sm font-semibold">{Math.round(current.temperature)}°</p>
                 </div>
@@ -309,7 +311,7 @@ export default function WeatherWidget() {
           to="/weather"
           className="mt-4 flex items-center justify-center gap-1 text-xs font-medium text-white/75 transition-colors hover:text-white"
         >
-          Full forecast & advisories
+          {t('w_full')}
           <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
         </Link>
       </div>
