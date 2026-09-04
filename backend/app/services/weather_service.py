@@ -133,94 +133,189 @@ def _sample_forecast(lat: float, lon: float) -> ForecastResponse:
 
 
 # ─────────────────────────────────────────────────────────────
-# Live upstream (OpenWeather) with graceful fallback
+# Live weather providers, in order of preference:
+#   1. OpenWeather  — used only if WEATHER_API_KEY is set
+#   2. Open-Meteo   — free, no key required (default)
+#   3. Seasonal sample model — last resort when offline
 # ─────────────────────────────────────────────────────────────
 
-async def get_current_weather(lat: float, lon: float) -> WeatherResponse:
+_OM_CURRENT = "https://api.open-meteo.com/v1/forecast"
+
+# WMO weather codes → OpenWeather-style descriptions
+_OM_CODES = {
+    0: "clear sky", 1: "few clouds", 2: "scattered clouds", 3: "overcast clouds",
+    45: "mist", 48: "fog",
+    51: "light drizzle", 53: "drizzle", 55: "heavy drizzle",
+    56: "light drizzle", 57: "heavy drizzle",
+    61: "light rain", 63: "moderate rain", 65: "heavy rain",
+    66: "light rain", 67: "heavy rain",
+    71: "light snow", 73: "snow", 75: "heavy snow", 77: "snow",
+    80: "light rain", 81: "moderate rain", 82: "heavy rain",
+    85: "light snow", 86: "heavy snow",
+    95: "thunderstorm", 96: "thunderstorm with hail", 99: "thunderstorm with hail",
+}
+
+
+def _om_desc(code):
+    return _OM_CODES.get(code, "scattered clouds")
+
+
+async def _om_current(lat: float, lon: float) -> WeatherResponse:
+    """Current conditions via Open-Meteo (free, keyless)."""
     params = {
-        "lat": lat,
-        "lon": lon,
-        "appid": settings.weather_api_key,
-        "units": "metric",
+        "latitude": lat, "longitude": lon,
+        "current": "temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m",
+        "forecast_days": 1, "timezone": "auto",
     }
-    last_error = None
-    for attempt in range(2):
+    async with httpx.AsyncClient(timeout=10, transport=_IPV4) as client:
+        resp = await client.get(_OM_CURRENT, params=params)
+        resp.raise_for_status()
+        c = resp.json()["current"]
+    return WeatherResponse(
+        location=None,
+        temperature=c["temperature_2m"],
+        feels_like=c.get("apparent_temperature"),
+        humidity=c.get("relative_humidity_2m"),
+        description=_om_desc(c.get("weather_code")),
+        icon="open-meteo",
+        wind_speed=c.get("wind_speed_10m"),
+        lat=lat, lon=lon,
+        source="live",
+    )
+
+
+async def _om_forecast(lat: float, lon: float) -> ForecastResponse:
+    """5-day summary + next 24 hours via Open-Meteo (free, keyless)."""
+    params = {
+        "latitude": lat, "longitude": lon, "timezone": "auto",
+        "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
+        "hourly": "temperature_2m,weather_code,precipitation_probability",
+        "forecast_days": 5, "forecast_hours": 24,
+    }
+    async with httpx.AsyncClient(timeout=10, transport=_IPV4) as client:
+        resp = await client.get(_OM_CURRENT, params=params)
+        resp.raise_for_status()
+        data = resp.json()
+
+    days = []
+    daily = data.get("daily", {})
+    for i, date in enumerate(daily.get("time", [])[:5]):
+        days.append(ForecastDay(
+            date=date,
+            rain_probability=round((daily.get("precipitation_probability_max") or [0] * 5)[i] or 0, 1),
+            temp_min=round((daily.get("temperature_2m_min") or [0] * 5)[i], 1),
+            temp_max=round((daily.get("temperature_2m_max") or [0] * 5)[i], 1),
+            description=_om_desc((daily.get("weather_code") or [2] * 5)[i]),
+            icon="open-meteo",
+        ))
+
+    hourly = []
+    h = data.get("hourly", {})
+    for i, ts in enumerate(h.get("time", [])[:24]):
+        dt = datetime.fromisoformat(ts)
+        hourly.append(HourlyEntry(
+            ts=int(dt.timestamp()),
+            temp=round((h.get("temperature_2m") or [0] * 24)[i], 1),
+            rain_probability=round((h.get("precipitation_probability") or [0] * 24)[i] or 0, 1),
+            description=_om_desc((h.get("weather_code") or [2] * 24)[i]),
+        ))
+
+    return ForecastResponse(location=None, lat=lat, lon=lon, days=days, hourly=hourly, source="live")
+
+
+# ─────────────────────────────────────────────────────────────
+# Public API — provider chain with graceful degradation
+# ─────────────────────────────────────────────────────────────
+
+_IPV4 = httpx.AsyncHTTPTransport(local_address="0.0.0.0")
+
+async def get_current_weather(lat: float, lon: float) -> WeatherResponse:
+    """Provider chain: OpenWeather (if key set) → Open-Meteo (keyless) → sample."""
+    if settings.weather_api_key:
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "appid": settings.weather_api_key,
+            "units": "metric",
+        }
         try:
             async with httpx.AsyncClient(timeout=10) as client:
                 resp = await client.get(f"{settings.weather_api_url}/weather", params=params)
                 resp.raise_for_status()
                 data = resp.json()
-            last_error = None
-            break
-        except Exception as e:
-            last_error = e
-    if last_error:
-        # Upstream unreachable — serve seasonal sample data instead of failing.
-        return _sample_current(lat, lon)
+            return WeatherResponse(
+                location=data.get("name"),
+                temperature=data["main"]["temp"],
+                feels_like=data["main"].get("feels_like"),
+                humidity=data["main"].get("humidity"),
+                description=(data.get("weather") or [{}])[0].get("description"),
+                icon=(data.get("weather") or [{}])[0].get("icon"),
+                wind_speed=data.get("wind", {}).get("speed"),
+                rain_1h=data.get("rain", {}).get("1h"),
+                lat=lat,
+                lon=lon,
+            )
+        except Exception:
+            pass  # fall through to Open-Meteo
 
-    return WeatherResponse(
-        location=data.get("name"),
-        temperature=data["main"]["temp"],
-        feels_like=data["main"].get("feels_like"),
-        humidity=data["main"].get("humidity"),
-        description=(data.get("weather") or [{}])[0].get("description"),
-        icon=(data.get("weather") or [{}])[0].get("icon"),
-        wind_speed=data.get("wind", {}).get("speed"),
-        rain_1h=data.get("rain", {}).get("1h"),
-        lat=lat,
-        lon=lon,
-    )
+    try:
+        return await _om_current(lat, lon)
+    except Exception:
+        return _sample_current(lat, lon)
 
 
 async def get_weather_forecast(lat: float, lon: float) -> ForecastResponse:
-    """5-day forecast + next 24 hours, with sample fallback."""
-    params = {
-        "lat": lat,
-        "lon": lon,
-        "appid": settings.weather_api_key,
-        "units": "metric",
-    }
+    """Provider chain: OpenWeather (if key set) → Open-Meteo (keyless) → sample."""
+    if settings.weather_api_key:
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "appid": settings.weather_api_key,
+            "units": "metric",
+        }
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                resp = await client.get(f"{settings.weather_api_url}/forecast", params=params)
+                resp.raise_for_status()
+                data = resp.json()
+        except Exception:
+            pass  # fall through to Open-Meteo
+        else:
+            by_date = defaultdict(list)
+            for entry in data.get("list", []):
+                date_str = datetime.utcfromtimestamp(entry["dt"]).strftime("%Y-%m-%d")
+                by_date[date_str].append(entry)
+
+            days = []
+            for date_str, entries in sorted(by_date.items())[:5]:
+                max_pop = max((e.get("pop", 0) for e in entries), default=0) * 100
+                temps = [e["main"]["temp"] for e in entries]
+                mid_entry = entries[len(entries) // 2]
+                days.append(ForecastDay(
+                    date=date_str,
+                    rain_probability=round(max_pop, 1),
+                    temp_min=round(min(temps), 1),
+                    temp_max=round(max(temps), 1),
+                    description=(mid_entry.get("weather") or [{}])[0].get("description", ""),
+                    icon=(mid_entry.get("weather") or [{}])[0].get("icon", ""),
+                ))
+
+            hourly = [
+                HourlyEntry(
+                    ts=entry["dt"],
+                    temp=round(entry["main"]["temp"], 1),
+                    rain_probability=round(entry.get("pop", 0) * 100, 1),
+                    description=(entry.get("weather") or [{}])[0].get("description", ""),
+                )
+                for entry in data.get("list", [])[:24]
+            ]
+
+            return ForecastResponse(
+                location=data.get("city", {}).get("name"),
+                lat=lat, lon=lon, days=days, hourly=hourly,
+            )
+
     try:
-        async with httpx.AsyncClient(timeout=10) as client:
-            resp = await client.get(f"{settings.weather_api_url}/forecast", params=params)
-            resp.raise_for_status()
-            data = resp.json()
+        return await _om_forecast(lat, lon)
     except Exception:
         return _sample_forecast(lat, lon)
-
-    by_date = defaultdict(list)
-    for entry in data.get("list", []):
-        date_str = datetime.utcfromtimestamp(entry["dt"]).strftime("%Y-%m-%d")
-        by_date[date_str].append(entry)
-
-    days = []
-    for date_str, entries in sorted(by_date.items())[:5]:
-        max_pop = max((e.get("pop", 0) for e in entries), default=0) * 100
-        temps = [e["main"]["temp"] for e in entries]
-        mid_entry = entries[len(entries) // 2]
-        days.append(ForecastDay(
-            date=date_str,
-            rain_probability=round(max_pop, 1),
-            temp_min=round(min(temps), 1),
-            temp_max=round(max(temps), 1),
-            description=(mid_entry.get("weather") or [{}])[0].get("description", ""),
-            icon=(mid_entry.get("weather") or [{}])[0].get("icon", ""),
-        ))
-
-    hourly = [
-        HourlyEntry(
-            ts=entry["dt"],
-            temp=round(entry["main"]["temp"], 1),
-            rain_probability=round(entry.get("pop", 0) * 100, 1),
-            description=(entry.get("weather") or [{}])[0].get("description", ""),
-        )
-        for entry in data.get("list", [])[:24]
-    ]
-
-    return ForecastResponse(
-        location=data.get("city", {}).get("name"),
-        lat=lat,
-        lon=lon,
-        days=days,
-        hourly=hourly,
-    )
