@@ -1,5 +1,4 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Camera, MapPin, Sprout, PawPrint, Bell, User } from 'lucide-react';
 import Logo from './Logo.jsx';
 
 const NAV_LINKS = [
@@ -12,11 +11,11 @@ const NAV_LINKS = [
 ];
 
 const MOBILE_NAV = [
-  { path: '/', icon: Home, label: 'Home' },
-  { path: '/diagnose', icon: Camera, label: 'Diagnose' },
-  { path: '/near-me', icon: MapPin, label: 'Near Me' },
-  { path: '/crops', icon: Sprout, label: 'Crops' },
-  { path: '/animal-encyclopedia', icon: PawPrint, label: 'Animals' },
+  { path: '/', emoji: '🏠', label: 'Home' },
+  { path: '/diagnose', emoji: '📷', label: 'Diagnose' },
+  { path: '/near-me', emoji: '📍', label: 'Near Me' },
+  { path: '/crops', emoji: '🌾', label: 'Crops' },
+  { path: '/animal-encyclopedia', emoji: '🐾', label: 'Animals' },
 ];
 
 export default function Layout({ children }) {
@@ -32,7 +31,7 @@ export default function Layout({ children }) {
       {/* ── Desktop header ─────────────────────────────── */}
       <header className="sticky top-0 z-40 hidden border-b border-gray-200 bg-white lg:block">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-          <Link to="/" aria-label="AgriSaathi home">
+          <Link to="/" aria-label="AgriSaathi home" className="transition-opacity hover:opacity-80">
             <Logo />
           </Link>
           <nav className="flex items-center gap-6">
@@ -51,21 +50,21 @@ export default function Layout({ children }) {
           <div className="flex items-center gap-1.5">
             <Link
               to="/alerts-center"
-              className="rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+              className="rounded-full p-2 text-base transition-transform hover:scale-110"
               aria-label="Alerts"
             >
-              <Bell size={19} />
+              🔔
             </Link>
             <Link
               to="/profile-settings"
-              className="rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+              className="rounded-full p-2 text-base transition-transform hover:scale-110"
               aria-label="Profile"
             >
-              <User size={19} />
+              👤
             </Link>
             <Link
               to="/dashboard"
-              className="ml-1 rounded-lg bg-leaf-600 px-3.5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-leaf-700"
+              className="ml-1 rounded-lg bg-leaf-600 px-3.5 py-1.5 text-sm font-medium text-white transition-all hover:bg-leaf-700 active:scale-95"
             >
               My Farm
             </Link>
@@ -79,11 +78,11 @@ export default function Layout({ children }) {
           <Logo />
         </Link>
         <div className="flex items-center gap-1">
-          <Link to="/alerts-center" className="rounded-full p-2 text-gray-500" aria-label="Alerts">
-            <Bell size={20} />
+          <Link to="/alerts-center" className="rounded-full p-2 text-lg transition-transform active:scale-90" aria-label="Alerts">
+            🔔
           </Link>
-          <Link to="/profile-settings" className="rounded-full p-2 text-gray-500" aria-label="Profile">
-            <User size={20} />
+          <Link to="/profile-settings" className="rounded-full p-2 text-lg transition-transform active:scale-90" aria-label="Profile">
+            👤
           </Link>
         </div>
       </div>
@@ -95,7 +94,7 @@ export default function Layout({ children }) {
 
       {/* ── Minimal footer ─────────────────────────────── */}
       <footer className="px-4 py-10 text-center text-xs text-gray-400">
-        AgriSaathi · Free for every farmer · 22 languages
+        🌾 AgriSaathi · Free for every farmer · 22 languages
       </footer>
 
       {/* Spacer so content clears the mobile bottom nav */}
@@ -104,7 +103,7 @@ export default function Layout({ children }) {
       {/* ── Mobile bottom nav ──────────────────────────── */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white lg:hidden">
         <div className="mx-auto flex h-16 max-w-md items-center justify-around px-2">
-          {MOBILE_NAV.map(({ path, icon: Icon, label }) => {
+          {MOBILE_NAV.map(({ path, emoji, label }) => {
             const active =
               isActive(path)
               || (path === '/animal-encyclopedia' && location.pathname.startsWith('/animal-encyclopedia'));
@@ -113,11 +112,16 @@ export default function Layout({ children }) {
                 key={path}
                 to={path}
                 aria-label={label}
-                className={`flex w-16 flex-col items-center gap-1 py-1.5 ${
+                className={`flex w-16 flex-col items-center gap-0.5 rounded-xl py-1.5 transition-colors ${
                   active ? 'text-leaf-700' : 'text-gray-400'
                 }`}
               >
-                <Icon size={22} strokeWidth={active ? 2 : 1.6} />
+                <span
+                  key={`${path}-${active}`}
+                  className={`text-xl leading-none transition-transform ${active ? 'animate-pop' : ''}`}
+                >
+                  {emoji}
+                </span>
                 <span className={`text-[10px] ${active ? 'font-semibold' : ''}`}>{label}</span>
               </Link>
             );
