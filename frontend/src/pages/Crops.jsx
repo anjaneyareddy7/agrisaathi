@@ -1,25 +1,23 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Sprout, ChevronRight } from 'lucide-react';
-import { useLang } from '@/lib/i18n';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/PageHeader';
+import { EmptyState } from '@/components/kit';
 import cropData from '@/data/cropEncyclopedia.json';
 
-const CATEGORY_COLORS = {
-  amber: 'bg-amber-50 border-amber-100 text-amber-700',
-  blue: 'bg-blue-50 border-blue-100 text-blue-700',
-  orange: 'bg-orange-50 border-orange-100 text-orange-700',
-  green: 'bg-green-50 border-green-100 text-green-700',
-  yellow: 'bg-yellow-50 border-yellow-100 text-yellow-700',
-  pink: 'bg-pink-50 border-pink-100 text-pink-700',
-  violet: 'bg-violet-50 border-violet-100 text-violet-700',
+const CATEGORY_TONES = {
+  amber: 'bg-amber-100 text-amber-700',
+  blue: 'bg-blue-100 text-blue-700',
+  orange: 'bg-orange-100 text-orange-700',
+  green: 'bg-leaf-100 text-leaf-700',
+  yellow: 'bg-yellow-100 text-yellow-700',
+  pink: 'bg-pink-100 text-pink-700',
+  violet: 'bg-violet-100 text-violet-700',
 };
 
 export default function Crops() {
-  const { t } = useLang();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
@@ -42,87 +40,80 @@ export default function Crops() {
       .filter((c) => c.types.length > 0);
   }, [categories, query, activeCategory]);
 
+  const totalTypes = filteredCategories.reduce((s, c) => s + c.types.length, 0);
+
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
-      <PageHeader titleKey="cropEncyclopedia" icon={Sprout} />
-      <p className="text-xs text-gray-500 mb-3">
-        {t('cropEncyclopediaIntro')}
-      </p>
+      <PageHeader title="Crop Encyclopedia" subtitle="Browse crops by category — tap for sowing, irrigation and harvest guidance" icon={Sprout} />
 
-      <div className="relative mb-3">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+      {/* Search */}
+      <div className="relative mb-3 animate-fade-up">
+        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={t('searchCropType')}
-          className="pl-9"
+          placeholder="Search crop, use or variety…"
+          className="h-11 rounded-xl border-gray-200 bg-white pl-10 text-sm focus:border-leaf-500 focus:ring-4 focus:ring-leaf-100"
         />
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-3 -mx-1 px-1">
-        <button
-          onClick={() => setActiveCategory('all')}
-          className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition ${
-            activeCategory === 'all'
-              ? 'bg-green-600 text-white border-green-600'
-              : 'bg-white text-gray-600 border-gray-200'
-          }`}
-        >
-          {t('allCategories')}
+      {/* Category chips */}
+      <div className="mb-4 flex gap-1.5 overflow-x-auto pb-1 no-scrollbar animate-fade-up">
+        <button onClick={() => setActiveCategory('all')}
+          className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${activeCategory === 'all' ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 bg-white text-gray-600'}`}>
+          All
         </button>
         {categories.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => setActiveCategory(c.id)}
-            className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition ${
-              activeCategory === c.id
-                ? 'bg-green-600 text-white border-green-600'
-                : 'bg-white text-gray-600 border-gray-200'
-            }`}
-          >
+          <button key={c.id} onClick={() => setActiveCategory(c.id)}
+            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${activeCategory === c.id ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 bg-white text-gray-600'}`}>
             {c.name}
           </button>
         ))}
       </div>
 
-      {filteredCategories.length === 0 && (
-        <p className="text-sm text-gray-400 text-center py-8">{t('noCropTypesFound')}</p>
+      {filteredCategories.length === 0 ? (
+        <EmptyState icon={Sprout} title="No crop types found" subtitle="Try a different search or category." />
+      ) : (
+        <>
+          <p className="mb-3 text-[11px] font-medium text-gray-400">{totalTypes} crop types</p>
+          {filteredCategories.map((c) => (
+            <div key={c.id} className="mb-5">
+              <h3 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <span className={`h-2 w-2 rounded-full ${CATEGORY_TONES[c.color]?.replace('text-', 'bg-') || 'bg-gray-300'}`} />
+                {c.name}
+              </h3>
+              <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                <ul className="divide-y divide-gray-100">
+                  {c.types.map((tItem, i) => (
+                    <li key={tItem.id}>
+                      <button onClick={() => navigate(`/crop-encyclopedia/${c.id}/${tItem.id}`)}
+                        className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-gray-50 animate-slide-in"
+                        style={{ animationDelay: `${Math.min(i, 8) * 25}ms` }}>
+                        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${CATEGORY_TONES[c.color] || 'bg-gray-100 text-gray-600'}`}>
+                          <Sprout size={17} />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold text-gray-900">{tItem.name}</p>
+                          <p className="truncate text-xs text-gray-500">{tItem.category_use}</p>
+                          <div className="mt-1.5 flex flex-wrap gap-1">
+                            {tItem.varieties.slice(0, 2).map((v) => (
+                              <Badge key={v.name} className="bg-gray-100 text-gray-600 hover:bg-gray-100 text-[10px]">{v.name}</Badge>
+                            ))}
+                            {tItem.varieties.length > 2 && (
+                              <Badge className="bg-gray-50 text-gray-400 hover:bg-gray-50 text-[10px]">+{tItem.varieties.length - 2}</Badge>
+                            )}
+                          </div>
+                        </div>
+                        <ChevronRight size={16} className="shrink-0 text-gray-300" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </>
       )}
-
-      {filteredCategories.map((c) => (
-        <div key={c.id} className="mb-5">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">{c.name}</h3>
-          <div className="grid grid-cols-1 gap-2">
-            {c.types.map((tItem) => (
-              <Card
-                key={tItem.id}
-                className={`cursor-pointer hover:shadow-md transition ${CATEGORY_COLORS[c.color] || ''}`}
-                onClick={() => navigate(`/crop-encyclopedia/${c.id}/${tItem.id}`)}
-              >
-                <CardContent className="pt-3 pb-3 flex items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold truncate">{tItem.name}</p>
-                    <p className="text-xs text-gray-500 truncate">{tItem.category_use}</p>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {tItem.varieties.slice(0, 2).map((v) => (
-                        <Badge key={v.name} className="bg-white/70 text-gray-600 border border-gray-200 text-[10px]">
-                          {v.name}
-                        </Badge>
-                      ))}
-                      {tItem.varieties.length > 2 && (
-                        <Badge className="bg-white/70 text-gray-500 border border-gray-200 text-[10px]">
-                          +{tItem.varieties.length - 2}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      ))}
     </div>
   );
 }
