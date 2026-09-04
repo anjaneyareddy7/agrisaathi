@@ -62,7 +62,7 @@ export default function CropEncyclopediaDetail() {
 
   if (!crop) {
     return (
-      <div>
+      <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
         <PageHeader titleKey="cropEncyclopedia" icon={Home} />
         <p className="text-sm text-gray-400 text-center py-8">{t('cropTypeNotFound')}</p>
         <button onClick={() => navigate('/crops')} className="text-sm text-green-700 flex items-center gap-1 mx-auto">
@@ -73,21 +73,21 @@ export default function CropEncyclopediaDetail() {
   }
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <button
         onClick={() => navigate('/crops')}
-        className="flex items-center gap-1 text-xs text-gray-500 mb-2"
+        className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-leaf-700"
       >
         <ArrowLeft className="h-3.5 w-3.5" />{t('backToEncyclopedia')}
       </button>
 
-      <div className="mb-4">
-        <h1 className="text-lg font-bold text-gray-800">{crop.name}</h1>
-        <p className="text-sm text-gray-500">{category.name} &middot; {crop.category_use}</p>
+      <div className="mb-4 overflow-hidden rounded-3xl bg-gradient-to-br from-leaf-800 to-leaf-950 p-5 text-white shadow-md animate-fade-up">
+        <h1 className="text-xl font-bold tracking-tight">{crop.name}</h1>
+        <p className="mt-1 text-sm text-white/75">{category.name} &middot; {crop.category_use}</p>
       </div>
 
       {/* Varieties */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('varieties')}</h3>
           <div className="space-y-2">
@@ -105,7 +105,7 @@ export default function CropEncyclopediaDetail() {
       </Card>
 
       {/* Climate & Soil */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
             <Sun className="h-4 w-4 text-amber-600" />{t('climateSoil')}
@@ -123,7 +123,7 @@ export default function CropEncyclopediaDetail() {
       </Card>
 
       {/* Sowing & Irrigation */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
             <Droplets className="h-4 w-4 text-cyan-600" />{t('sowingIrrigation')}
@@ -139,7 +139,7 @@ export default function CropEncyclopediaDetail() {
       </Card>
 
       {/* Fertilizer Schedule */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
             <FlaskConical className="h-4 w-4 text-rose-600" />{t('fertilizerSchedule')}
@@ -161,7 +161,7 @@ export default function CropEncyclopediaDetail() {
       </Card>
 
       {/* Growth Timeline */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
             <TrendingUp className="h-4 w-4 text-green-600" />{t('growthTimeline')}
@@ -180,7 +180,7 @@ export default function CropEncyclopediaDetail() {
       </Card>
 
       {/* Common Pests & Diseases */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
             <AlertTriangle className="h-4 w-4 text-orange-600" />{t('commonPestsDiseases')}
@@ -195,7 +195,7 @@ export default function CropEncyclopediaDetail() {
 
       {/* Economics */}
       {crop.economics && (
-        <Card className="mb-4">
+        <Card className="mb-4 animate-fade-up">
           <CardContent className="pt-4">
             <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
               <IndianRupee className="h-4 w-4 text-emerald-600" />{t('quickFacts')}

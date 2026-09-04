@@ -62,7 +62,7 @@ export default function AnimalEncyclopediaDetail() {
 
   if (!animal) {
     return (
-      <div>
+      <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
         <PageHeader titleKey="animalEncyclopedia" icon={Home} />
         <p className="text-sm text-gray-400 text-center py-8">{t('animalTypeNotFound')}</p>
         <button onClick={() => navigate('/animal-encyclopedia')} className="text-sm text-green-700 flex items-center gap-1 mx-auto">
@@ -73,21 +73,21 @@ export default function AnimalEncyclopediaDetail() {
   }
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <button
         onClick={() => navigate('/animal-encyclopedia')}
-        className="flex items-center gap-1 text-xs text-gray-500 mb-2"
+        className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-leaf-700"
       >
         <ArrowLeft className="h-3.5 w-3.5" />{t('backToEncyclopedia')}
       </button>
 
-      <div className="mb-4">
-        <h1 className="text-lg font-bold text-gray-800">{animal.name}</h1>
-        <p className="text-sm text-gray-500">{category.name} &middot; {animal.purpose}</p>
+      <div className="mb-4 overflow-hidden rounded-3xl bg-gradient-to-br from-harvest-600 to-harvest-800 p-5 text-white shadow-md animate-fade-up">
+        <h1 className="text-xl font-bold tracking-tight">{animal.name}</h1>
+        <p className="mt-1 text-sm text-white/75">{category.name} &middot; {animal.purpose}</p>
       </div>
 
       {/* Breeds */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('breeds')}</h3>
           <div className="space-y-2">
@@ -105,7 +105,7 @@ export default function AnimalEncyclopediaDetail() {
       </Card>
 
       {/* Housing / Environment */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
             <Thermometer className="h-4 w-4 text-blue-600" />{t('housingEnvironment')}
@@ -124,7 +124,7 @@ export default function AnimalEncyclopediaDetail() {
       </Card>
 
       {/* Feed */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
             <Utensils className="h-4 w-4 text-amber-600" />{t('feedRequirements')}
@@ -139,7 +139,7 @@ export default function AnimalEncyclopediaDetail() {
       </Card>
 
       {/* Vaccination Schedule */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
             <Syringe className="h-4 w-4 text-rose-600" />{t('vaccinationSchedule')}
@@ -163,7 +163,7 @@ export default function AnimalEncyclopediaDetail() {
       </Card>
 
       {/* Yield Timeline */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
             <TrendingUp className="h-4 w-4 text-green-600" />{t('yieldTimeline')}
@@ -182,7 +182,7 @@ export default function AnimalEncyclopediaDetail() {
       </Card>
 
       {/* Common Diseases */}
-      <Card className="mb-3">
+      <Card className="mb-3 animate-fade-up">
         <CardContent className="pt-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
             <AlertTriangle className="h-4 w-4 text-orange-600" />{t('commonDiseases')}
@@ -197,7 +197,7 @@ export default function AnimalEncyclopediaDetail() {
 
       {/* Economics */}
       {animal.economics && (
-        <Card className="mb-4">
+        <Card className="mb-4 animate-fade-up">
           <CardContent className="pt-4">
             <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
               <IndianRupee className="h-4 w-4 text-emerald-600" />{t('quickFacts')}
