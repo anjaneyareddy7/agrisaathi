@@ -5,7 +5,7 @@ import {
   ShieldCheck, Landmark, Wheat, User, Banknote, MessageSquare, Store, GraduationCap,
   FolderArchive, ShieldPlus, Package, ListTodo, Bug, Gauge, UserCheck, Trophy, BellRing,
   Contact, Bell, FileSpreadsheet, PawPrint, Search, X, ChevronRight, SearchX,
-  CloudSun, Tractor, ScanSearch, Database, BarChart3, ChevronDown,
+  CloudSun, Tractor, ScanSearch, Database, BarChart3, ChevronDown, Sparkles,
 } from 'lucide-react';
 import axios from 'axios';
 import { useLang } from '../lib/i18n';
@@ -80,24 +80,21 @@ const TOOLS = [
 
 /* Sections in a logical farmer's journey: grow, protect, livestock, money, learn, manage */
 const SECTIONS = [
-  {
-    id: 'grow', titleKey: 'sec_grow', subKey: 'sec_grow_sub', icon: Sprout, tone: 'green', openByDefault: true,
-  },
-  {
-    id: 'protect', titleKey: 'sec_protect', subKey: 'sec_protect_sub', icon: ShieldCheck, tone: 'amber', openByDefault: false,
-  },
-  {
-    id: 'animals', titleKey: 'sec_animals', subKey: 'sec_animals_sub', icon: PawPrint, tone: 'rose', openByDefault: false,
-  },
-  {
-    id: 'market', titleKey: 'sec_market', subKey: 'sec_market_sub', icon: Wallet, tone: 'indigo', openByDefault: true,
-  },
-  {
-    id: 'learn', titleKey: 'sec_learn', subKey: 'sec_learn_sub', icon: GraduationCap, tone: 'blue', openByDefault: false,
-  },
-  {
-    id: 'manage', titleKey: 'sec_manage', subKey: 'sec_manage_sub', icon: ListTodo, tone: 'cyan', openByDefault: false,
-  },
+  { id: 'grow', titleKey: 'sec_grow', subKey: 'sec_grow_sub', icon: Sprout, tone: 'green', openByDefault: true },
+  { id: 'protect', titleKey: 'sec_protect', subKey: 'sec_protect_sub', icon: ShieldCheck, tone: 'amber', openByDefault: false },
+  { id: 'animals', titleKey: 'sec_animals', subKey: 'sec_animals_sub', icon: PawPrint, tone: 'rose', openByDefault: false },
+  { id: 'market', titleKey: 'sec_market', subKey: 'sec_market_sub', icon: Wallet, tone: 'indigo', openByDefault: true },
+  { id: 'learn', titleKey: 'sec_learn', subKey: 'sec_learn_sub', icon: GraduationCap, tone: 'blue', openByDefault: false },
+  { id: 'manage', titleKey: 'sec_manage', subKey: 'sec_manage_sub', icon: ListTodo, tone: 'cyan', openByDefault: false },
+];
+
+/* Tinted initial avatars for mandi commodities (graphical, no emojis) */
+const PRICE_AVATAR_TONES = [
+  'bg-harvest-100 text-harvest-800',
+  'bg-rose-100 text-rose-700',
+  'bg-leaf-100 text-leaf-700',
+  'bg-blue-100 text-blue-700',
+  'bg-violet-100 text-violet-700',
 ];
 
 export default function Home() {
@@ -162,16 +159,16 @@ export default function Home() {
     });
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pb-6 pt-5">
-      {/* Language switcher */}
+    <div className="mx-auto max-w-2xl px-4 pb-8 pt-4">
+      {/* ── Language switcher ─────────────────────────── */}
       <LanguageBar />
 
-      {/* Weather forecast */}
-      <div className="mt-3">
+      {/* ── Weather forecast ──────────────────────────── */}
+      <div className="mt-4">
         <WeatherWidget />
       </div>
 
-      {/* Search + voice */}
+      {/* ── Search + voice ────────────────────────────── */}
       <div className="mt-5 flex animate-fade-up items-center gap-2.5 rounded-full border border-gray-300 bg-white py-2.5 pl-4 pr-2.5 shadow-sm transition-all focus-within:border-leaf-500 focus-within:ring-4 focus-within:ring-leaf-100">
         <Search size={18} className="shrink-0 text-gray-400" />
         <input
@@ -210,26 +207,33 @@ export default function Home() {
         <p className="mt-2 animate-fade-in text-center text-xs text-gray-400">{t('listening')}</p>
       )}
 
+      {/* ── Smart suggestion ──────────────────────────── */}
       {intent && (
         <Link
           to={intent.to}
-          className="mt-3 flex animate-fade-up items-center justify-between rounded-xl bg-leaf-50 px-4 py-3 text-sm font-medium text-leaf-800 transition-all hover:bg-leaf-100 active:scale-[0.98]"
+          className="mt-3 flex animate-fade-up items-center gap-3 rounded-2xl border border-leaf-200 bg-leaf-50/70 px-4 py-3 transition-all hover:bg-leaf-50 active:scale-[0.98]"
         >
-          <span>
-            <span className="text-gray-500">{t('you_asked')}</span> “{query}” — {t('open_action')} {intent.label}
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-leaf-100 text-leaf-700">
+            <Sparkles size={16} />
           </span>
-          <ChevronRight size={16} />
+          <span className="min-w-0 flex-1 text-sm">
+            <span className="block truncate text-gray-500">“{query}”</span>
+            <span className="block font-semibold text-leaf-800">{t('open_action')} {intent.label}</span>
+          </span>
+          <ChevronRight size={16} className="shrink-0 text-leaf-600" />
         </Link>
       )}
 
-      {/* Mandi prices */}
-      <div className="mt-6 animate-fade-up overflow-hidden rounded-2xl border border-gray-200" style={{ animationDelay: '200ms' }}>
-        <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-            <TrendingUp size={15} className="text-leaf-600" />
+      {/* ── Mandi prices ──────────────────────────────── */}
+      <div className="mt-6 animate-fade-up overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm" style={{ animationDelay: '200ms' }}>
+        <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3.5">
+          <h2 className="flex items-center gap-2.5 text-sm font-semibold text-gray-900">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-leaf-100 text-leaf-700">
+              <TrendingUp size={15} strokeWidth={2.2} />
+            </span>
             {t('mandi_title')}
           </h2>
-          <Link to="/market-prices" className="flex items-center gap-0.5 text-xs font-medium text-leaf-700 hover:text-leaf-800">
+          <Link to="/market-prices" className="flex items-center gap-0.5 rounded-lg px-1.5 py-1 text-xs font-semibold text-leaf-700 transition-colors hover:bg-leaf-50">
             {t('see_all')} <ChevronRight size={13} />
           </Link>
         </div>
@@ -237,7 +241,7 @@ export default function Home() {
         {prices === null ? (
           <div className="space-y-3 px-4 py-4">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="animate-shimmer h-9 rounded-lg bg-gray-100 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:400px_100%]" />
+              <div key={i} className="animate-shimmer h-11 rounded-xl bg-gray-100 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:400px_100%]" />
             ))}
           </div>
         ) : prices.length > 0 ? (
@@ -246,19 +250,22 @@ export default function Home() {
               <li key={r.commodity}>
                 <Link
                   to="/market-prices"
-                  className="flex animate-slide-in items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
+                  className="flex animate-slide-in items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50"
                   style={{ animationDelay: `${i * 90}ms` }}
                 >
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{r.commodity}</p>
-                    <p className="text-xs text-gray-400">{r.market}, {r.district}</p>
+                  <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${PRICE_AVATAR_TONES[i % PRICE_AVATAR_TONES.length]}`}>
+                    {(r.commodity || '?').charAt(0).toUpperCase()}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold capitalize text-gray-900">{r.commodity}</p>
+                    <p className="truncate text-xs text-gray-400">{r.market}, {r.district}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-sm font-bold text-gray-900">
                       ₹{Number(r.modal_price || 0).toLocaleString('en-IN')}
-                      <span className="text-xs font-normal text-gray-400">/quintal</span>
+                      <span className="text-[11px] font-normal text-gray-400">/q</span>
                     </p>
-                    <p className="text-xs text-gray-400">₹{r.min_price} – ₹{r.max_price}</p>
+                    <p className="text-[11px] text-gray-400">₹{r.min_price} – ₹{r.max_price}</p>
                   </div>
                 </Link>
               </li>
@@ -271,10 +278,16 @@ export default function Home() {
         )}
       </div>
 
-      {/* Tools — categorised sections, opened one at a time */}
-      <h2 className="mt-8 animate-fade-up text-base font-semibold text-gray-900" style={{ animationDelay: '260ms' }}>
-        Explore tools
-      </h2>
+      {/* ── Tools ─────────────────────────────────────── */}
+      <div className="mt-7 mb-3 flex animate-fade-up items-end justify-between" style={{ animationDelay: '260ms' }}>
+        <div>
+          <h2 className="text-base font-bold tracking-tight text-gray-900">{t('explore_tools', 'Explore tools')}</h2>
+          <p className="mt-0.5 text-xs text-gray-400">{t('explore_tools_sub', 'Everything for your farm, in one place')}</p>
+        </div>
+        <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-bold text-gray-500">
+          {TOOLS.length}
+        </span>
+      </div>
 
       {isSearching && totalMatches === 0 && (
         <div className="mt-3 animate-pop rounded-2xl border border-dashed border-gray-300 py-10 text-center">
@@ -286,7 +299,7 @@ export default function Home() {
         </div>
       )}
 
-      <div className="mt-3 space-y-3">
+      <div className="space-y-3">
         {SECTIONS.map((section) => {
           const matches = matchesFor[section.id];
           if (isSearching && matches.length === 0) return null;
@@ -297,7 +310,7 @@ export default function Home() {
           return (
             <div
               key={section.id}
-              className="animate-fade-up overflow-hidden rounded-2xl border border-gray-200"
+              className="animate-fade-up overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
             >
               {/* Section header */}
               <button

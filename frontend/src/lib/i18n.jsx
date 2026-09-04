@@ -292,6 +292,14 @@ export const labels = {
   loading: { en: 'Loading...', hi: 'लोड हो रहा...', te: 'లోడ్ అవుతోంది...' },
   noData: { en: 'No data available', hi: 'कोई डेटा नहीं', te: 'డేటా అందుబాటులో లేదు' },
 
+  explore_tools: {
+    en: 'Explore tools', hi: 'टूल्स देखें', te: 'టూల్స్ చూడండి', ta: 'கருவிகளைப் பார்க்க', kn: 'ಉಪಕರಣಗಳನ್ನು ನೋಡಿ',
+    mr: 'साधने पहा', bn: 'টুল দেখুন', gu: 'સાધનો જુઓ', pa: 'ਸੰਦ ਵੇਖੋ', ml: 'ടൂളുകൾ കാണുക',
+  },
+  explore_tools_sub: {
+    en: 'Everything for your farm, in one place', hi: 'आपके खेत के लिए सब कुछ, एक जगह', te: 'మీ పొలం కోసం అన్నీ ఒకే చోట', ta: 'உங்கள் பண்ணைக்கு எல்லாம் ஒரே இடத்தில்', kn: 'ನಿಮ್ಮ ಜಮೀನಿಗೆ ಎಲ್ಲವೂ ಒಂದೇ ಕಡೆ',
+    mr: 'तुमच्या शेतासाठी सर्व काही, एका ठिकाणी', bn: 'আপনার খামারের জন্য সবকিছু, এক জায়গায়', gu: 'તમારા ખેતર માટે બધું એક જગ્યાએ', pa: 'ਤੁਹਾਡੇ ਖੇਤ ਲਈ ਸਭ ਕੁਝ, ਇੱਕ ਥਾਂ', ml: 'നിങ്ങളുടെ ഫാമിനായി എല്ലാം ഒരിടത്ത്',
+  },
   /* ── Fallback extras (auto-added) ─────────────── */
   activePolicies: { en: 'Active policies', hi: 'Active policies', te: 'Active policies' },
   addDocument: { en: 'Add document', hi: 'Add document', te: 'Add document' },
