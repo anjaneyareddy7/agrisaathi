@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import WeatherWidget from '../components/WeatherWidget';
+import LanguageBar from '../components/LanguageBar';
 
 const INTENTS = [
   { keys: ['disease', 'pest', 'yellow', 'leaf', 'rot', 'wilt', 'spot'], to: '/diagnose', label: 'Diagnose crop issue' },
@@ -160,8 +161,13 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-5">
+      {/* Language switcher */}
+      <LanguageBar />
+
       {/* Weather forecast */}
-      <WeatherWidget />
+      <div className="mt-3">
+        <WeatherWidget />
+      </div>
 
       {/* Search + voice */}
       <div className="mt-5 flex animate-fade-up items-center gap-2.5 rounded-full border border-gray-300 bg-white py-2.5 pl-4 pr-2.5 shadow-sm transition-all focus-within:border-leaf-500 focus-within:ring-4 focus-within:ring-leaf-100">
