@@ -1,52 +1,38 @@
-import React from 'react'
-import { useState, useMemo, useRef } from 'react'
+import React, { useState, useMemo, useRef } from 'react';
 import {
-  ArrowLeft, Camera, X, Sprout, PawPrint, Mic, AlertTriangle,
-  Leaf, FlaskConical, ShieldAlert, ChevronRight,
+  ArrowLeft, Camera, X, Sprout, PawPrint, Mic, AlertTriangle, RotateCcw,
+  Leaf, FlaskConical, ShieldAlert, ChevronRight, ScanSearch, Loader2,
 } from 'lucide-react';
 import axios from 'axios';
 import appClient from '@/api/appClient';
 import cropData from '@/data/cropEncyclopedia.json';
 import animalData from '@/data/animalEncyclopedia.json';
+import PageHeader from '@/components/PageHeader';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
 const STEPS = [
-  { id: 1, label: 'Take a photo' },
-  { id: 2, label: 'Confirm crop' },
-  { id: 3, label: 'Treatment advice' },
+  { id: 1, label: 'Photo' }, { id: 2, label: 'Details' }, { id: 3, label: 'Result' },
 ];
 
-// Flatten the encyclopedia data into { id, name, category } option lists
-const cropOptions = cropData.categories.flatMap((c) =>
-  c.types.map((t) => ({ id: t.id, name: t.name, category: c.name }))
-);
-const animalOptions = animalData.categories.flatMap((c) =>
-  c.types.map((t) => ({ id: t.id, name: t.name, category: c.name }))
-);
+const cropOptions = cropData.categories.flatMap((c) => c.types.map((t) => ({ id: t.id, name: t.name, category: c.name })));
+const animalOptions = animalData.categories.flatMap((c) => c.types.map((t) => ({ id: t.id, name: t.name, category: c.name })));
 
 export default function Diagnose() {
   const [step, setStep] = useState(1);
-
-  // Step 1 state
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
-
-  // Step 2 state
-  const [domain, setDomain] = useState('crop'); // 'crop' | 'livestock'
+  const [domain, setDomain] = useState('crop');
   const [subject, setSubject] = useState('');
   const [plots, setPlots] = useState([]);
   const [plotId, setPlotId] = useState('');
   const [symptoms, setSymptoms] = useState('');
   const [listening, setListening] = useState(false);
-
-  // Step 3 state
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const recognitionRef = useRef(null);
-
   const subjectOptions = domain === 'crop' ? cropOptions : animalOptions;
 
   const groupedSubjectOptions = useMemo(() => {
@@ -58,8 +44,6 @@ export default function Diagnose() {
     return groups;
   }, [subjectOptions]);
 
-  // Load plots (farms) once, best-effort — works with the localStorage-backed
-  // appClient entity shim even if none exist yet.
   React.useEffect(() => {
     appClient.entities.Farm.list('plot_name', 50)
       .then((rows) => setPlots(Array.isArray(rows) ? rows : []))
@@ -76,17 +60,10 @@ export default function Diagnose() {
     }
   };
 
-  const removeFile = () => {
-    setFile(null);
-    setPreview(null);
-    setResult(null);
-  };
+  const removeFile = () => { setFile(null); setPreview(null); setResult(null); };
 
   const goNextFromStep1 = () => {
-    if (!file) {
-      setError('Please take or upload a photo first');
-      return;
-    }
+    if (!file) { setError('Please take or upload a photo first'); return; }
     setError(null);
     setStep(2);
   };
@@ -94,11 +71,7 @@ export default function Diagnose() {
   const toggleMic = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
-    if (listening) {
-      recognitionRef.current?.stop();
-      setListening(false);
-      return;
-    }
+    if (listening) { recognitionRef.current?.stop(); setListening(false); return; }
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-IN';
     recognition.interimResults = false;
@@ -117,10 +90,7 @@ export default function Diagnose() {
       setError(domain === 'crop' ? 'Please select a crop' : 'Please select an animal type');
       return;
     }
-
-    setLoading(true);
-    setError(null);
-    setResult(null);
+    setLoading(true); setError(null); setResult(null);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -135,14 +105,9 @@ export default function Diagnose() {
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 60000,
       });
-
       setResult(response.data);
       setStep(3);
-      // Don't also setError here — the "source === 'unavailable'" block
-      // in step 3 already renders response.data.description, so setting
-      // error too would show the same message twice.
     } catch (err) {
-      console.error('Diagnosis error:', err);
       setError(err.response?.data?.detail || err.message || 'Failed to analyze image. Please try again.');
       setStep(3);
     } finally {
@@ -151,322 +116,282 @@ export default function Diagnose() {
   };
 
   const startOver = () => {
-    setStep(1);
-    setFile(null);
-    setPreview(null);
-    setSubject('');
-    setPlotId('');
-    setSymptoms('');
-    setResult(null);
-    setError(null);
+    setStep(1); setFile(null); setPreview(null); setSubject('');
+    setPlotId(''); setSymptoms(''); setResult(null); setError(null);
   };
 
   const confidencePct =
     result?.confidence !== undefined && result?.confidence !== null
-      ? Math.round(result.confidence * 100)
-      : null;
+      ? Math.round(result.confidence * 100) : null;
 
-  // Flexible field mapping so this keeps working whether the backend returns
-  // the legacy shape (disease_name/treatment_advice/prevention) or the newer
-  // Diagnosis-entity shape (likely_issue/organic_treatment/chemical_treatment/precautions)
   const likelyIssue = result?.likely_issue || result?.disease_name || 'Unable to determine';
   const alternatives = result?.alternatives || [];
   const evidence = result?.evidence || result?.detailed_analysis || result?.description || '';
-  const organicTreatment =
-    result?.organic_treatment ||
-    (result?.treatment_advice && result.treatment_advice.length
-      ? result.treatment_advice.join(' ')
-      : '');
+  const organicTreatment = result?.organic_treatment ||
+    (result?.treatment_advice && result.treatment_advice.length ? result.treatment_advice.join(' ') : '');
   const chemicalTreatment = result?.chemical_treatment || result?.recommended_action || '';
-  const precautions =
-    result?.precautions ||
+  const precautions = result?.precautions ||
     (result?.prevention && result.prevention.length ? result.prevention.join(' ') : '');
 
+  const inputCls = 'w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm outline-none transition-all focus:border-leaf-500 focus:ring-4 focus:ring-leaf-100';
+
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
+      <div className="flex items-center gap-2">
         {step > 1 && (
           <button
             onClick={() => setStep(step - 1)}
-            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all hover:bg-gray-200 active:scale-90"
+            aria-label="Back"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft size={16} />
           </button>
         )}
-        <Camera className="h-5 w-5 text-green-600" />
-        <h1 className="text-xl font-bold text-gray-800">Diagnose</h1>
+        <div className="flex-1">
+          <PageHeader title="Diagnose" icon={ScanSearch} subtitle="AI-powered crop & livestock diagnosis" />
+        </div>
       </div>
 
-      {step === 1 && (
-        <p className="text-gray-500 text-sm mb-3">AI-powered crop &amp; livestock diagnosis</p>
-      )}
-
-      <div className="flex items-center gap-1 mb-1">
+      {/* Step progress */}
+      <div className="mb-4 flex items-center gap-2">
         {STEPS.map((s, i) => (
-          <div
-            key={s.id}
-            className={`h-1.5 flex-1 rounded-full ${step >= s.id ? 'bg-green-500' : 'bg-gray-200'}`}
-          />
-        ))}
-      </div>
-      <div className="flex justify-between mb-4">
-        {STEPS.map((s) => (
-          <span
-            key={s.id}
-            className={`text-[11px] ${step >= s.id ? 'text-green-700 font-medium' : 'text-gray-400'}`}
-          >
-            {s.id}. {s.label}
-          </span>
+          <React.Fragment key={s.id}>
+            <span className={`flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold transition-all ${
+              step > s.id ? 'bg-leaf-600 text-white' : step === s.id ? 'animate-pop bg-leaf-800 text-white' : 'bg-gray-100 text-gray-400'
+            }`}>{step > s.id ? '✓' : s.id}</span>
+            <span className={`text-xs font-medium ${step >= s.id ? 'text-gray-800' : 'text-gray-400'}`}>{s.label}</span>
+            {i < STEPS.length - 1 && <span className={`h-0.5 flex-1 rounded-full transition-colors ${step > s.id ? 'bg-leaf-500' : 'bg-gray-200'}`} />}
+          </React.Fragment>
         ))}
       </div>
 
-      <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg mb-4">
-        <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-        <p className="text-xs text-amber-700">AI-assisted — not a guaranteed diagnosis</p>
-      </div>
-
-      {/* STEP 1 — Take a photo */}
+      {/* STEP 1 — photo */}
       {step === 1 && (
-        <div className="space-y-4">
-          <div className="border-2 border-dashed border-green-300 bg-green-50/40 rounded-xl p-6 text-center hover:border-green-400 transition-colors">
+        <div className="animate-fade-up space-y-4">
+          <label className="group block cursor-pointer rounded-3xl border-2 border-dashed border-leaf-300 bg-leaf-50/50 p-8 text-center transition-all hover:border-leaf-500 hover:bg-leaf-50">
             {preview ? (
               <div className="relative">
-                <img src={preview} alt="Preview" className="max-h-64 mx-auto rounded-lg object-contain" />
+                <img src={preview} alt="Preview" className="mx-auto max-h-72 rounded-2xl object-contain shadow-md" />
                 <button
-                  onClick={removeFile}
-                  className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                  onClick={(e) => { e.preventDefault(); removeFile(); }}
+                  className="absolute right-2 top-2 rounded-full bg-red-500 p-1.5 text-white shadow-md transition-transform hover:scale-110 active:scale-90"
+                  aria-label="Remove photo"
                 >
-                  <X size={20} />
+                  <X size={16} />
                 </button>
-                <p className="text-sm text-gray-500 mt-2">{file.name}</p>
+                <p className="mt-3 truncate text-xs text-gray-500">{file.name}</p>
               </div>
             ) : (
-              <label className="cursor-pointer block">
-                <Camera className="h-10 w-10 mx-auto text-green-500" />
-                <p className="text-green-700 font-medium mt-2">Take / upload photo</p>
-                <p className="text-xs text-gray-400 mt-1">Supports JPG, PNG, WEBP</p>
-                <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-              </label>
+              <>
+                <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-leaf-600 shadow-sm transition-transform group-hover:scale-110">
+                  <Camera size={26} />
+                </span>
+                <p className="mt-3 text-sm font-semibold text-leaf-800">Take or upload a photo</p>
+                <p className="mt-1 text-xs text-gray-400">Leaf, stem, animal skin — close and clear works best</p>
+              </>
             )}
-          </div>
+            <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+          </label>
 
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm">{error}</p>
-            </div>
-          )}
+          {error && <ErrorBox>{error}</ErrorBox>}
 
           <button
-            onClick={goNextFromStep1}
-            disabled={!file}
-            className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-1"
+            onClick={goNextFromStep1} disabled={!file}
+            className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-leaf-600 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-leaf-700 active:scale-[0.98] disabled:opacity-40"
           >
-            Next <ChevronRight className="h-4 w-4" />
+            Next <ChevronRight size={16} />
           </button>
         </div>
       )}
 
-      {/* STEP 2 — Confirm crop / animal */}
+      {/* STEP 2 — details */}
       {step === 2 && (
-        <div className="space-y-4">
-          <div className="flex rounded-lg border border-gray-200 overflow-hidden">
-            <button
-              onClick={() => { setDomain('crop'); setSubject(''); }}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium transition ${
-                domain === 'crop' ? 'bg-green-600 text-white' : 'bg-white text-gray-600'
-              }`}
-            >
-              <Sprout className="h-4 w-4" /> Crop
-            </button>
-            <button
-              onClick={() => { setDomain('livestock'); setSubject(''); }}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium transition ${
-                domain === 'livestock' ? 'bg-green-600 text-white' : 'bg-white text-gray-600'
-              }`}
-            >
-              <PawPrint className="h-4 w-4" /> Animal / Livestock
-            </button>
+        <div className="animate-fade-up space-y-4">
+          <div className="flex gap-1.5 rounded-2xl border border-gray-200 bg-gray-50 p-1.5">
+            {[
+              { id: 'crop', label: 'Crop', icon: Sprout },
+              { id: 'livestock', label: 'Animal / Livestock', icon: PawPrint },
+            ].map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                onClick={() => { setDomain(id); setSubject(''); }}
+                className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all active:scale-95 ${
+                  domain === id ? 'bg-white text-leaf-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <Icon size={14} /> {label}
+              </button>
+            ))}
           </div>
 
+          {preview && (
+            <img src={preview} alt="" className="h-20 w-full rounded-2xl object-cover shadow-sm" />
+          )}
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500">
               Select {domain === 'crop' ? 'crop' : 'animal'} <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
-            >
-              <option value="">Select {domain === 'crop' ? 'crop' : 'animal'}</option>
+            </span>
+            <select value={subject} onChange={(e) => setSubject(e.target.value)} className={inputCls}>
+              <option value="">Choose from the list…</option>
               {Object.entries(groupedSubjectOptions).map(([category, opts]) => (
                 <optgroup key={category} label={category}>
-                  {opts.map((o) => (
-                    <option key={o.id} value={o.name}>{o.name}</option>
-                  ))}
+                  {opts.map((o) => <option key={o.id} value={o.name}>{o.name}</option>)}
                 </optgroup>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Select plot (optional)</label>
-            <select
-              value={plotId}
-              onChange={(e) => setPlotId(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
-            >
-              <option value="">Select plot (optional)</option>
-              {plots.map((p) => (
-                <option key={p.id} value={p.id}>{p.plot_name || p.id}</option>
-              ))}
+            <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500">Plot (optional)</span>
+            <select value={plotId} onChange={(e) => setPlotId(e.target.value)} className={inputCls}>
+              <option value="">Not linked to a plot</option>
+              {plots.map((p) => <option key={p.id} value={p.id}>{p.plot_name || p.id}</option>)}
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Describe symptoms (optional)</label>
+            <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500">Symptoms (optional)</span>
             <div className="relative">
               <textarea
-                value={symptoms}
-                onChange={(e) => setSymptoms(e.target.value)}
-                placeholder="e.g. leaves turning yellow with brown spots"
-                rows={3}
-                className="w-full p-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                value={symptoms} onChange={(e) => setSymptoms(e.target.value)}
+                placeholder="e.g. leaves turning yellow with brown spots" rows={3}
+                className={`${inputCls} resize-none pr-14`}
               />
               <button
-                type="button"
-                onClick={toggleMic}
-                className={`absolute bottom-2.5 right-2.5 h-8 w-8 rounded-full flex items-center justify-center transition ${
-                  listening ? 'bg-red-500 text-white animate-pulse' : 'bg-green-600 text-white'
+                type="button" onClick={toggleMic} aria-label="Describe by voice"
+                className={`absolute bottom-2.5 right-2.5 flex h-9 w-9 items-center justify-center rounded-full text-white transition-all active:scale-90 ${
+                  listening ? 'animate-pulse bg-red-500' : 'bg-leaf-600 hover:bg-leaf-700'
                 }`}
               >
-                <Mic className="h-4 w-4" />
+                <Mic size={15} />
               </button>
             </div>
           </div>
 
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm">{error}</p>
-            </div>
-          )}
+          {error && <ErrorBox>{error}</ErrorBox>}
 
           <div className="flex gap-2">
-            <button
-              onClick={() => setStep(1)}
-              className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-            >
+            <button onClick={() => setStep(1)} className="flex-1 rounded-xl border border-gray-300 bg-white py-3.5 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50 active:scale-[0.98]">
               Back
             </button>
             <button
-              onClick={analyze}
-              disabled={!subject || loading}
-              className="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-1"
+              onClick={analyze} disabled={!subject || loading}
+              className="inline-flex flex-[2] items-center justify-center gap-1.5 rounded-xl bg-leaf-600 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-leaf-700 active:scale-[0.98] disabled:opacity-40"
             >
-              {loading ? 'Analyzing...' : <>Analyze <ChevronRight className="h-4 w-4" /></>}
+              {loading ? (<><Loader2 size={16} className="animate-spin" /> Analyzing…</>) : (<>Analyze photo <ChevronRight size={16} /></>)}
             </button>
           </div>
         </div>
       )}
 
-      {/* STEP 3 — Treatment advice */}
+      {/* STEP 3 — result */}
       {step === 3 && (
-        <div className="space-y-3">
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm">{error}</p>
+        <div className="animate-fade-up space-y-3">
+          {loading && (
+            <div className="space-y-3">
+              {[0, 1, 2].map((i) => <div key={i} className="animate-shimmer h-24 rounded-2xl bg-gray-100 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:400px_100%]" />)}
+              <p className="text-center text-xs text-gray-400">Our AI is examining your photo…</p>
             </div>
           )}
 
-          {result && result.source !== 'unavailable' && (
+          {error && !loading && <ErrorBox>{error}</ErrorBox>}
+
+          {result && result.source !== 'unavailable' && !loading && (
             <>
-              <div className="border border-gray-200 rounded-xl p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
-                    <Leaf className="h-4 w-4 text-green-600" /> Likely issue
-                  </h3>
-                  {confidencePct !== null && (
-                    <span className="text-xs font-medium bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full">
-                      Confidence: {confidencePct}%
+              <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-leaf-700 to-leaf-900 p-5 text-white shadow-md">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-leaf-100">
+                      <Leaf size={12} /> Likely issue
                     </span>
+                    <h2 className="mt-3 text-xl font-semibold leading-snug">{likelyIssue}</h2>
+                    {subject && <p className="mt-1 text-xs text-leaf-100/75">{subject}</p>}
+                  </div>
+                  {confidencePct !== null && (
+                    <div className="shrink-0 text-center">
+                      <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
+                        <span className="text-lg font-bold">{confidencePct}%</span>
+                      </div>
+                      <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-leaf-100/70">confidence</p>
+                    </div>
                   )}
                 </div>
-                <p className="text-lg font-semibold text-gray-800">{likelyIssue}</p>
-
-                {alternatives.length > 0 && (
-                  <div className="mt-3">
-                    <p className="text-xs font-medium text-gray-500 mb-1">Other possibilities</p>
-                    <ul className="list-disc list-inside text-sm text-gray-600 space-y-0.5">
-                      {alternatives.map((a, i) => <li key={i}>{a}</li>)}
-                    </ul>
-                  </div>
-                )}
-
-                {evidence && (
-                  <div className="mt-3">
-                    <p className="text-xs font-medium text-gray-500 mb-1">Evidence</p>
-                    <p className="text-sm text-gray-700">{evidence}</p>
-                  </div>
-                )}
               </div>
 
-              {organicTreatment && (
-                <div className="p-3 bg-green-50 border border-green-100 rounded-xl">
-                  <p className="text-xs font-semibold text-green-700 flex items-center gap-1.5 mb-1">
-                    <Leaf className="h-4 w-4" /> Organic (try first)
-                  </p>
-                  <p className="text-sm text-green-800">{organicTreatment}</p>
+              {alternatives.length > 0 && (
+                <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-gray-400">Other possibilities</p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {alternatives.map((a, i) => (
+                      <span key={i} className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">{a}</span>
+                    ))}
+                  </div>
                 </div>
               )}
 
-              {chemicalTreatment && (
-                <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl">
-                  <p className="text-xs font-semibold text-blue-700 flex items-center gap-1.5 mb-1">
-                    <FlaskConical className="h-4 w-4" /> Chemical
-                  </p>
-                  <p className="text-sm text-blue-800">{chemicalTreatment}</p>
+              {evidence && (
+                <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-gray-400">What we see</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-gray-600">{evidence}</p>
                 </div>
               )}
 
-              {precautions && (
-                <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                  <p className="text-xs font-semibold text-amber-700 flex items-center gap-1.5 mb-1">
-                    <ShieldAlert className="h-4 w-4" /> Precautions
-                  </p>
-                  <p className="text-sm text-amber-800">{precautions}</p>
-                </div>
-              )}
+              {organicTreatment && <ResultCard icon={Leaf} tone="bg-leaf-100 text-leaf-700" title="Organic — try first" body={organicTreatment} />}
+              {chemicalTreatment && <ResultCard icon={FlaskConical} tone="bg-blue-100 text-blue-700" title="Chemical option" body={chemicalTreatment} />}
+              {precautions && <ResultCard icon={ShieldAlert} tone="bg-amber-100 text-amber-700" title="Precautions" body={precautions} />}
 
-              <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
-                <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-                <p className="text-xs text-amber-700">
+              <div className="flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 p-3.5">
+                <AlertTriangle size={15} className="mt-0.5 shrink-0 text-amber-600" />
+                <p className="text-xs leading-relaxed text-amber-700">
                   {result.disclaimer || 'AI-assisted estimate only. Confirm with a KVK expert before applying treatment.'}
                 </p>
               </div>
 
               {(result.source || result.model_name) && (
-                <p className="text-xs text-gray-400">
-                  Source: {result.source} {result.model_name ? `| Model: ${result.model_name}` : ''}
-                </p>
+                <p className="text-[10px] text-gray-300">Source: {result.source} {result.model_name ? `| Model: ${result.model_name}` : ''}</p>
               )}
             </>
           )}
 
-          {result && result.source === 'unavailable' && (
-            <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-              <p className="text-amber-700 text-sm">
-                {result.description || 'Diagnosis service temporarily unavailable'}
-              </p>
+          {result && result.source === 'unavailable' && !loading && (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+              <p className="text-sm text-amber-700">{result.description || 'Diagnosis service temporarily unavailable'}</p>
             </div>
           )}
 
-          <button
-            onClick={startOver}
-            className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors mt-2"
-          >
-            Diagnose another
-          </button>
+          {!loading && (
+            <button
+              onClick={startOver}
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-gray-300 bg-white py-3.5 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50 active:scale-[0.98]"
+            >
+              <RotateCcw size={15} /> Diagnose another
+            </button>
+          )}
         </div>
       )}
+    </div>
+  );
+}
+
+function ErrorBox({ children }) {
+  return (
+    <div className="animate-fade-up rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+      <p className="text-sm font-medium text-red-600">{children}</p>
+    </div>
+  );
+}
+
+function ResultCard({ icon: Icon, tone, title, body }) {
+  return (
+    <div className="flex animate-fade-up gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+      <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tone}`}>
+        <Icon size={17} strokeWidth={2} />
+      </span>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-gray-900">{title}</p>
+        <p className="mt-0.5 text-sm leading-relaxed text-gray-600">{body}</p>
+      </div>
     </div>
   );
 }
