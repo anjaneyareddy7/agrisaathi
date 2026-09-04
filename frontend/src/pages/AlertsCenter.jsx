@@ -1,11 +1,23 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Bell, AlertTriangle, CloudRain, TrendingUp } from 'lucide-react';
+import { Bell, AlertTriangle, CloudRain, TrendingUp, TrendingDown, Package, ShieldCheck, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import { getDeviceId } from '../lib/deviceId';
-import { Card, CardContent } from '../components/ui/card';
 import PageHeader from '../components/PageHeader';
+import { SectionCard } from '../components/kit';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
+
+function AlertGroup({ icon: Icon, title, tone, loading, emptyText, children }) {
+  return (
+    <SectionCard className="mb-4 animate-fade-up" icon={Icon} title={title} tone={tone}>
+      {loading ? (
+        <div className="flex items-center gap-2 px-4 py-5 text-xs text-gray-400">
+          <Loader2 size={13} className="animate-spin" /> Checking…
+        </div>
+      ) : children}
+    </SectionCard>
+  );
+}
 
 export default function AlertsCenter() {
   const deviceId = getDeviceId();
@@ -28,9 +40,7 @@ export default function AlertsCenter() {
         (b) => b.payload?.low_stock_at != null && b.payload.quantity <= b.payload.low_stock_at
       );
       setLowStockItems(low);
-    } catch {
-      setLowStockItems([]);
-    }
+    } catch { setLowStockItems([]); }
 
     try {
       const pos = await new Promise((resolve, reject) =>
@@ -42,108 +52,104 @@ export default function AlertsCenter() {
       const fRes = await axios.get(`${API_URL}/api/weather/forecast`, { params: { lat: latitude, lon: longitude } });
       const risky = (fRes.data.days || []).filter((d) => d.rain_probability >= 60);
       setForecastDays(risky);
-    } catch {
-      setForecastDays([]);
-    }
+    } catch { setForecastDays([]); }
 
     try {
       const pRes = await axios.get(`${API_URL}/api/price-alerts`);
       setPriceAlerts(pRes.data.alerts || []);
-    } catch {
-      setPriceAlerts([]);
-    }
+    } catch { setPriceAlerts([]); }
 
     setLoading(false);
   }, [deviceId]);
 
-   
   useEffect(() => { load(); }, [load]);
 
   const totalAlerts = lowStockItems.length + forecastDays.length + priceAlerts.length;
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
-      <PageHeader title="Alerts Center" icon={Bell} />
-      <p className="text-xs text-gray-500 mb-3">
-        {totalAlerts > 0
-          ? `${totalAlerts} alert${totalAlerts > 1 ? 's' : ''} need your attention.`
-          : 'No active alerts right now.'}
-      </p>
+      <PageHeader title="Alerts Center" subtitle="Everything that needs your attention, in one place" icon={Bell} />
 
-      {/* Low stock — real, from Inventory Tracker */}
-      <div className="mb-4">
-        <p className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
-          <AlertTriangle className="h-4 w-4 text-amber-600" /> Low Stock
-        </p>
-        {loading ? (
-          <p className="text-sm text-gray-400">Checking inventory…</p>
-        ) : lowStockItems.length === 0 ? (
-          <Card><CardContent className="pt-4 text-sm text-gray-400">Nothing running low.</CardContent></Card>
+      {/* Hero */}
+      <div className={`mb-4 overflow-hidden rounded-3xl p-5 text-white shadow-md animate-fade-up ${totalAlerts > 0 ? 'bg-gradient-to-br from-harvest-500 to-harvest-700' : 'bg-gradient-to-br from-leaf-800 to-leaf-950'}`}>
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">{totalAlerts > 0 ? 'Active alerts' : 'Status'}</p>
+            <p className="mt-1 text-4xl font-bold tracking-tight">{totalAlerts > 0 ? totalAlerts : 'All clear'}</p>
+            <p className="mt-2 max-w-[260px] text-xs leading-relaxed text-white/80">
+              {totalAlerts > 0
+                ? 'Tap through to each section below to see details and act.'
+                : 'Stock levels, weather and prices all look normal right now.'}
+            </p>
+          </div>
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15">
+            {totalAlerts > 0 ? <AlertTriangle size={24} /> : <ShieldCheck size={24} />}
+          </span>
+        </div>
+      </div>
+
+      {/* Low stock */}
+      <AlertGroup icon={Package} title="Low stock" tone="bg-amber-100 text-amber-700" loading={loading} emptyText="">
+        {lowStockItems.length === 0 ? (
+          <p className="px-4 py-5 text-xs text-gray-400">Nothing running low.</p>
         ) : (
-          <div className="space-y-2">
+          <ul className="divide-y divide-amber-100">
             {lowStockItems.map((b) => (
-              <Card key={b.payload.item} className="border-amber-300 bg-amber-50">
-                <CardContent className="pt-3 pb-3">
-                  <p className="text-sm font-medium text-amber-900">{b.payload.item}</p>
+              <li key={b.payload.item} className="flex items-center gap-3 bg-amber-50/60 px-4 py-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700"><AlertTriangle size={15} /></span>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-amber-900">{b.payload.item}</p>
                   <p className="text-xs text-amber-700">{b.payload.quantity} {b.payload.unit} left · threshold {b.payload.low_stock_at}</p>
-                </CardContent>
-              </Card>
+                </div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
-      </div>
+      </AlertGroup>
 
-      {/* Weather risk — not yet available; backend only fetches current
-          conditions, not a forecast. Being upfront instead of faking data. */}
-      <div className="mb-4">
-        <p className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
-          <CloudRain className="h-4 w-4 text-blue-500" /> Weather Risk
-        </p>
-        {loading ? (
-          <p className="text-sm text-gray-400">Checking forecast…</p>
-        ) : forecastDays.length === 0 ? (
-          <Card><CardContent className="pt-4 text-sm text-gray-400">No high rain risk in the next 5 days.</CardContent></Card>
+      {/* Weather risk */}
+      <AlertGroup icon={CloudRain} title="Weather risk" tone="bg-blue-100 text-blue-700" loading={loading}>
+        {forecastDays.length === 0 ? (
+          <p className="px-4 py-5 text-xs text-gray-400">No high rain risk in the next 5 days.</p>
         ) : (
-          <div className="space-y-2">
+          <ul className="divide-y divide-blue-100">
             {forecastDays.map((d) => (
-              <Card key={d.date} className="border-blue-300 bg-blue-50">
-                <CardContent className="pt-3 pb-3">
-                  <p className="text-sm font-medium text-blue-900">{d.date} · {Math.round(d.rain_probability)}% rain chance</p>
+              <li key={d.date} className="flex items-center gap-3 bg-blue-50/60 px-4 py-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700"><CloudRain size={15} /></span>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-blue-900">{d.date} · {Math.round(d.rain_probability)}% rain chance</p>
                   <p className="text-xs text-blue-700">{d.description} · {Math.round(d.temp_min)}–{Math.round(d.temp_max)}°C</p>
-                </CardContent>
-              </Card>
+                </div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
-      </div>
+      </AlertGroup>
 
-      {/* Price alerts — not yet available; no price history is stored yet
-          to compute a % change against. */}
-      <div>
-        <p className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
-          <TrendingUp className="h-4 w-4 text-green-600" /> Price Changes
-        </p>
-        {loading ? (
-          <p className="text-sm text-gray-400">Checking prices…</p>
-        ) : priceAlerts.length === 0 ? (
-          <Card><CardContent className="pt-4 text-sm text-gray-400">
+      {/* Price changes */}
+      <AlertGroup icon={TrendingUp} title="Price changes" tone="bg-leaf-100 text-leaf-700" loading={loading}>
+        {priceAlerts.length === 0 ? (
+          <p className="px-4 py-5 text-xs leading-relaxed text-gray-400">
             No price swings of 5% or more recorded yet. Alerts build up as prices are checked over time — visit Market Prices a few times to start tracking changes.
-          </CardContent></Card>
+          </p>
         ) : (
-          <div className="space-y-2">
+          <ul className="divide-y divide-gray-100">
             {priceAlerts.map((p) => (
-              <Card key={`${p.market}-${p.commodity}`} className={p.direction === 'up' ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50'}>
-                <CardContent className="pt-3 pb-3">
-                  <p className="text-sm font-medium">{p.commodity} — {p.market}</p>
-                  <p className={`text-xs ${p.direction === 'up' ? 'text-green-700' : 'text-red-700'}`}>
-                    ₹{p.previous_price} to ₹{p.current_price} ({p.direction === 'up' ? '+' : ''}{p.pct_change}%)
+              <li key={`${p.market}-${p.commodity}`} className="flex items-center gap-3 px-4 py-3 animate-slide-in">
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${p.direction === 'up' ? 'bg-leaf-100 text-leaf-700' : 'bg-red-100 text-red-600'}`}>
+                  {p.direction === 'up' ? <TrendingUp size={15} /> : <TrendingDown size={15} />}
+                </span>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-gray-900">{p.commodity} — {p.market}</p>
+                  <p className={`text-xs font-medium ${p.direction === 'up' ? 'text-leaf-700' : 'text-red-600'}`}>
+                    ₹{p.previous_price} → ₹{p.current_price} ({p.direction === 'up' ? '+' : ''}{p.pct_change}%)
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
-      </div>
+      </AlertGroup>
     </div>
   );
 }
