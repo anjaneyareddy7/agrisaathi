@@ -152,10 +152,6 @@ export default function WeatherWidget() {
   const hourly = forecast && forecast.hourly ? forecast.hourly : [];
   const sample = current.source === 'sample' || (forecast && forecast.source === 'sample');
 
-  const weekMin = days.length ? Math.min(...days.map((d) => d.temp_min)) : 0;
-  const weekMax = days.length ? Math.max(...days.map((d) => d.temp_max)) : 1;
-  const range = Math.max(1, weekMax - weekMin);
-
   return (
     <section
       className={`relative animate-fade-up overflow-hidden rounded-3xl bg-gradient-to-br text-white shadow-sm ${skyClasses(current.description, day)}`}
@@ -264,36 +260,6 @@ export default function WeatherWidget() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
-
-        {/* 5-day outlook */}
-        {days.length > 0 && (
-          <div className="mt-5">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-white/70">5-day outlook</p>
-            <ul className="mt-2 space-y-2">
-              {days.map((d, i) => {
-                const label = i === 0
-                  ? 'Today'
-                  : new Date(d.date).toLocaleDateString('en-IN', { weekday: 'short' });
-                const left = ((d.temp_min - weekMin) / range) * 100;
-                const width = Math.max(8, ((d.temp_max - d.temp_min) / range) * 100);
-                return (
-                  <li key={d.date} className="flex items-center gap-2 text-sm">
-                    <span className="w-12 shrink-0 font-medium text-white/85">{label}</span>
-                    <span className="w-6 shrink-0 text-center text-base">{weatherEmoji(d.description)}</span>
-                    <span className="w-8 shrink-0 text-right text-xs text-white/70">{Math.round(d.temp_min)}°</span>
-                    <span className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/25">
-                      <span
-                        className="absolute inset-y-0 animate-grow-x origin-left rounded-full bg-gradient-to-r from-sky-200 to-amber-200"
-                        style={{ left: `${left}%`, width: `${width}%`, animationDelay: `${200 + i * 110}ms` }}
-                      />
-                    </span>
-                    <span className="w-8 shrink-0 text-xs font-semibold">{Math.round(d.temp_max)}°</span>
-                  </li>
-                );
-              })}
-            </ul>
           </div>
         )}
 
