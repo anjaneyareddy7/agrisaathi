@@ -1,16 +1,12 @@
-import { useState, useEffect } from 'react'
-import { FileDown, Loader2, Download } from 'lucide-react';
-import { useLang } from '../lib/i18n';
+import { useState, useEffect } from 'react';
+import { FileDown, Loader2, Download, BookOpen, Wheat, FlaskConical, FileText, CheckCircle2 } from 'lucide-react';
 import appClient from '../api/appClient';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
-import { Label } from '../components/ui/label';
 import { Checkbox } from '../components/ui/checkbox';
 import PageHeader from '../components/PageHeader';
+import { SectionCard, EmptyState } from '../components/kit';
 import jsPDF from 'jspdf';
 
 export default function ExportReports() {
-  const { t } = useLang();
   const [sections, setSections] = useState({ ledger: true, yield: true, soil: true });
   const [generating, setGenerating] = useState(false);
   const [data, setData] = useState({ ledger: [], harvest: [], soil: [] });
@@ -24,6 +20,13 @@ export default function ExportReports() {
   }, []);
 
   const toggle = (k) => setSections((s) => ({ ...s, [k]: !s[k] }));
+
+  const ROWS = [
+    { k: 'ledger', label: 'Farm Ledger', icon: BookOpen, count: data.ledger.length, tone: 'bg-leaf-100 text-leaf-700' },
+    { k: 'yield', label: 'Harvest Records', icon: Wheat, count: data.harvest.length, tone: 'bg-harvest-100 text-harvest-700' },
+    { k: 'soil', label: 'Soil Records', icon: FlaskConical, count: data.soil.length, tone: 'bg-cyan-100 text-cyan-700' },
+  ];
+  const totalSelected = ROWS.filter((r) => sections[r.k]).reduce((s, r) => s + r.count, 0);
 
   const generate = async () => {
     setGenerating(true);
@@ -84,33 +87,54 @@ export default function ExportReports() {
       }
 
       doc.save(`AgriSaathi-Report-${new Date().toISOString().slice(0, 10)}.pdf`);
-    } catch { alert('Could not generate report.'); }
+    } catch { /* ignore */ }
     finally { setGenerating(false); }
   };
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
-      <PageHeader titleKey="exportReports" icon={FileDown} />
-      <p className="text-xs text-gray-500 mb-3">{t('exportReportsIntro')}</p>
+      <PageHeader title="Export Reports" subtitle="Build a shareable PDF farm report" icon={FileDown} />
 
-      <Card className="mb-4"><CardContent className="pt-4 space-y-3">
-        <Label>{t('selectSections')}</Label>
-        {[
-          { k: 'ledger', label: `${t('farmLedger')} (${data.ledger.length})` },
-          { k: 'yield', label: `${t('harvestRecords')} (${data.harvest.length})` },
-          { k: 'soil', label: `${t('soilPassport')} (${data.soil.length})` },
-        ].map((s) => (
-          <div key={s.k} className="flex items-center gap-2">
-            <Checkbox checked={sections[s.k]} onCheckedChange={() => toggle(s.k)} id={s.k} />
-            <Label htmlFor={s.k} className="text-sm cursor-pointer">{s.label}</Label>
+      {/* Hero */}
+      <div className="mb-4 overflow-hidden rounded-3xl bg-gradient-to-br from-leaf-800 to-leaf-950 p-5 text-white shadow-md animate-fade-up">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Records in report</p>
+            <p className="mt-1 text-4xl font-bold tracking-tight">{totalSelected}</p>
           </div>
-        ))}
-      </CardContent></Card>
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15"><FileText size={24} /></span>
+        </div>
+        <p className="mt-3 text-xs text-white/70">A clean PDF with your ledger totals, harvest log and soil tests — ready to share with a bank or agent.</p>
+      </div>
 
-      <Button onClick={generate} disabled={generating} className="w-full bg-green-600 hover:bg-green-700">
-        {generating ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Download className="h-4 w-4 mr-1" />}
-        {generating ? t('generating') : t('downloadPdf')}
-      </Button>
+      {/* Section picker */}
+      <SectionCard className="mb-4 animate-fade-up" icon={FileDown} title="Include sections">
+        <ul className="divide-y divide-gray-100">
+          {ROWS.map((r) => (
+            <li key={r.k} className="flex items-center gap-3 px-4 py-3.5">
+              <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${r.tone}`}><r.icon size={17} /></span>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-gray-900">{r.label}</p>
+                <p className="text-xs text-gray-500">{r.count} records</p>
+              </div>
+              <Checkbox checked={sections[r.k]} onCheckedChange={() => toggle(r.k)} id={r.k} className="h-5 w-5" />
+            </li>
+          ))}
+        </ul>
+      </SectionCard>
+
+      {totalSelected === 0 ? (
+        <EmptyState icon={FileDown} title="Nothing selected" subtitle="Tick at least one section to build your report." />
+      ) : (
+        <button onClick={generate} disabled={generating}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-leaf-700 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-leaf-800 disabled:opacity-60 animate-fade-up">
+          {generating ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+          {generating ? 'Generating…' : 'Download PDF'}
+        </button>
+      )}
+      <p className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-gray-400">
+        <CheckCircle2 size={12} /> Generated on your phone — nothing is uploaded.
+      </p>
     </div>
   );
 }
