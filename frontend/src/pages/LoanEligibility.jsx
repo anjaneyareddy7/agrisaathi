@@ -68,7 +68,7 @@ Known required documents: ${(loan.required_documents || []).join(', ')}`,
     t('notEligible');
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="loanEligibility" icon={Banknote} />
       <p className="text-xs text-gray-500 mb-4">{t('loanIntro')}</p>
 

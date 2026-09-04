@@ -62,7 +62,7 @@ export default function AlertsCenter() {
   const totalAlerts = lowStockItems.length + forecastDays.length + priceAlerts.length;
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader title="Alerts Center" icon={Bell} />
       <p className="text-xs text-gray-500 mb-3">
         {totalAlerts > 0

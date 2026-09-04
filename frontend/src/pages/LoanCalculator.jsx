@@ -38,7 +38,7 @@ export default function LoanCalculator() {
   const fmt = (v) => '₹' + Math.round(v).toLocaleString('en-IN');
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="loanCalculator" icon={Calculator} />
       <p className="text-xs text-gray-500 mb-3">{t('loanCalcIntro')}</p>
 

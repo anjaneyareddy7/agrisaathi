@@ -119,7 +119,7 @@ export default function SoilPassport() {
   const hasTrend = trendData.filter((d) => d.pH != null || d.N != null || d.P != null || d.K != null).length >= 2;
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="soilPassport" icon={Sprout} />
 
       {soilProfiles.length > 0 && (

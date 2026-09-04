@@ -133,7 +133,7 @@ export default function NearMe() {
   };
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="nearMe" icon={MapPin} />
 
       <div className="rounded-xl overflow-hidden border mb-3 h-44">

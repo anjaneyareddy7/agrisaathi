@@ -121,7 +121,7 @@ export default function WeatherAnalytics() {
     ).length;
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader
         title="Weather Analytics"
         icon={CloudRain}

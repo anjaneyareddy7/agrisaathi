@@ -58,7 +58,7 @@ export default function FeedbackCorner() {
   const history = [...blocks].reverse();
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader title="Feedback Corner" icon={MessageSquareHeart} />
       <p className="text-xs text-gray-500 mb-3">
         Tell us what's working and what isn't. Your feedback shapes what gets built next.

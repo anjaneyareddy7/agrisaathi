@@ -74,7 +74,7 @@ export default function InsuranceHub() {
   const filedClaims = policies.filter((p) => p.claim_status !== 'none');
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="insuranceHub" icon={ShieldPlus} />
       <p className="text-xs text-gray-500 mb-3">{t('insuranceIntro')}</p>
 

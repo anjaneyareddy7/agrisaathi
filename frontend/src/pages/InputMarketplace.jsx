@@ -46,7 +46,7 @@ export default function InputMarketplace() {
   list.sort((a, b) => (a._dist == null) - (b._dist == null) || a._dist - b._dist);
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="inputMarketplace" icon={Store} />
       <p className="text-xs text-gray-500 mb-3">{t('marketplaceIntro')}</p>
 

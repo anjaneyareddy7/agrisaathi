@@ -89,7 +89,7 @@ export default function ExportReports() {
   };
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="exportReports" icon={FileDown} />
       <p className="text-xs text-gray-500 mb-3">{t('exportReportsIntro')}</p>
 

@@ -59,7 +59,7 @@ export default function SupportTickets() {
   const tickets = [...blocks].reverse();
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader title="Support Tickets" icon={LifeBuoy} />
       <p className="text-xs text-gray-500 mb-3">
         Report an issue or ask for help. Every ticket is recorded so you can track its status over time.

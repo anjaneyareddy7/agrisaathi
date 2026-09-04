@@ -74,7 +74,7 @@ export default function VendorContacts() {
   const vendors = Object.values(latestByName).filter((b) => b.payload?.active);
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader title="Vendor Contacts" icon={Store} />
       <p className="text-xs text-gray-500 mb-3">
         Save the shops and buyers you deal with regularly, so their numbers are one tap away.

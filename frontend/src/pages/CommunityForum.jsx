@@ -119,7 +119,7 @@ export default function CommunityForum() {
   }
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="communityForum" icon={MessageSquare} />
       <p className="text-xs text-gray-500 mb-3">{t('forumIntro')}</p>
 

@@ -74,7 +74,7 @@ export default function VoiceNotes() {
   const remove = async (id) => { await appClient.entities.VoiceNote.delete(id); load(); };
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="voiceNotes" icon={Mic} />
       <p className="text-xs text-gray-500 mb-3">{t('voiceNotesIntro')}</p>
 

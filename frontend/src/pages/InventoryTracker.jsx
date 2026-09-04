@@ -75,7 +75,7 @@ export default function InventoryTracker() {
   );
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader title="Inventory Tracker" icon={Package} />
       <p className="text-xs text-gray-500 mb-3">
         Log seed, fertilizer, pesticide and equipment stock. Set a low-stock threshold to get warned before you run out.

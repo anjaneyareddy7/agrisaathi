@@ -74,7 +74,7 @@ export default function SensorLab() {
   };
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="sensorLab" icon={Gauge} />
 
       <Card className="mb-4"><CardContent className="pt-4">

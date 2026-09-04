@@ -82,15 +82,15 @@ export default function GovernmentSchemes() {
     'Need more info';
 
   return (
-    <div>
-      <PageHeader titleKey="govSchemes" icon={Landmark} />
-      <p className="text-xs text-gray-500 mb-3">
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
+      <PageHeader title="Gov Schemes" icon={Landmark} subtitle="Central & state schemes, matched to you" />
+      <p className="mb-4 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-[11px] leading-relaxed text-gray-500 shadow-sm">
         Central + state scheme reference. Eligibility is checked against each scheme's published rules — not a live government
         decision. Always confirm on the official portal before relying on a result.
       </p>
 
-      <div className="flex items-center gap-2 mb-4">
-        <MapPin className="h-4 w-4 text-green-600 shrink-0" />
+      <div className="mb-4 flex items-center gap-2">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-leaf-100 text-leaf-700"><MapPin className="h-4 w-4" /></span>
         <Select value={filterState || 'all'} onValueChange={(v) => setFilterState(v === 'all' ? '' : v)}>
           <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="All states" /></SelectTrigger>
           <SelectContent className="max-h-72">
@@ -102,19 +102,21 @@ export default function GovernmentSchemes() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-green-600" /></div>
+        <div className="space-y-3 py-2">
+          {[0, 1, 2].map((i) => <div key={i} className="animate-shimmer h-32 rounded-2xl bg-gray-100 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:400px_100%]" />)}
+        </div>
       ) : error ? (
         <Card><CardContent className="pt-6 text-center text-sm text-red-500">{error}</CardContent></Card>
       ) : schemes.length === 0 ? (
         <Card><CardContent className="pt-6 text-center text-sm text-gray-400">No schemes found for this state yet.</CardContent></Card>
       ) : (
         <div className="space-y-3">
-          {schemes.map((s) => {
+          {schemes.map((s, si) => {
             const result = results[s.id];
             const questions = ELIGIBILITY_QUESTIONS[s.id] || [];
             const isOpen = openScheme === s.id;
             return (
-              <Card key={s.id}><CardContent className="pt-4 space-y-2">
+              <Card key={s.id} className="animate-fade-up transition-all hover:border-leaf-300 hover:shadow-md" style={{ animationDelay: `${Math.min(si, 6) * 50}ms` }}><CardContent className="space-y-2 pt-4">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-semibold text-sm leading-tight">{s.name}</h3>
                   {result && <Badge className={`flex items-center gap-1 ${statusStyle(result.status)}`}>{statusIcon(result.status)}{statusLabel(result.status)}</Badge>}

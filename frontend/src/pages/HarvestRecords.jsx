@@ -54,7 +54,7 @@ export default function HarvestRecords() {
   const totalValue = records.reduce((sum, r) => sum + (r.quantity || 0) * (r.sale_price_per_unit || 0), 0);
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="harvestRecords" icon={Wheat} />
       <p className="text-xs text-gray-500 mb-3">{t('harvestIntro')}</p>
 

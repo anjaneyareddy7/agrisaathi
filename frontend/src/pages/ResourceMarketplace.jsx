@@ -79,7 +79,7 @@ export default function ResourceMarketplace() {
   );
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader
         title="Resource Marketplace"
         icon={Store}

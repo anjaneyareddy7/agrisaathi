@@ -43,7 +43,7 @@ export default function Crops() {
   }, [categories, query, activeCategory]);
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="cropEncyclopedia" icon={Sprout} />
       <p className="text-xs text-gray-500 mb-3">
         {t('cropEncyclopediaIntro')}

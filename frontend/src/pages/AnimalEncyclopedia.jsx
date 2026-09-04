@@ -66,7 +66,7 @@ export default function AnimalEncyclopedia() {
   }
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader titleKey="animalEncyclopedia" icon={BookOpen} />
       <p className="text-xs text-gray-500 mb-3">
         Standard husbandry reference — vaccination schedules, feed and environment needs. Always confirm specifics with your local Veterinarian or KVK.

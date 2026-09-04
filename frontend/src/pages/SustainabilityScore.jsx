@@ -69,7 +69,7 @@ export default function SustainabilityScore() {
   const score = Math.round((Object.values(checked).filter(Boolean).length / PRACTICES.length) * 100);
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader title="Sustainability Score" icon={Leaf} />
       <p className="text-xs text-gray-500 mb-3">
         A simple self-assessment based on practices you actually follow — not an automated guess.

@@ -71,7 +71,7 @@ export default function FarmNotifications() {
   const reminders = Object.values(latestByReminder).sort((a, b) => (a.payload.due_date || '').localeCompare(b.payload.due_date || ''));
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader title="Farm Notifications" icon={BellRing} />
       <p className="text-xs text-gray-500 mb-3">Set reminders for spraying, harvest, vaccination — anything with a date.</p>
 

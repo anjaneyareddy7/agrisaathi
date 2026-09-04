@@ -61,7 +61,7 @@ export default function EquipmentRegistry() {
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
       <PageHeader title="Equipment Registry" icon={Wrench} />
       <p className="text-xs text-gray-500 mb-3">Track your machinery and its maintenance schedule.</p>
 
