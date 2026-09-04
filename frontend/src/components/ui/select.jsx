@@ -54,9 +54,9 @@ export const SelectTrigger = ({
       type="button"
       aria-haspopup="listbox"
       aria-expanded={open}
-      className={`w-full px-4 py-2 border border-gray-300 rounded-xl
-        focus:ring-2 focus:ring-green-500 focus:border-transparent
-        flex items-center justify-between bg-white ${className}`}
+      className={`w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm
+        outline-none transition-all focus:border-leaf-500 focus:ring-4 focus:ring-leaf-100
+        flex items-center justify-between ${className}`}
       onClick={() => setOpen((current) => !current)}
       {...props}
     >
@@ -64,14 +64,18 @@ export const SelectTrigger = ({
         {children}
       </span>
 
-      <span
+      <svg
         aria-hidden="true"
-        className={`ml-2 shrink-0 text-gray-400 transition-transform ${
-          open ? 'rotate-180' : ''
-        }`}
+        viewBox="0 0 24 24"
+        className={`ml-2 h-4 w-4 shrink-0 text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
-        ▼
-      </span>
+        <path d="M6 9l6 6 6-6" />
+      </svg>
     </button>
   );
 };

@@ -1,8 +1,5 @@
-
-export const Label = ({ children, className = '', ...props }) => {
-  return (
-    <label className={`block text-sm font-medium text-gray-700 mb-1 ${className}`} {...props}>
-      {children}
-    </label>
-  );
-};
+export const Label = ({ children, className = '', ...props }) => (
+  <label className={`mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500 ${className}`} {...props}>
+    {children}
+  </label>
+);
