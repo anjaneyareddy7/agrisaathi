@@ -5,7 +5,7 @@ import {
   ShieldCheck, Landmark, Wheat, User, Banknote, MessageSquare, Store, GraduationCap,
   FolderArchive, ShieldPlus, Package, ListTodo, Bug, Gauge, UserCheck, Trophy, BellRing,
   Contact, Bell, FileSpreadsheet, PawPrint, Search, X, ChevronRight, SearchX,
-  CloudSun, Tractor, ScanSearch, Database, BarChart3,
+  CloudSun, Tractor, ScanSearch, Database, BarChart3, ChevronDown,
 } from 'lucide-react';
 import axios from 'axios';
 import WeatherWidget from '../components/WeatherWidget';
@@ -19,16 +19,6 @@ const INTENTS = [
   { keys: ['market', 'price', 'mandi', 'bhav'], to: '/market-prices', label: 'Market prices' },
   { keys: ['weather', 'rain'], to: '/weather', label: 'Weather forecast' },
   { keys: ['scheme', 'subsidy', 'kisan'], to: '/schemes', label: 'Government schemes' },
-];
-
-const CATEGORIES = [
-  { id: 'all', label: 'All' },
-  { id: 'grow', label: 'Grow & Plan' },
-  { id: 'protect', label: 'Protect' },
-  { id: 'animals', label: 'Livestock' },
-  { id: 'market', label: 'Market & Money' },
-  { id: 'learn', label: 'Learn' },
-  { id: 'manage', label: 'Management' },
 ];
 
 /* Designed tonal tiles: soft tinted background + matching deep icon colour */
@@ -86,18 +76,35 @@ const TOOLS = [
   { to: '/profile-settings', icon: User, label: 'Profile', cat: 'manage', tone: 'slate' },
 ];
 
-const QUICK_ACTIONS = [
-  { to: '/diagnose', icon: Camera, label: 'Diagnose', tone: 'amber' },
-  { to: '/market-prices', icon: Wallet, label: 'Prices', tone: 'green' },
-  { to: '/schemes', icon: Landmark, label: 'Schemes', tone: 'blue' },
-  { to: '/crop-planner', icon: TrendingUp, label: 'Planner', tone: 'violet' },
+/* Sections in a logical farmer's journey: grow, protect, livestock, money, learn, manage */
+const SECTIONS = [
+  {
+    id: 'grow', title: 'Grow & Plan', subtitle: 'Sowing, soil, water and nutrients', icon: Sprout, tone: 'green', openByDefault: true,
+  },
+  {
+    id: 'protect', title: 'Protect & Cure', subtitle: 'Diagnose problems and act early', icon: ShieldCheck, tone: 'amber', openByDefault: false,
+  },
+  {
+    id: 'animals', title: 'Livestock', subtitle: 'Care for cows, goats, poultry and fish', icon: PawPrint, tone: 'rose', openByDefault: false,
+  },
+  {
+    id: 'market', title: 'Market & Money', subtitle: 'Prices, selling, loans and insurance', icon: Wallet, tone: 'indigo', openByDefault: true,
+  },
+  {
+    id: 'learn', title: 'Learn & Community', subtitle: 'Schemes, experts and fellow farmers', icon: GraduationCap, tone: 'blue', openByDefault: false,
+  },
+  {
+    id: 'manage', title: 'Manage My Farm', subtitle: 'Records, tasks and reminders', icon: ListTodo, tone: 'cyan', openByDefault: false,
+  },
 ];
 
 export default function Home() {
   const [query, setQuery] = useState('');
-  const [category, setCategory] = useState('all');
   const [listening, setListening] = useState(false);
   const [prices, setPrices] = useState(null);
+  const [openSections, setOpenSections] = useState(
+    () => new Set(SECTIONS.filter((s) => s.openByDefault).map((s) => s.id))
+  );
 
   useEffect(() => {
     Promise.all(
@@ -127,17 +134,29 @@ export default function Home() {
 
   const intent = INTENTS.find((i) => i.keys.some((k) => query.toLowerCase().includes(k)));
 
-  const filteredTools = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    // Long (spoken) sentences shouldn't filter the grid — the intent
-    // link shown under the search bar is the answer.
-    const isSearch = q.length > 0 && q.split(/\s+/).length <= 4;
-    return TOOLS.filter((t) => {
-      const inCat = category === 'all' || t.cat === category;
-      const inQuery = !isSearch || t.label.toLowerCase().includes(q) || t.cat.includes(q);
-      return inCat && inQuery;
+  /* Searching auto-expands every section that has matches */
+  const isSearching = query.trim().length > 0 && query.trim().split(/\s+/).length <= 4;
+  const q = query.trim().toLowerCase();
+
+  const matchesFor = useMemo(() => {
+    const map = {};
+    for (const s of SECTIONS) {
+      map[s.id] = TOOLS.filter(
+        (t) => t.cat === s.id && (!isSearching || t.label.toLowerCase().includes(q))
+      );
+    }
+    return map;
+  }, [isSearching, q]);
+
+  const totalMatches = Object.values(matchesFor).reduce((n, arr) => n + arr.length, 0);
+
+  const toggleSection = (id) =>
+    setOpenSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
     });
-  }, [query, category]);
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-5">
@@ -150,7 +169,7 @@ export default function Home() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search tools or ask anything…"
+          placeholder="Search all tools…"
           className="min-w-0 flex-1 bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
         />
         {query && (
@@ -194,25 +213,6 @@ export default function Home() {
           <ChevronRight size={16} />
         </Link>
       )}
-
-      {/* Quick actions */}
-      <div className="mt-6 grid grid-cols-4 gap-2">
-        {QUICK_ACTIONS.map(({ to, icon: Icon, label, tone }, i) => (
-          <Link
-            key={to}
-            to={to}
-            className="group flex animate-pop flex-col items-center gap-2 rounded-2xl py-3 transition-colors hover:bg-gray-50 active:scale-95"
-            style={{ animationDelay: `${120 + i * 70}ms` }}
-          >
-            <span
-              className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-transform group-hover:scale-110 ${TONES[tone]}`}
-            >
-              <Icon size={21} strokeWidth={2} />
-            </span>
-            <span className="text-xs font-medium text-gray-700">{label}</span>
-          </Link>
-        ))}
-      </div>
 
       {/* Mandi prices */}
       <div className="mt-6 animate-fade-up overflow-hidden rounded-2xl border border-gray-200" style={{ animationDelay: '200ms' }}>
@@ -263,63 +263,87 @@ export default function Home() {
         )}
       </div>
 
-      {/* All tools */}
-      <div className="mt-8 flex animate-fade-up items-baseline justify-between" style={{ animationDelay: '260ms' }}>
-        <h2 className="text-base font-semibold text-gray-900">All tools</h2>
-        <span className="text-xs text-gray-400">{filteredTools.length} tools</span>
-      </div>
+      {/* Tools — categorised sections, opened one at a time */}
+      <h2 className="mt-8 animate-fade-up text-base font-semibold text-gray-900" style={{ animationDelay: '260ms' }}>
+        Explore tools
+      </h2>
 
-      <div className="mt-3 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {CATEGORIES.map(({ id, label }) => (
-          <button
-            key={id}
-            onClick={() => setCategory(id)}
-            className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all active:scale-95 ${
-              category === id
-                ? 'border-gray-900 bg-gray-900 text-white'
-                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-400'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-4 grid grid-cols-4 gap-x-2 gap-y-5 sm:grid-cols-5">
-        {filteredTools.map(({ to, icon: Icon, label, tone }, i) => (
-          <Link
-            key={`${category}-${to}`}
-            to={to}
-            className="group flex animate-pop flex-col items-center gap-2 rounded-xl py-1 transition-all active:scale-90"
-            style={{ animationDelay: `${(i % 10) * 30}ms` }}
-          >
-            <span
-              className={`flex h-[52px] w-[52px] items-center justify-center rounded-2xl transition-all group-hover:scale-110 ${TONES[tone]}`}
-            >
-              <Icon size={23} strokeWidth={1.9} />
-            </span>
-            <span className="max-w-[72px] truncate text-center text-xs text-gray-600 transition-colors group-hover:text-gray-900">
-              {label}
-            </span>
-          </Link>
-        ))}
-      </div>
-
-      {filteredTools.length === 0 && (
-        <div className="mt-6 animate-pop rounded-2xl border border-dashed border-gray-300 py-10 text-center">
+      {isSearching && totalMatches === 0 && (
+        <div className="mt-3 animate-pop rounded-2xl border border-dashed border-gray-300 py-10 text-center">
           <SearchX size={26} className="mx-auto text-gray-300" />
-          <p className="mt-2 text-sm font-medium text-gray-700">No tools match your search</p>
-          <button
-            onClick={() => {
-              setQuery('');
-              setCategory('all');
-            }}
-            className="mt-1 text-xs font-medium text-leaf-700"
-          >
+          <p className="mt-2 text-sm font-medium text-gray-700">No tools match “{query}”</p>
+          <button onClick={() => setQuery('')} className="mt-1 text-xs font-medium text-leaf-700">
             Clear search
           </button>
         </div>
       )}
+
+      <div className="mt-3 space-y-3">
+        {SECTIONS.map((section) => {
+          const matches = matchesFor[section.id];
+          if (isSearching && matches.length === 0) return null;
+
+          const open = isSearching || openSections.has(section.id);
+          const SectionIcon = section.icon;
+
+          return (
+            <div
+              key={section.id}
+              className="animate-fade-up overflow-hidden rounded-2xl border border-gray-200"
+            >
+              {/* Section header */}
+              <button
+                onClick={() => toggleSection(section.id)}
+                aria-expanded={open}
+                className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-gray-50 active:bg-gray-100"
+              >
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${TONES[section.tone]}`}>
+                  <SectionIcon size={18} strokeWidth={2} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold text-gray-900">{section.title}</span>
+                  <span className="block truncate text-xs text-gray-400">{section.subtitle}</span>
+                </span>
+                <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-gray-500">
+                  {matches.length}
+                </span>
+                <ChevronDown
+                  size={17}
+                  className={`shrink-0 text-gray-400 transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {/* Section body (smooth expand/collapse) */}
+              <div
+                className={`grid transition-all duration-300 ease-in-out ${
+                  open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <div className="grid grid-cols-4 gap-x-2 gap-y-5 border-t border-gray-100 px-4 py-4 sm:grid-cols-5">
+                    {matches.map(({ to, icon: Icon, label, tone }) => (
+                      <Link
+                        key={to}
+                        to={to}
+                        className="group flex flex-col items-center gap-2 rounded-xl py-1 transition-all active:scale-90"
+                      >
+                        <span
+                          className={`flex h-[52px] w-[52px] items-center justify-center rounded-2xl transition-transform group-hover:scale-110 ${TONES[tone]}`}
+                        >
+                          <Icon size={23} strokeWidth={1.9} />
+                        </span>
+                        <span className="max-w-[72px] truncate text-center text-xs text-gray-600 transition-colors group-hover:text-gray-900">
+                          {label}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
