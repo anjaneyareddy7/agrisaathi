@@ -1,48 +1,18 @@
-import {
-  useState,
-  useEffect
-} from 'react'
-import {
-  Activity,
-  Plus,
-  Trash2,
-  Radio
-} from 'lucide-react';
-import {
-  useLang
-} from '../lib/i18n';
+import { useState, useEffect } from 'react';
+import { Activity, Plus, X, Trash2, Radio, FlaskConical, Droplets, ThermometerSun, Zap } from 'lucide-react';
 import appClient from '../api/appClient';
-import {
-  Button
-} from '../components/ui/button';
-import {
-  Card,
-  CardContent
-} from '../components/ui/card';
-import {
-  Label
-} from '../components/ui/label';
-import {
-  Input
-} from '../components/ui/input';
-;
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend
-} from 'recharts';
+import { Input } from '../components/ui/input';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import PageHeader from '../components/PageHeader';
+import { SectionCard, FormField, EmptyState } from '../components/kit';
+
+const inputCls = 'h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-leaf-500 focus:outline-none focus:ring-4 focus:ring-leaf-100';
+const EMPTY = { soil_ph: '', soil_moisture: '', soil_ec: '', soil_nitrogen: '', test_date: '' };
 
 export default function SensorHub() {
-  const { t } = useLang();
   const [readings, setReadings] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ soil_ph: '', soil_moisture: '', soil_ec: '', soil_nitrogen: '', test_date: '' });
+  const [form, setForm] = useState(EMPTY);
 
   const load = () => appClient.entities.SensorTest.list('-test_date', 30).then(setReadings).catch(() => []);
   useEffect(() => { load(); }, []);
@@ -56,7 +26,7 @@ export default function SensorHub() {
       soil_nitrogen: form.soil_nitrogen ? Number(form.soil_nitrogen) : undefined,
       test_date: form.test_date || new Date().toISOString().slice(0, 10),
     });
-    setForm({ soil_ph: '', soil_moisture: '', soil_ec: '', soil_nitrogen: '', test_date: '' });
+    setForm(EMPTY);
     setShowAdd(false);
     load();
   };
@@ -77,75 +47,112 @@ export default function SensorHub() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
-      <PageHeader titleKey="sensorHub" icon={Activity} />
-      <p className="text-xs text-gray-500 mb-3">{t('sensorHubIntro')}</p>
+      <PageHeader title="Sensor Hub" subtitle="Log soil sensor readings and watch the trends" icon={Activity} />
 
-      {latest && (
-        <Card className="mb-4 bg-gradient-to-br from-cyan-50 to-blue-50 border-cyan-200"><CardContent className="pt-4">
-          <h3 className="text-sm font-semibold text-cyan-800 flex items-center gap-1.5 mb-2"><Radio className="h-4 w-4 animate-pulse" />{t('latestReading')}</h3>
-          <div className="grid grid-cols-4 gap-2 text-center">
-            {[['pH', latest.soil_ph], ['Moisture', latest.soil_moisture], ['EC', latest.soil_ec], ['N', latest.soil_nitrogen]].map(([k, v]) => (
-              <div key={k} className="bg-white rounded-lg p-2">
-                <div className="text-[10px] text-gray-400">{k}</div>
-                <div className="text-sm font-bold text-cyan-700">{v ?? '—'}</div>
+      {/* Latest reading hero */}
+      {latest ? (
+        <div className="mb-4 overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-600 to-leaf-800 p-5 text-white shadow-md animate-fade-up">
+          <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">
+            <Radio size={12} className="animate-pulse" /> Latest reading
+          </p>
+          <p className="mt-1 text-sm font-medium text-white/85">
+            {new Date(latest.test_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </p>
+          <div className="mt-4 grid grid-cols-4 gap-2">
+            {[
+              { k: 'pH', v: latest.soil_ph },
+              { k: 'Moisture', v: latest.soil_moisture != null ? `${latest.soil_moisture}%` : null },
+              { k: 'EC', v: latest.soil_ec },
+              { k: 'N', v: latest.soil_nitrogen },
+            ].map((m) => (
+              <div key={m.k} className="rounded-2xl bg-white/15 px-2 py-2.5 text-center">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-white/70">{m.k}</p>
+                <p className="mt-0.5 text-sm font-bold">{m.v ?? '—'}</p>
               </div>
             ))}
           </div>
-        </CardContent></Card>
+        </div>
+      ) : (
+        <div className="mb-4 overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-600 to-leaf-800 p-5 text-white shadow-md animate-fade-up">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Sensor Hub</p>
+          <p className="mt-2 max-w-[280px] text-sm leading-relaxed text-white/85">
+            Record pH, moisture, EC and nitrogen readings from your soil sensors — the trend chart builds as you log.
+          </p>
+        </div>
       )}
 
+      {/* Trend */}
       {trendData.length >= 2 && (
-        <Card className="mb-4"><CardContent className="pt-4">
-          <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-1.5 mb-2">{t('sensorTrend')}</h3>
-          <div className="h-56">
+        <SectionCard className="mb-4 animate-fade-up" icon={Activity} title="Sensor trend" tone="bg-cyan-100 text-cyan-700">
+          <div className="h-56 px-2 pb-4 pt-4">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={trendData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} />
-                <Tooltip />
+              <LineChart data={trendData} margin={{ top: 5, right: 16, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #e5e7eb', fontSize: 12 }} />
                 <Legend wrapperStyle={{ fontSize: 10 }} />
-                <Line type="monotone" dataKey="pH" stroke="#16a34a" dot={{ r: 3 }} connectNulls />
-                <Line type="monotone" dataKey="Moisture" stroke="#3b82f6" dot={{ r: 3 }} connectNulls />
-                <Line type="monotone" dataKey="EC" stroke="#f59e0b" dot={{ r: 3 }} connectNulls />
-                <Line type="monotone" dataKey="N" stroke="#a855f7" dot={{ r: 3 }} connectNulls />
+                <Line type="monotone" dataKey="pH" stroke="#16a34a" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+                <Line type="monotone" dataKey="Moisture" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+                <Line type="monotone" dataKey="EC" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+                <Line type="monotone" dataKey="N" stroke="#a855f7" strokeWidth={2} dot={{ r: 3 }} connectNulls />
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </CardContent></Card>
+        </SectionCard>
       )}
 
-      <div className="space-y-2 mb-4">
-        {readings.length === 0 ? (
-          <p className="text-sm text-gray-400">{t('noReadings')}</p>
-        ) : readings.map((r) => (
-          <Card key={r.id}><CardContent className="pt-3 flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-400">{r.test_date}</p>
-              <p className="text-xs text-gray-600">pH {r.soil_ph ?? '—'} · Moisture {r.soil_moisture ?? '—'} · EC {r.soil_ec ?? '—'} · N {r.soil_nitrogen ?? '—'}</p>
-            </div>
-            <button onClick={() => remove(r.id)} className="text-gray-300 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
-          </CardContent></Card>
-        ))}
-      </div>
-
-      {showAdd ? (
-        <Card className="border-cyan-200"><CardContent className="pt-4 space-y-3">
-          <Label>{t('addReading')}</Label>
-          <div><Label className="mb-1 block text-xs">{t('date')}</Label><Input type="date" value={form.test_date} onChange={(e) => setForm({ ...form, test_date: e.target.value })} /></div>
-          <div className="grid grid-cols-2 gap-2">
-            <div><Label className="mb-1 block text-xs">pH</Label><Input type="number" value={form.soil_ph} onChange={(e) => setForm({ ...form, soil_ph: e.target.value })} /></div>
-            <div><Label className="mb-1 block text-xs">Moisture (%)</Label><Input type="number" value={form.soil_moisture} onChange={(e) => setForm({ ...form, soil_moisture: e.target.value })} /></div>
-            <div><Label className="mb-1 block text-xs">EC</Label><Input type="number" value={form.soil_ec} onChange={(e) => setForm({ ...form, soil_ec: e.target.value })} /></div>
-            <div><Label className="mb-1 block text-xs">Nitrogen</Label><Input type="number" value={form.soil_nitrogen} onChange={(e) => setForm({ ...form, soil_nitrogen: e.target.value })} /></div>
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={save} className="flex-1 bg-cyan-600 hover:bg-cyan-700">{t('save')}</Button>
-            <Button onClick={() => setShowAdd(false)} variant="outline" className="flex-1">{t('cancel')}</Button>
-          </div>
-        </CardContent></Card>
+      {/* Add reading */}
+      {!showAdd ? (
+        <button onClick={() => setShowAdd(true)}
+          className="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-cyan-400 bg-cyan-50/50 py-3 text-sm font-semibold text-cyan-700 transition-colors hover:bg-cyan-50 animate-fade-up">
+          <Plus size={16} /> Add reading
+        </button>
       ) : (
-        <Button onClick={() => setShowAdd(true)} variant="outline" className="w-full border-cyan-300 text-cyan-700"><Plus className="h-4 w-4 mr-1" />{t('addReading')}</Button>
+        <div className="mb-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm animate-fade-up">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-900">New reading</h3>
+            <button onClick={() => setShowAdd(false)} className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"><X size={16} /></button>
+          </div>
+          <div className="space-y-3">
+            <FormField label="Date">
+              <Input className={inputCls} type="date" value={form.test_date} onChange={(e) => setForm({ ...form, test_date: e.target.value })} />
+            </FormField>
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="pH"><Input className={inputCls} type="number" step="0.1" value={form.soil_ph} onChange={(e) => setForm({ ...form, soil_ph: e.target.value })} placeholder="6.5" /></FormField>
+              <FormField label="Moisture (%)"><Input className={inputCls} type="number" value={form.soil_moisture} onChange={(e) => setForm({ ...form, soil_moisture: e.target.value })} placeholder="30" /></FormField>
+              <FormField label="EC (dS/m)"><Input className={inputCls} type="number" value={form.soil_ec} onChange={(e) => setForm({ ...form, soil_ec: e.target.value })} placeholder="0.8" /></FormField>
+              <FormField label="Nitrogen"><Input className={inputCls} type="number" value={form.soil_nitrogen} onChange={(e) => setForm({ ...form, soil_nitrogen: e.target.value })} placeholder="280" /></FormField>
+            </div>
+            <button onClick={save} className="mt-1 w-full rounded-xl bg-cyan-700 py-3 text-sm font-semibold text-white transition-colors hover:bg-cyan-800">
+              Save reading
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* History */}
+      {readings.length === 0 ? (
+        <EmptyState icon={Activity} title="No readings yet" subtitle="Log your first sensor reading above." />
+      ) : (
+        <SectionCard title="Recent readings" icon={FlaskConical}>
+          <ul className="divide-y divide-gray-100">
+            {readings.map((r, i) => (
+              <li key={r.id} className="flex items-center gap-3 px-4 py-3 animate-slide-in" style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-100 text-cyan-700"><Droplets size={15} /></span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-gray-900">
+                    {new Date(r.test_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </p>
+                  <p className="mt-0.5 text-xs text-gray-500">
+                    pH {r.soil_ph ?? '—'} · Moisture {r.soil_moisture ?? '—'} · EC {r.soil_ec ?? '—'} · N {r.soil_nitrogen ?? '—'}
+                  </p>
+                </div>
+                <button onClick={() => remove(r.id)} className="rounded-lg p-1.5 text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"><Trash2 size={15} /></button>
+              </li>
+            ))}
+          </ul>
+        </SectionCard>
       )}
     </div>
   );
