@@ -1,15 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Trophy, Plus, Sprout } from 'lucide-react';
+import { Trophy, Plus, Sprout, X, Quote } from 'lucide-react';
 import axios from 'axios';
 import { getDeviceId } from '../lib/deviceId';
-import { Card, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Textarea } from '../components/ui/textarea';
 import PageHeader from '../components/PageHeader';
+import { Button } from '../components/ui/button';
+import { FormField, EmptyState } from '../components/kit';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
+const inputCls = 'w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm outline-none transition-all focus:border-leaf-500 focus:ring-4 focus:ring-leaf-100';
 
 export default function SuccessStories() {
   const deviceId = getDeviceId();
@@ -22,7 +20,6 @@ export default function SuccessStories() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      // Shared feed — every farmer's story, not just this device's.
       const res = await axios.get(`${API_URL}/api/ledger/list/success_story`, { params: { limit: 50 } });
       setStories(res.data.blocks || []);
     } catch {
@@ -32,7 +29,6 @@ export default function SuccessStories() {
     }
   }, []);
 
-   
   useEffect(() => { load(); }, [load]);
 
   const submit = async () => {
@@ -40,11 +36,8 @@ export default function SuccessStories() {
     setSaving(true);
     try {
       await axios.post(`${API_URL}/api/ledger/log`, {
-        entity_type: 'success_story',
-        entity_id: deviceId,
-        event_type: 'story_shared',
-        payload: form,
-        actor: deviceId,
+        entity_type: 'success_story', entity_id: deviceId,
+        event_type: 'story_shared', payload: form, actor: deviceId,
       });
       setForm({ farmer_name: '', crop: '', story: '' });
       setShowForm(false);
@@ -55,57 +48,75 @@ export default function SuccessStories() {
   };
 
   return (
-    <div>
-      <PageHeader title="Success Stories" icon={Trophy} />
-      <p className="text-xs text-gray-500 mb-3">
-        Real stories shared by farmers using AgriSaathi — visible to everyone.
-      </p>
+    <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
+      <PageHeader title="Success Stories" icon={Trophy} subtitle="Real wins, shared by farmers like you" />
 
-      <div className="flex justify-end mb-3">
-        <Button size="sm" onClick={() => setShowForm((s) => !s)}>
-          <Plus className="h-4 w-4 mr-1" /> Share your story
-        </Button>
+      {/* Hero */}
+      <div className="flex animate-fade-up items-center justify-between rounded-2xl bg-gradient-to-br from-harvest-500 to-harvest-700 p-4 text-white shadow-sm">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-wider text-harvest-100">Community wall</p>
+          <p className="mt-1 text-2xl font-bold leading-none">{loading ? '—' : stories.length} <span className="text-sm font-medium">stories</span></p>
+        </div>
+        <button
+          onClick={() => setShowForm((s) => !s)}
+          className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-4 py-2 text-xs font-bold backdrop-blur transition-all hover:bg-white/30 active:scale-95"
+        >
+          <Plus size={14} /> Share yours
+        </button>
       </div>
 
       {showForm && (
-        <Card className="mb-4">
-          <CardContent className="pt-4 space-y-3">
-            <div>
-              <Label>Your name</Label>
-              <Input value={form.farmer_name} onChange={(e) => setForm({ ...form, farmer_name: e.target.value })} placeholder="e.g. Ravi Kumar" />
+        <div className="mt-4 animate-fade-in rounded-2xl border border-leaf-200 bg-white p-4 shadow-sm">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-900">Share your story</h3>
+            <button onClick={() => setShowForm(false)} className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100" aria-label="Close"><X size={16} /></button>
+          </div>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="Your name">
+                <input value={form.farmer_name} onChange={(e) => setForm({ ...form, farmer_name: e.target.value })} placeholder="e.g. Ravi Kumar" className={inputCls} />
+              </FormField>
+              <FormField label="Crop">
+                <input value={form.crop} onChange={(e) => setForm({ ...form, crop: e.target.value })} placeholder="e.g. Chilli" className={inputCls} />
+              </FormField>
             </div>
-            <div>
-              <Label>Crop</Label>
-              <Input value={form.crop} onChange={(e) => setForm({ ...form, crop: e.target.value })} placeholder="e.g. Chilli" />
-            </div>
-            <div>
-              <Label>Your story</Label>
-              <Textarea value={form.story} onChange={(e) => setForm({ ...form, story: e.target.value })} placeholder="What changed, what worked, what would you tell other farmers?" rows={4} />
-            </div>
+            <FormField label="Your story">
+              <textarea value={form.story} onChange={(e) => setForm({ ...form, story: e.target.value })} rows={4}
+                placeholder="What changed, what worked, what would you tell other farmers?" className={`${inputCls} resize-none`} />
+            </FormField>
             <Button className="w-full" onClick={submit} disabled={saving || !form.farmer_name || !form.crop || !form.story}>
               {saving ? 'Sharing…' : 'Share with the community'}
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {loading ? (
-        <p className="text-sm text-gray-400 text-center py-8">Loading stories…</p>
+        <div className="mt-4 space-y-3">
+          {[0, 1, 2].map((i) => <div key={i} className="animate-shimmer h-28 rounded-2xl bg-gray-100 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:400px_100%]" />)}
+        </div>
       ) : stories.length === 0 ? (
-        <Card><CardContent className="pt-6 text-center text-sm text-gray-400">No stories shared yet. Be the first!</CardContent></Card>
+        <div className="mt-4 rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <EmptyState icon={Trophy} title="No stories shared yet" subtitle="Be the first to inspire other farmers!" />
+        </div>
       ) : (
-        <div className="space-y-2">
-          {stories.map((b) => (
-            <Card key={b.hash}>
-              <CardContent className="pt-3 pb-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <Sprout className="h-4 w-4 text-green-600" />
-                  <p className="text-sm font-medium">{b.payload?.farmer_name} · {b.payload?.crop}</p>
+        <div className="mt-4 space-y-3">
+          {stories.map((b, i) => (
+            <figure key={b.hash} className="animate-fade-up rounded-2xl border border-gray-200 bg-white p-4 shadow-sm" style={{ animationDelay: `${Math.min(i, 8) * 45}ms` }}>
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-harvest-100 text-sm font-bold text-harvest-700">
+                  {(b.payload?.farmer_name || 'F').charAt(0).toUpperCase()}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-gray-900">{b.payload?.farmer_name}</p>
+                  <p className="inline-flex items-center gap-1 text-[11px] text-gray-400">
+                    <Sprout size={10} /> {b.payload?.crop} · {new Date(b.timestamp).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </p>
                 </div>
-                <p className="text-xs text-gray-600">{b.payload?.story}</p>
-                <p className="text-[11px] text-gray-400 mt-1">{new Date(b.timestamp).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-              </CardContent>
-            </Card>
+                <Quote size={15} className="ml-auto shrink-0 text-gray-200" />
+              </div>
+              <blockquote className="mt-2.5 text-sm leading-relaxed text-gray-600">{b.payload?.story}</blockquote>
+            </figure>
           ))}
         </div>
       )}
