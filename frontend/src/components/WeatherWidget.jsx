@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -71,6 +71,20 @@ export default function WeatherWidget() {
   const [current, setCurrent] = useState(null);
   const [forecast, setForecast] = useState(null);
   const [displayTemp, setDisplayTemp] = useState(0);
+  const stripRef = useRef(null);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  const updateArrows = () => {
+    const el = stripRef.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 6);
+    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 6);
+  };
+
+  useEffect(() => {
+    updateArrows();
+  }, [forecast]);
 
   /* Live clock */
   useEffect(() => {
@@ -243,22 +257,55 @@ export default function WeatherWidget() {
           </div>
         </div>
 
-        {/* Hourly strip */}
+        {/* Hourly strip — swipe to travel through the day */}
         {hourly.length > 0 && (
           <div className="mt-5">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-white/70">Next hours</p>
-            <div className="mt-2 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {hourly.map((h, i) => (
-                <div
-                  key={h.ts}
-                  className="w-[62px] shrink-0 animate-slide-in rounded-2xl bg-white/12 py-2.5 text-center backdrop-blur-sm transition-transform hover:scale-105"
-                  style={{ animationDelay: `${i * 60}ms` }}
-                >
-                  <p className="text-[10px] font-medium text-white/75">{hourLabel(h.ts)}</p>
-                  <p className="my-1 text-xl">{weatherEmoji(h.description)}</p>
-                  <p className="text-sm font-semibold">{Math.round(h.temp)}°</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-white/70">
+              Hourly · swipe to check later hours
+            </p>
+            <div className="relative mt-2">
+              <div
+                ref={stripRef}
+                onScroll={updateArrows}
+                className="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                <div className="w-[62px] shrink-0 snap-start animate-pop rounded-2xl border border-white/40 bg-white/20 py-2.5 text-center backdrop-blur-sm">
+                  <p className="text-[10px] font-medium text-white/75">Now</p>
+                  <p className="my-1 text-xl">{emoji}</p>
+                  <p className="text-sm font-semibold">{Math.round(current.temperature)}°</p>
                 </div>
-              ))}
+                {hourly.map((h, i) => (
+                  <div
+                    key={h.ts}
+                    className="w-[62px] shrink-0 snap-start animate-slide-in rounded-2xl bg-white/12 py-2.5 text-center backdrop-blur-sm transition-transform hover:scale-105"
+                    style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
+                  >
+                    <p className="text-[10px] font-medium text-white/75">{hourLabel(h.ts)}</p>
+                    <p className="my-1 text-xl">{weatherEmoji(h.description)}</p>
+                    <p className="text-sm font-semibold">{Math.round(h.temp)}°</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Slide arrows */}
+              {canLeft && (
+                <button
+                  onClick={() => stripRef.current.scrollBy({ left: -220, behavior: 'smooth' })}
+                  aria-label="Earlier hours"
+                  className="absolute -left-1 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/25 text-sm font-bold text-white shadow-sm backdrop-blur transition-transform hover:scale-110 active:scale-95"
+                >
+                  ‹
+                </button>
+              )}
+              {canRight && (
+                <button
+                  onClick={() => stripRef.current.scrollBy({ left: 220, behavior: 'smooth' })}
+                  aria-label="Later hours"
+                  className="absolute -right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 animate-bounce-soft items-center justify-center rounded-full bg-white/25 text-sm font-bold text-white shadow-sm backdrop-blur transition-transform hover:scale-110 active:scale-95"
+                >
+                  ›
+                </button>
+              )}
             </div>
           </div>
         )}

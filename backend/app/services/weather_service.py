@@ -114,7 +114,7 @@ def _sample_forecast(lat: float, lon: float) -> ForecastResponse:
         ))
 
     start = now.replace(minute=0, second=0, microsecond=0)
-    for step in range(12):
+    for step in range(24):
         ts = start + timedelta(hours=step + 1)
         h_rng = _seed("hr", ts.strftime("%Y%m%d%H"), round(lat, 1))
         hour = ts.hour
@@ -173,7 +173,7 @@ async def get_current_weather(lat: float, lon: float) -> WeatherResponse:
 
 
 async def get_weather_forecast(lat: float, lon: float) -> ForecastResponse:
-    """5-day forecast + next 12 hours, with sample fallback."""
+    """5-day forecast + next 24 hours, with sample fallback."""
     params = {
         "lat": lat,
         "lon": lon,
@@ -214,7 +214,7 @@ async def get_weather_forecast(lat: float, lon: float) -> ForecastResponse:
             rain_probability=round(entry.get("pop", 0) * 100, 1),
             description=(entry.get("weather") or [{}])[0].get("description", ""),
         )
-        for entry in data.get("list", [])[:12]
+        for entry in data.get("list", [])[:24]
     ]
 
     return ForecastResponse(
