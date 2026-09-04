@@ -1,42 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import {
-  TrendingUp,
-  FlaskConical
-} from 'lucide-react';
-import {
-  useLang
-} from '../lib/i18n';
-import {
-  base44
-} from '../api/base44Client';
+import { useState, useEffect } from 'react';
+import { TrendingUp, FlaskConical, Droplets, CalendarDays, MapPin, Loader2, Sparkles, Wheat } from 'lucide-react';
+import { base44 } from '../api/base44Client';
 import axios from 'axios';
+import { districtsOf } from '../lib/indianLocations';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select';
+import PageHeader from '../components/PageHeader';
+import { SectionCard, FormField, EmptyState } from '../components/kit';
+import YieldEstimator from '../components/YieldEstimator';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
-import {
-  districtsOf
-} from '../lib/indianLocations';
-import {
-  Card,
-  CardContent
-} from '../components/ui/card';
-import {
-  Badge
-} from '../components/ui/badge';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem
-} from '../components/ui/select';
-import {
-  Label
-} from '../components/ui/label';
-import {
-  Button
-} from '../components/ui/button';
-import PageHeader from '../components/PageHeader';
-import YieldEstimator from '../components/YieldEstimator';
 
 const waterScore = (need, avail) => {
   if (!need) return 1;
@@ -47,8 +19,15 @@ const waterScore = (need, avail) => {
   return avail === 'medium' ? 2.5 : 2;
 };
 
+const WATER_OPTIONS = [
+  { id: 'low', label: 'Low' },
+  { id: 'medium', label: 'Medium' },
+  { id: 'high', label: 'High' },
+];
+const SEASON_OPTIONS = ['', 'kharif', 'rabi', 'zaid', 'perennial'];
+const SEASON_LABELS = { '': 'Any', kharif: 'Kharif', rabi: 'Rabi', zaid: 'Zaid', perennial: 'Perennial' };
+
 export default function CropPlanner() {
-  const { t } = useLang();
   const [crops, setCrops] = useState([]);
   const [profiles, setProfiles] = useState([]);
   const [state, setState] = useState('');
@@ -58,6 +37,7 @@ export default function CropPlanner() {
   const [ranked, setRanked] = useState([]);
   const [estimates, setEstimates] = useState({});
   const [loading, setLoading] = useState(false);
+  const [planned, setPlanned] = useState(false);
   const [soilCtx, setSoilCtx] = useState(null);
   const [waterCtx, setWaterCtx] = useState(null);
 
@@ -72,13 +52,11 @@ export default function CropPlanner() {
     try {
       const soilRecs = await base44.entities.SoilRecord.list('-test_date', 50);
       soil = soilRecs.find((r) => (!state || r.state === state) && (!district || r.district === district)) || soilRecs.find((r) => !state || r.state === state) || soilRecs[0];
-    } catch (err) {console.warn("CropPlanner data fetch failed:", err);
-    }
+    } catch (err) { console.warn('CropPlanner data fetch failed:', err); }
     try {
       const wqRecs = await base44.entities.SensorTest.filter({ test_type: 'water' }, '-test_date', 20).catch(() => []);
       wq = wqRecs[0];
-    } catch (err) {console.warn("CropPlanner data fetch failed:", err);
-    }
+    } catch (err) { console.warn('CropPlanner data fetch failed:', err); }
     setSoilCtx(soil); setWaterCtx(wq);
     const soilInfo = soil ? `Soil pH ${soil.ph ?? '?'}, N ${soil.nitrogen ?? '?'}, P ${soil.phosphorus ?? '?'}, K ${soil.potassium ?? '?'}, OC ${soil.organic_carbon ?? '?'}%, type ${soil.soil_type || '?'}` : 'unknown';
     const waterInfo = wq ? `Water pH ${wq.water_ph ?? '?'}, EC ${wq.water_ec ?? '?'}, TDS ${wq.water_tds ?? '?'}` : 'no water test data';
@@ -91,6 +69,7 @@ export default function CropPlanner() {
       return { ...c, _score: score };
     }).sort((a, b) => b._score - a._score).slice(0, 8);
     setRanked(scored);
+    setPlanned(true);
     setLoading(true);
     setEstimates({});
     try {
@@ -118,79 +97,116 @@ export default function CropPlanner() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
-      <PageHeader titleKey="cropPlanner" icon={TrendingUp} />
-      <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2 mb-4">{t('estimate')}</p>
+      <PageHeader
+        title="Crop Planner"
+        subtitle="Rank crops by fit for your soil, water and season"
+        icon={TrendingUp}
+      />
 
       <div className="mb-4">
         <YieldEstimator />
       </div>
 
-      <div className="space-y-3 mb-4">
-        <div><Label className="mb-1.5 block">{t('state')}</Label>
-          <Select value={state} onValueChange={(v) => { setState(v); setDistrict(''); }}>
-            <SelectTrigger><SelectValue placeholder={t('state')} /></SelectTrigger>
-            <SelectContent className="max-h-72">{profiles.map((p) => <SelectItem key={p.id} value={p.state_ut}>{p.state_ut}</SelectItem>)}</SelectContent>
-          </Select>
-        </div>
-        <div><Label className="mb-1.5 block">{t('district')}</Label>
-          <Select value={district} onValueChange={setDistrict} disabled={!state}>
-            <SelectTrigger><SelectValue placeholder={state ? t('selectDistrict') : t('selectStateFirst')} /></SelectTrigger>
-            <SelectContent className="max-h-72">{districtsOf(state).map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
-          </Select>
-        </div>
-        <div><Label className="mb-1.5 block">{t('water')}</Label>
-          <Select value={water} onValueChange={setWater}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent><SelectItem value="low">Low</SelectItem><SelectItem value="medium">Medium</SelectItem><SelectItem value="high">High</SelectItem></SelectContent>
-          </Select>
-        </div>
-        <div><Label className="mb-1.5 block">{t('season')}</Label>
-          <Select value={season} onValueChange={setSeason}>
-            <SelectTrigger><SelectValue placeholder="Any" /></SelectTrigger>
-            <SelectContent><SelectItem value="kharif">Kharif</SelectItem><SelectItem value="rabi">Rabi</SelectItem><SelectItem value="zaid">Zaid</SelectItem><SelectItem value="perennial">Perennial</SelectItem></SelectContent>
-          </Select>
-        </div>
-        <Button onClick={plan} className="w-full bg-green-600 hover:bg-green-700 h-12">{t('rankByFit')}</Button>
-      </div>
+      {/* Plan inputs */}
+      <SectionCard className="mb-4 animate-fade-up" icon={MapPin} title="Your plot">
+        <div className="space-y-4 p-4">
+          <div className="grid grid-cols-2 gap-3">
+            <FormField label="State">
+              <Select value={state} onValueChange={(v) => { setState(v); setDistrict(''); }}>
+                <SelectTrigger className="h-11 rounded-xl border-gray-200"><SelectValue placeholder="Select state" /></SelectTrigger>
+                <SelectContent className="max-h-72">{profiles.map((p) => <SelectItem key={p.id} value={p.state_ut}>{p.state_ut}</SelectItem>)}</SelectContent>
+              </Select>
+            </FormField>
+            <FormField label="District">
+              <Select value={district} onValueChange={setDistrict} disabled={!state}>
+                <SelectTrigger className="h-11 rounded-xl border-gray-200" disabled={!state}><SelectValue placeholder={state ? 'Select district' : 'Select state first'} /></SelectTrigger>
+                <SelectContent className="max-h-72">{districtsOf(state).map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
+              </Select>
+            </FormField>
+          </div>
 
+          <div>
+            <span className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500"><Droplets size={12} /> Water availability</span>
+            <div className="flex items-center gap-1.5 rounded-2xl border border-gray-200 bg-gray-50 p-1.5">
+              {WATER_OPTIONS.map((o) => (
+                <button key={o.id} onClick={() => setWater(o.id)}
+                  className={`flex-1 rounded-xl py-2 text-xs font-semibold transition-all ${water === o.id ? 'bg-white text-leaf-800 shadow-sm' : 'text-gray-500'}`}>
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <span className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500"><CalendarDays size={12} /> Season</span>
+            <div className="flex items-center gap-1.5 overflow-x-auto rounded-2xl border border-gray-200 bg-gray-50 p-1.5 no-scrollbar">
+              {SEASON_OPTIONS.map((s) => (
+                <button key={s} onClick={() => setSeason(s)}
+                  className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2 text-xs font-semibold transition-all ${season === s ? 'bg-white text-leaf-800 shadow-sm' : 'text-gray-500'}`}>
+                  {SEASON_LABELS[s]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <button onClick={plan} disabled={!crops.length}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-leaf-700 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-leaf-800 disabled:opacity-50">
+            <Sparkles size={16} /> Rank crops by fit
+          </button>
+          <p className="text-center text-[11px] text-gray-400">Estimates are indicative — verify with your local agriculture officer.</p>
+        </div>
+      </SectionCard>
+
+      {/* Soil & water context */}
       {(soilCtx || waterCtx) && (
-        <Card className="mb-4 bg-green-50 border-green-100"><CardContent className="pt-3 text-xs">
-          <p className="font-semibold text-green-700 flex items-center gap-1 mb-1"><FlaskConical className="h-3 w-3" />{t('soilWaterContext')}</p>
-          {soilCtx && <p className="text-gray-600">pH {soilCtx.ph ?? '—'} · N {soilCtx.nitrogen ?? '—'} · P {soilCtx.phosphorus ?? '—'} · K {soilCtx.potassium ?? '—'}</p>}
-          {waterCtx && <p className="text-gray-600">Water pH {waterCtx.water_ph ?? '—'} · EC {waterCtx.water_ec ?? '—'}</p>}
-        </CardContent></Card>
+        <div className="mb-4 rounded-2xl border border-leaf-200 bg-leaf-50/60 p-4 animate-fade-up">
+          <p className="flex items-center gap-1.5 text-xs font-semibold text-leaf-800"><FlaskConical size={13} /> Soil &amp; water context used</p>
+          {soilCtx && <p className="mt-1.5 text-xs text-gray-600">pH {soilCtx.ph ?? '—'} · N {soilCtx.nitrogen ?? '—'} · P {soilCtx.phosphorus ?? '—'} · K {soilCtx.potassium ?? '—'} · {soilCtx.soil_type || '—'}</p>}
+          {waterCtx && <p className="mt-0.5 text-xs text-gray-600">Water pH {waterCtx.water_ph ?? '—'} · EC {waterCtx.water_ec ?? '—'} · TDS {waterCtx.water_tds ?? '—'}</p>}
+        </div>
       )}
 
-      <div className="space-y-2">
-        {ranked.map((c, i) => {
-          const est = estimates[c.name_en];
-          return (
-            <Card key={c.id}><CardContent className="pt-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-green-700 text-xs font-bold">{i + 1}</span>
-                  <div>
-                    <p className="text-sm font-medium">{c.name_en}</p>
-                    <p className="text-xs text-gray-400">{c.category}</p>
+      {/* Ranked results */}
+      {loading && (
+        <div className="space-y-2">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-[92px] rounded-2xl border border-gray-200 bg-gray-100 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:400px_100%] animate-shimmer" />
+          ))}
+        </div>
+      )}
+
+      {!loading && planned && ranked.length === 0 && (
+        <EmptyState icon={Wheat} title="No crops matched" subtitle="Try a different state, season or water level." />
+      )}
+
+      {!loading && ranked.length > 0 && (
+        <div className="space-y-2">
+          {ranked.map((c, i) => {
+            const est = estimates[c.name_en];
+            return (
+              <div key={c.id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:border-leaf-300 animate-slide-in" style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${i === 0 ? 'bg-harvest-500 text-white' : 'bg-gray-100 text-gray-600'}`}>{i + 1}</span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-gray-900">{c.name_en}</p>
+                      <p className="text-xs text-gray-400">{c.category} · {c.season} · {c.duration_days || '—'} days</p>
+                    </div>
                   </div>
+                  <span className="shrink-0 rounded-full bg-cyan-50 px-2.5 py-1 text-[11px] font-semibold text-cyan-700">{c.water_requirement || '—'}</span>
                 </div>
-                <div className="text-right">
-                  <Badge className="bg-blue-50 text-blue-700">{c.water_requirement}</Badge>
-                  <p className="text-[10px] text-gray-400 mt-0.5">{c.season} · {c.duration_days}</p>
-                </div>
+                {est && (
+                  <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+                    <div className="rounded-xl bg-red-50 px-2 py-2"><p className="text-[10px] uppercase tracking-wide text-red-400">Cost</p><p className="mt-0.5 font-bold text-red-700">{est.cost}</p></div>
+                    <div className="rounded-xl bg-leaf-50 px-2 py-2"><p className="text-[10px] uppercase tracking-wide text-leaf-500">Revenue</p><p className="mt-0.5 font-bold text-leaf-700">{est.revenue}</p></div>
+                    <div className="rounded-xl bg-harvest-50 px-2 py-2"><p className="text-[10px] uppercase tracking-wide text-harvest-500">Margin</p><p className="mt-0.5 font-bold text-harvest-700">{est.margin}</p></div>
+                  </div>
+                )}
               </div>
-              {loading && <p className="text-xs text-gray-400 mt-1">{t('loading')}</p>}
-              {est && (
-                <div className="grid grid-cols-3 gap-1 mt-2 text-center text-xs">
-                  <div className="bg-red-50 rounded p-1"><div className="text-gray-400">Cost</div><div className="font-medium">{est.cost}</div></div>
-                  <div className="bg-green-50 rounded p-1"><div className="text-gray-400">Revenue</div><div className="font-medium">{est.revenue}</div></div>
-                  <div className="bg-amber-50 rounded p-1"><div className="text-gray-400">Margin</div><div className="font-medium">{est.margin}</div></div>
-                </div>
-              )}
-            </CardContent></Card>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
