@@ -1,23 +1,21 @@
-import { useState, useEffect } from 'react'
-import { Droplets, Plus, Check, Trash2, Calendar } from 'lucide-react';
-import { useLang } from '../lib/i18n';
+import { useState, useEffect } from 'react';
+import { Droplets, Plus, X, Check, Trash2, CalendarClock, History, Waves, Timer } from 'lucide-react';
 import appClient from '../api/appClient';
-import { Card, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
 import { Badge } from '../components/ui/badge';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select';
 import PageHeader from '../components/PageHeader';
+import { SectionCard, FormField, EmptyState } from '../components/kit';
 
 const METHODS = ['drip', 'sprinkler', 'flood', 'furrow', 'rainfed'];
+const inputCls = 'h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-leaf-500 focus:outline-none focus:ring-4 focus:ring-leaf-100';
+const EMPTY = { plot_name: '', crop_name: '', session_date: '', duration_minutes: '', water_litres: '', method: 'drip', water_source: '', notes: '' };
 
 export default function IrrigationPlanner() {
-  const { t } = useLang();
   const [farms, setFarms] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ plot_name: '', crop_name: '', session_date: '', duration_minutes: '', water_litres: '', method: 'drip', water_source: '', notes: '' });
+  const [form, setForm] = useState(EMPTY);
 
   const load = async () => {
     const [f, s] = await Promise.all([
@@ -36,7 +34,7 @@ export default function IrrigationPlanner() {
       water_litres: form.water_litres ? Number(form.water_litres) : undefined,
       status: 'scheduled',
     });
-    setForm({ plot_name: '', crop_name: '', session_date: '', duration_minutes: '', water_litres: '', method: 'drip', water_source: '', notes: '' });
+    setForm(EMPTY);
     setShowForm(false);
     load();
   };
@@ -47,84 +45,127 @@ export default function IrrigationPlanner() {
   const today = new Date().toISOString().slice(0, 10);
   const upcoming = sessions.filter((s) => s.status === 'scheduled' && s.session_date >= today);
   const past = sessions.filter((s) => s.status !== 'scheduled' || s.session_date < today);
+  const totalWater = sessions.reduce((sum, s) => sum + (s.water_litres || 0), 0);
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
-      <PageHeader titleKey="irrigationPlanner" icon={Droplets} />
-      <p className="text-xs text-gray-500 mb-3">{t('irrigationIntro')}</p>
+      <PageHeader title="Irrigation Planner" subtitle="Schedule and log watering for every plot" icon={Droplets} />
 
-      <Button onClick={() => setShowForm(!showForm)} className="w-full mb-3 bg-green-600 hover:bg-green-700">
-        <Plus className="h-4 w-4" /> {t('logIrrigation')}
-      </Button>
-
-      {showForm && (
-        <Card className="mb-4"><CardContent className="pt-4 space-y-3">
-          <div>
-            <Label className="mb-1 block">{t('plotName')}</Label>
-            <Select value={form.plot_name} onValueChange={(v) => {
-              const f = farms.find((x) => x.plot_name === v);
-              setForm({ ...form, plot_name: v, crop_name: f?.current_crop || '' });
-            }}>
-              <SelectTrigger><SelectValue placeholder={t('selectPlot')} /></SelectTrigger>
-              <SelectContent>{farms.map((f) => <SelectItem key={f.id} value={f.plot_name}>{f.plot_name}</SelectItem>)}</SelectContent>
-            </Select>
+      {/* Water hero */}
+      <div className="mb-4 overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-600 to-leaf-800 p-5 text-white shadow-md animate-fade-up">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Upcoming sessions</p>
+        <div className="mt-1 flex items-baseline gap-2">
+          <span className="text-4xl font-bold tracking-tight">{upcoming.length}</span>
+          <span className="text-sm font-medium text-white/80">{upcoming.length === 1 ? 'session' : 'sessions'} scheduled</span>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="rounded-2xl bg-white/15 px-3 py-2.5">
+            <p className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-white/70"><Waves size={10} /> Water logged</p>
+            <p className="mt-0.5 text-sm font-bold">{totalWater >= 1000 ? `${(totalWater / 1000).toFixed(1)}k L` : `${totalWater} L`}</p>
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div><Label className="mb-1 block">{t('cropName')}</Label><Input value={form.crop_name} onChange={(e) => setForm({ ...form, crop_name: e.target.value })} /></div>
-            <div><Label className="mb-1 block">{t('date')}</Label><Input type="date" value={form.session_date} onChange={(e) => setForm({ ...form, session_date: e.target.value })} /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div><Label className="mb-1 block">{t('durationMin')}</Label><Input type="number" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: e.target.value })} /></div>
-            <div><Label className="mb-1 block">{t('waterLitres')}</Label><Input type="number" value={form.water_litres} onChange={(e) => setForm({ ...form, water_litres: e.target.value })} /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div><Label className="mb-1 block">{t('method')}</Label>
-              <Select value={form.method} onValueChange={(v) => setForm({ ...form, method: v })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{METHODS.map((m) => <SelectItem key={m} value={m}>{t(m)}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-            <div><Label className="mb-1 block">{t('waterSource')}</Label><Input value={form.water_source} onChange={(e) => setForm({ ...form, water_source: e.target.value })} placeholder="borewell / canal" /></div>
-          </div>
-          <Button onClick={submit} className="w-full bg-green-600 hover:bg-green-700">{t('save')}</Button>
-        </CardContent></Card>
-      )}
-
-      {upcoming.length > 0 && (
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold text-gray-500 mb-2 flex items-center gap-1"><Calendar className="h-4 w-4" />{t('upcomingSessions')}</h3>
-          <div className="space-y-2">
-            {upcoming.map((s) => (
-              <Card key={s.id}><CardContent className="pt-3 pb-3 flex items-center justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">{s.plot_name} · {s.crop_name || '—'}</p>
-                  <p className="text-xs text-gray-500">{s.session_date} · {t(s.method)} · {s.water_litres ? `${s.water_litres}L` : ''}</p>
-                </div>
-                <div className="flex gap-1 shrink-0">
-                  <Button size="icon" variant="ghost" onClick={() => markDone(s.id)}><Check className="h-4 w-4 text-green-600" /></Button>
-                  <Button size="icon" variant="ghost" onClick={() => remove(s.id)}><Trash2 className="h-4 w-4 text-red-500" /></Button>
-                </div>
-              </CardContent></Card>
-            ))}
+          <div className="rounded-2xl bg-white/15 px-3 py-2.5">
+            <p className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-white/70"><Timer size={10} /> Total sessions</p>
+            <p className="mt-0.5 text-sm font-bold">{sessions.length}</p>
           </div>
         </div>
-      )}
+      </div>
 
-      <h3 className="text-sm font-semibold text-gray-500 mb-2">{t('history')}</h3>
-      {past.length === 0 ? (
-        <p className="text-xs text-gray-400">{t('noRecords')}</p>
+      {/* Add session */}
+      {!showForm ? (
+        <button onClick={() => setShowForm(true)}
+          className="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-leaf-400 bg-leaf-50/50 py-3 text-sm font-semibold text-leaf-700 transition-colors hover:bg-leaf-50 animate-fade-up">
+          <Plus size={16} /> Schedule irrigation
+        </button>
       ) : (
-        <div className="space-y-2">
-          {past.map((s) => (
-            <Card key={s.id}><CardContent className="pt-3 pb-3 flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-sm font-medium truncate">{s.plot_name} · {s.crop_name || '—'}</p>
-                <p className="text-xs text-gray-500">{s.session_date} · {t(s.method)}{s.water_litres ? ` · ${s.water_litres}L` : ''}</p>
-              </div>
-              <Badge className={s.status === 'done' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}>{t(s.status)}</Badge>
-            </CardContent></Card>
-          ))}
+        <div className="mb-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm animate-fade-up">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-900">New session</h3>
+            <button onClick={() => setShowForm(false)} className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"><X size={16} /></button>
+          </div>
+          <div className="space-y-3">
+            <FormField label="Plot">
+              <Select value={form.plot_name} onValueChange={(v) => {
+                const f = farms.find((x) => x.plot_name === v);
+                setForm({ ...form, plot_name: v, crop_name: f?.current_crop || '' });
+              }}>
+                <SelectTrigger className="h-11 rounded-xl border-gray-200"><SelectValue placeholder="Choose plot" /></SelectTrigger>
+                <SelectContent>{farms.map((f) => <SelectItem key={f.id} value={f.plot_name}>{f.plot_name}</SelectItem>)}</SelectContent>
+              </Select>
+            </FormField>
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="Crop"><Input className={inputCls} value={form.crop_name} onChange={(e) => setForm({ ...form, crop_name: e.target.value })} placeholder="e.g. Cotton" /></FormField>
+              <FormField label="Date"><Input className={inputCls} type="date" value={form.session_date} onChange={(e) => setForm({ ...form, session_date: e.target.value })} /></FormField>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="Duration (min)"><Input className={inputCls} type="number" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: e.target.value })} placeholder="45" /></FormField>
+              <FormField label="Water (litres)"><Input className={inputCls} type="number" value={form.water_litres} onChange={(e) => setForm({ ...form, water_litres: e.target.value })} placeholder="500" /></FormField>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="Method">
+                <Select value={form.method} onValueChange={(v) => setForm({ ...form, method: v })}>
+                  <SelectTrigger className="h-11 rounded-xl border-gray-200 capitalize"><SelectValue /></SelectTrigger>
+                  <SelectContent>{METHODS.map((m) => <SelectItem key={m} value={m} className="capitalize">{m}</SelectItem>)}</SelectContent>
+                </Select>
+              </FormField>
+              <FormField label="Water source"><Input className={inputCls} value={form.water_source} onChange={(e) => setForm({ ...form, water_source: e.target.value })} placeholder="borewell / canal" /></FormField>
+            </div>
+            <button onClick={submit} className="mt-1 w-full rounded-xl bg-leaf-700 py-3 text-sm font-semibold text-white transition-colors hover:bg-leaf-800">
+              Save session
+            </button>
+          </div>
         </div>
+      )}
+
+      {/* Upcoming */}
+      {upcoming.length > 0 && (
+        <SectionCard className="mb-4 animate-fade-up" icon={CalendarClock} title="Upcoming" tone="bg-cyan-100 text-cyan-700">
+          <ul className="divide-y divide-gray-100">
+            {upcoming.map((s, i) => (
+              <li key={s.id} className="flex items-center gap-3 px-4 py-3 animate-slide-in" style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}>
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-100 text-cyan-700"><Droplets size={17} /></span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-gray-900">{s.plot_name} <span className="font-normal text-gray-400">· {s.crop_name || '—'}</span></p>
+                  <p className="mt-0.5 text-xs text-gray-500">
+                    {new Date(s.session_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} · <span className="capitalize">{s.method}</span>
+                    {s.water_litres ? ` · ${s.water_litres}L` : ''}{s.duration_minutes ? ` · ${s.duration_minutes}min` : ''}
+                  </p>
+                </div>
+                <div className="flex shrink-0 gap-1">
+                  <button onClick={() => markDone(s.id)} title="Mark done"
+                    className="rounded-lg p-2 text-leaf-600 transition-colors hover:bg-leaf-50"><Check size={16} /></button>
+                  <button onClick={() => remove(s.id)} title="Delete"
+                    className="rounded-lg p-2 text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"><Trash2 size={15} /></button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </SectionCard>
+      )}
+
+      {/* History */}
+      <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500"><History size={13} /> History</h3>
+      {past.length === 0 ? (
+        <EmptyState icon={Droplets} title="No past sessions" subtitle="Completed and past-dated sessions appear here." />
+      ) : (
+        <SectionCard>
+          <ul className="divide-y divide-gray-100">
+            {past.map((s, i) => (
+              <li key={s.id} className="flex items-center gap-3 px-4 py-3 animate-slide-in" style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-gray-500"><Droplets size={15} /></span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-gray-900">{s.plot_name} <span className="font-normal text-gray-400">· {s.crop_name || '—'}</span></p>
+                  <p className="mt-0.5 text-xs text-gray-500">
+                    {new Date(s.session_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} · <span className="capitalize">{s.method}</span>
+                    {s.water_litres ? ` · ${s.water_litres}L` : ''}
+                  </p>
+                </div>
+                <Badge className={s.status === 'done' ? 'bg-leaf-100 text-leaf-800 hover:bg-leaf-100' : 'bg-gray-100 text-gray-500 hover:bg-gray-100'}>
+                  {s.status === 'done' ? 'Done' : 'Missed'}
+                </Badge>
+              </li>
+            ))}
+          </ul>
+        </SectionCard>
       )}
     </div>
   );
