@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Wallet, Building2, Navigation, AlertCircle, TrendingUp, Search, IndianRupee, Store } from 'lucide-react';
-import { getDataGovResourceRecords } from '../lib/dataGov';
+import axios from 'axios';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select';
 import PageHeader from '../components/PageHeader';
 import { SectionCard } from '../components/kit';
@@ -25,14 +25,18 @@ export default function MarketPrices() {
   const [stateFilter, setStateFilter] = useState('');
   const [commodityFilter, setCommodityFilter] = useState('');
   const [search, setSearch] = useState('');
+  const [source, setSource] = useState('');
 
   useEffect(() => {
     let cancelled = false;
     const loadPrices = async () => {
       setLoading(true); setError('');
       try {
-        const data = await getDataGovResourceRecords('mandi_prices', { limit: 100 });
-        if (!cancelled) setRecords(data.map(normaliseRecord));
+        const res = await axios.get('/api/mandi-prices', { params: { limit: 100 } });
+        if (!cancelled) {
+          setRecords((res.data.records || []).map(normaliseRecord));
+          setSource(res.data.source || '');
+        }
       } catch (err) {
         if (!cancelled) { setRecords([]); setError(err?.message || 'Could not load market prices.'); }
       } finally {
@@ -85,7 +89,9 @@ export default function MarketPrices() {
       {/* Hero strip */}
       <div className="flex animate-fade-up items-center justify-between rounded-2xl bg-gradient-to-br from-harvest-500 to-harvest-700 p-4 text-white shadow-sm">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-wider text-harvest-100">Live from Data.gov.in</p>
+          <p className="text-[11px] font-bold uppercase tracking-wider text-harvest-100">
+            {source === 'sample_fallback' ? 'Reference sample prices' : 'Live from Data.gov.in'}
+          </p>
           <p className="mt-1 text-2xl font-bold leading-none">
             {loading ? '—' : filteredRecords.length} <span className="text-sm font-medium">prices</span>
           </p>
@@ -94,6 +100,16 @@ export default function MarketPrices() {
           <TrendingUp size={22} />
         </span>
       </div>
+
+      {/* Sample-data notice */}
+      {!loading && source === 'sample_fallback' && (
+        <div className="mt-3 flex animate-fade-up items-start gap-2.5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+          <AlertCircle size={16} className="mt-0.5 shrink-0 text-amber-600" />
+          <p className="text-xs leading-relaxed text-amber-800">
+            Showing reference sample prices — the server can't reach data.gov.in right now (no API key or no outbound internet). Live daily bhav appears automatically once a key is configured.
+          </p>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="mt-4 flex animate-fade-up gap-2" style={{ animationDelay: '60ms' }}>

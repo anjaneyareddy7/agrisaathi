@@ -59,13 +59,28 @@ async def get_mandi_prices(state: str = None, commodity: str = None, limit: int 
         import logging
         logging.getLogger(__name__).warning(f"Mandi price live fetch failed ({type(e).__name__}: {e}), using sample fallback")
         from app.data.mandi_sample import MANDI_SAMPLE_DATA
+        from datetime import date
+
         filtered = MANDI_SAMPLE_DATA
         if state:
             filtered = [r for r in filtered if r["state"].lower() == state.lower()]
         if commodity:
             filtered = [r for r in filtered if r["commodity"].lower() == commodity.lower()]
+
+        if not filtered:
+            # Honest empty response -- never return unrelated commodities
+            return {
+                "records": [],
+                "source": "sample_fallback",
+                "note": "No sample data for this filter, and live data.gov.in is unreachable "
+                        "(no API key or no outbound network). Try another commodity or state.",
+            }
+
+        today = date.today().isoformat()
+        rows = [{**r, "arrival_date": today} for r in filtered[:limit]]
         return {
-            "records": filtered or MANDI_SAMPLE_DATA[:limit],
+            "records": rows,
             "source": "sample_fallback",
-            "note": "Live data.gov.in call failed (rate limit or network) -- showing bundled sample data.",
+            "note": "Showing reference sample prices -- live data.gov.in is unreachable from this server. "
+                    "Add a DATA_GOV_API_KEY and outbound internet to get daily mandi bhav.",
         }

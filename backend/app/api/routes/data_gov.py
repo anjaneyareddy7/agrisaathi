@@ -79,6 +79,15 @@ async def get_resource(
             offset=offset,
         )
     except Exception as exc:
+        # Mandi prices have a bundled sample fallback so the app keeps
+        # working without a data.gov.in key or outbound network.
+        if resource == "mandi_prices":
+            from app.services.mandi_service import get_mandi_prices
+            return await get_mandi_prices(
+                state=state,
+                commodity=commodity,
+                limit=limit,
+            )
         raise HTTPException(
             status_code=502,
             detail=str(exc),

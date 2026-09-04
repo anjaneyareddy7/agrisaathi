@@ -102,6 +102,7 @@ export default function Home() {
   const [query, setQuery] = useState('');
   const [listening, setListening] = useState(false);
   const [prices, setPrices] = useState(null);
+  const [pricesSample, setPricesSample] = useState(false);
   const [openSections, setOpenSections] = useState(
     () => new Set(SECTIONS.filter((s) => s.openByDefault).map((s) => s.id))
   );
@@ -110,10 +111,17 @@ export default function Home() {
     Promise.all(
       ['onion', 'tomato', 'potato'].map((c) =>
         axios.get('/api/mandi-prices', { params: { commodity: c } })
-          .then((res) => (res.data.records || [])[0])
+          .then((res) => {
+            const row = (res.data.records || [])[0];
+            return row ? { row, source: res.data.source } : null;
+          })
           .catch(() => null)
       )
-    ).then((rows) => setPrices(rows.filter(Boolean)));
+    ).then((list) => {
+      const ok = list.filter(Boolean);
+      setPrices(ok.map((x) => x.row));
+      setPricesSample(ok.some((x) => x.source === 'sample_fallback'));
+    });
   }, []);
 
   const startVoice = () => {
@@ -232,6 +240,9 @@ export default function Home() {
               <TrendingUp size={15} strokeWidth={2.2} />
             </span>
             {t('mandi_title')}
+            {pricesSample && (
+              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">Sample</span>
+            )}
           </h2>
           <Link to="/market-prices" className="flex items-center gap-0.5 rounded-lg px-1.5 py-1 text-xs font-semibold text-leaf-700 transition-colors hover:bg-leaf-50">
             {t('see_all')} <ChevronRight size={13} />
