@@ -6,7 +6,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import PageHeader from '../components/PageHeader';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 const PRACTICES = [
   { key: 'organic_fertilizer', label: 'I use organic/farmyard manure alongside or instead of chemical fertilizer' },

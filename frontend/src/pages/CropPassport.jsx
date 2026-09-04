@@ -3,7 +3,7 @@ import { ShieldCheck, Search, CheckCircle2, XCircle } from 'lucide-react';
 import axios from 'axios';
 import PageHeader from '../components/PageHeader';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 export default function CropPassport() {
   const [requirements, setRequirements] = useState([]);

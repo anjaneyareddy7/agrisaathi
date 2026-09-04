@@ -7,7 +7,7 @@ import { Button } from '../components/ui/button';
 import { Textarea } from '../components/ui/textarea';
 import PageHeader from '../components/PageHeader';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 export default function FeedbackCorner() {
   const deviceId = getDeviceId();

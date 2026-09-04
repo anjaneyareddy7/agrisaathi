@@ -5,7 +5,7 @@ import axios from 'axios';
 import { INDIAN_LANGUAGES } from '../lib/indianLanguages';
 import { useHelperRouter } from '../lib/useHelperRouter';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 async function translateText(text, targetLang) {
   if (!text || targetLang === 'en') return text;

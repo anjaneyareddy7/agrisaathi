@@ -3,7 +3,7 @@ import { MapPin, Phone, Building2, Sprout, Navigation, ExternalLink, Store, Leaf
 import { useLang } from '../lib/i18n';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || '';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';

@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+const BACKEND = process.env.BACKEND_URL || 'http://127.0.0.1:8000'
+
 export default defineConfig({
   plugins: [react()],
 
@@ -18,6 +20,17 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
+    allowedHosts: true,
+    proxy: {
+      '/api': {
+        target: BACKEND,
+        changeOrigin: true,
+      },
+      '/health': {
+        target: BACKEND,
+        changeOrigin: true,
+      },
+    },
   },
 
   build: {
